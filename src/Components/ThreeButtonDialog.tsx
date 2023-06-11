@@ -1,5 +1,5 @@
 // components/CustomDialog.tsx
-import React, { MouseEvent, useEffect } from 'react';
+import React, { MouseEvent } from 'react';
 
 interface CustomDialogProps {
   show: boolean;
