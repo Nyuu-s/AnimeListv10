@@ -4,6 +4,7 @@ import { Divider} from "@mantine/core";
 
 import { useMediaQuery } from '@mantine/hooks';
 import { useNavState } from "../../context/AuthContext";
+import { useNavigate   } from "react-router-dom";
 
 
 interface CustomNavLinkProps {
@@ -13,7 +14,7 @@ interface CustomNavLinkProps {
   }
 
 function CustomNavLink({path, display}: CustomNavLinkProps) {
-
+    const navigate = useNavigate ();
     const { close } = useNavState();
     const matches = useMediaQuery('(min-width: 48em)');
     console.log(path);
@@ -22,7 +23,7 @@ function CustomNavLink({path, display}: CustomNavLinkProps) {
   return ( 
   <div className=" pt-5 rounded-lg cursor-pointer hover:bg-gray-600 " onClick={() => {
       matches ? "" : close() 
-      
+      navigate(path);
       
     }}>
       <h2 className="ml-5 text-lg"> {display} </h2>

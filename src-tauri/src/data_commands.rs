@@ -17,6 +17,13 @@ pub fn saved_data(data_state: State<'_, SessionDataState>) -> Result<bool, Strin
   //set is_unsaved false
   Ok(true)
 }
+#[tauri::command]
+pub fn get_data(ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles>) -> Result<serde_json::Value, String> {
+  let data_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames);
+  let data_str =  fs::read_to_string(data_path).map_err(|err| format!{"{}", err})?;
+  let data_json = serde_json::from_str(&data_str).map_err(|err| format!("{}", err))?;
+  Ok(data_json)
+}
 
 #[tauri::command]
 pub fn loading_data_status(state: tauri::State<'_, InitialDataState>) -> Result<String, String> {

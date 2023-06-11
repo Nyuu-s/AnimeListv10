@@ -13,7 +13,7 @@ export default function Demo() {
   return (
           
   <div className=' left-2 top-0'>
-  
+
 
       {opened && <Navbar mt={26} height='100%'  width={{ sm:300, lg:400 }} p='xs' hiddenBreakpoint='sm' >
         <Navbar.Section mt="xs">{
@@ -33,7 +33,7 @@ export default function Demo() {
          <div className="flex flex-col content-evenly">
          
             <CustomNavLink  path={"/"} display={"Home"} />
-            <CustomNavLink  path={"/List"} display={"List"} />
+            <CustomNavLink  path={"/list"} display={"List"} />
             <CustomNavLink  path={"/Details"} display={"Details"} />
 
 

@@ -14,7 +14,8 @@ use data_commands::{
   check_current_data, 
   loading_data_status, 
   load_data, 
-  init_session_state
+  init_session_state,
+  get_data
 };
 use commands::{
   
@@ -43,16 +44,15 @@ tauri::Builder::default()
   .manage(data_files_names)
   .manage(initial_data_state)
   .manage(session)
-  .setup( |app|  {
-          Ok(())
-        })
   .invoke_handler(tauri::generate_handler![
     check_current_data, 
     import_file, 
     loading_data_status, 
     safe_to_quit, 
     init_app_on_ready, 
-    saved_data])
+    saved_data,
+    get_data
+    ])
   .on_window_event( |event| match event.event() {
         tauri::WindowEvent::CloseRequested { api, .. } => {
           // Intercept closing app from shortcut + windows right click --> close
