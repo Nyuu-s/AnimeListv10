@@ -76,7 +76,3 @@ export function useNavState()
 {
     return useContext(NavContext);
 }
-
-export function useAuth() {
-  return useContext(AuthContext);
-}

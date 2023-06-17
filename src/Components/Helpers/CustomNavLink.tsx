@@ -3,7 +3,7 @@
 import { Divider} from "@mantine/core";
 
 import { useMediaQuery } from '@mantine/hooks';
-import { useNavState } from "../../context/AuthContext";
+import { useNavState } from "../../context/AppContext";
 import { useNavigate   } from "react-router-dom";
 
 

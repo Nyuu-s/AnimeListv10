@@ -1,5 +1,5 @@
 
-import { useNavState } from '../context/AuthContext';
+import { useNavState } from '../context/AppContext';
 import { Header, Burger } from '@mantine/core'
 
 function TitleBar() {

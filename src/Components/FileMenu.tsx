@@ -6,6 +6,7 @@ import { IconSettings, IconArrowRight, IconUserCircle, IconLogout, IconArrowsLef
 import { useDisclosure } from '@mantine/hooks';
 import { open as openDialog } from '@tauri-apps/api/dialog';
 import { toast } from 'react-toastify';
+import { useDataState } from '../context';
 
 
 
@@ -45,7 +46,7 @@ async function handleDialog() : Promise<AnimeFile>
 
 
 function FileMenu() {
-   
+    const {set, get} = useDataState();
     const [opened, { open, close }] = useDisclosure(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [dataAlreadyImportedMessage, setDataAlreadyImportedMessage] = useState<string | undefined>(undefined);
@@ -160,10 +161,13 @@ function FileMenu() {
                         {
                             
                             pending: 'Loading data...',
-                            success: { render({}){       
+                            success: { render({data}: any){       
                                     close();
                                     setValue(undefined);
                                     setIsButtonDisabled(false);
+                                    set(data)
+                                    
+                                    
                                     return `File parsed successfully 👌`
                                 }
                             },
@@ -180,6 +184,7 @@ function FileMenu() {
                             position: 'bottom-center'
                         }
                     ) 
+                  
                 }}> Import </Button>
             
             </div>

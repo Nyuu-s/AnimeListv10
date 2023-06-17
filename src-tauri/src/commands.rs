@@ -20,7 +20,7 @@ pub async fn init_app_on_ready(data_state: State<'_, SessionDataState>, filename
 }
 
 #[tauri::command]
-pub fn import_file(data_file_path: String,  ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles> ) -> Result<String, String> {
+pub fn import_file(data_file_path: String,  ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles> ) -> Result<serde_json::Value, String> {
   
   let script_path = "python/script.py";
 
@@ -38,11 +38,12 @@ pub fn import_file(data_file_path: String,  ctx: State<'_, TauriConfig>, filenam
         //Write json file in cache directory, to be edited, modified etc
         //And write a compressed json file in the data directory, will be used for persistance
         //Todo Save extra copy of compressed as ultimate backup for a potential reset of the json
+        let result_value = serde_json::Value::from(json_str.clone());
         write_json_file(json_str, &cache_path)?;
         let data = compress_json_file(&cache_path)?;
         helper_write_file(&data, &compressed_json_file_path)?;
         helper_write_file(&data, &backup_compressed_json_file_path)?;
-        Ok(format!("Done parsing !"))
+        Ok(result_value)
       },
       Err(e) => Err(e.to_string()),
   }

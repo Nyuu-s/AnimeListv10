@@ -7,7 +7,7 @@ import { AppShell,  MantineProvider} from '@mantine/core'
 import TitleBar from './Components/TitleBar.tsx'
 import MenuBar from './Components/MenuBar.tsx'
 import Sidebar from './Components/SideBar.tsx'
-import { NavProvider } from './context/AuthContext.tsx'
+import {NavProvider as AppProvider, DataProvider } from './context'
 import { ToastContainer } from 'react-toastify';
 import {MemoryRouter} from 'react-router-dom'
 
@@ -20,7 +20,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
  
  
       <ToastContainer />
-      <NavProvider>
+      <AppProvider>
 
         <MantineProvider
           withGlobalStyles
@@ -37,18 +37,20 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             
           }}
         >
-          <MenuBar />
-      
-          <AppShell mt={24} padding={'md'} navbarOffsetBreakpoint={"sm"}
-                navbar={<Sidebar />}
-                header={<TitleBar />}
-            >
+          <DataProvider>
+            <MenuBar />
+        
+            <AppShell mt={24} padding={'md'} navbarOffsetBreakpoint={"sm"}
+                  navbar={<Sidebar />}
+                  header={<TitleBar />}
+              >
 
-
-            <App />
-          </AppShell>
+                <App />
+              
+            </AppShell>
+          </DataProvider>
         </MantineProvider>
-      </NavProvider>
+      </AppProvider>
     </MemoryRouter>
   </React.StrictMode>,
 )
