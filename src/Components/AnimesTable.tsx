@@ -3,11 +3,16 @@ import {Table } from "@mantine/core";
 type TableOption = {
     isSticky: boolean,
 }
+
+type TableSpacing = {
+    verticalSpacing: string,
+    fontSize: string
+}
 interface DataProps {
     dataHeaders: string[],
     data: object,
-    tableOption: TableOption
-
+    tableOption: TableOption,
+    spacingOptions: TableSpacing
 }
 
 function AnimesTable(props: DataProps) {
@@ -15,8 +20,8 @@ function AnimesTable(props: DataProps) {
     props.tableOption.isSticky ? "sticky top-0 bg-black" : ""
 
   return (
-    <Table highlightOnHover>
-      
+    <Table highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
+        
         <thead>
         <tr className={`${Options} `}>
             <th>ID</th>

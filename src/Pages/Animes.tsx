@@ -3,7 +3,7 @@
 import { invoke } from "@tauri-apps/api";
 import { useCallback, useEffect, useState } from "react";
 import { useDataState } from "../context";
-import { Group, NumberInput, Pagination } from '@mantine/core';
+import { Group, NumberInput, Pagination, Slider } from '@mantine/core';
 import AnimesTable from "../Components/AnimesTable";
 
 type AnimesData = {    
@@ -17,6 +17,8 @@ function Animes() {
     const {set, getData, setDataOnly, setHeadersOnly, isEmpty, getHeaders} = useDataState();
     const [paginatedData, setPaginatedData] = useState<object>({})
     const [activePage, setPage] = useState(1);
+    const [vSpacing, setVSpacing] = useState<string | undefined>("");
+    const [fontSize, setfontSize] = useState<string | undefined>("");
     // const {active} = usePagination({});
     const extractDataOnly = useCallback(
       (obj: AnimesData): object => {
@@ -57,11 +59,45 @@ function Animes() {
 
     }, [isEmpty.all])
 
+    const MARKS = [
+      { value: 0, label: 'xs' },
+      { value: 25, label: 'sm' },
+      { value: 50, label: 'md' },
+      { value: 75, label: 'lg' },
+      { value: 100, label: 'xl' },
+    ];
+
   return (
     <>
   
-   <Group position="center">
-      
+   <Group position="center" className="mt-5 justify-evenly">
+    <Group >
+      <span className="mb-2">Vertical space</span>
+      <Slider
+            id="vspacing"
+            
+            w={150}
+            defaultValue={50}
+            step={25}
+            marks={MARKS}
+            onChange={(value) => setVSpacing(MARKS.find((v) => v.value === value)?.label)}
+            styles={{ markLabel: { display: 'none' } }}
+        /> 
+
+    </Group>
+    <Group>
+      <span className="mb-2">Font</span>
+     <Slider
+        id="fontsize"
+       
+        w={150}
+        defaultValue={50}
+        step={25}
+        marks={MARKS}
+        onChange={(value) => setfontSize(MARKS.find((v) => v.value === value)?.label)}
+        styles={{ markLabel: { display: 'none' } }}
+    />
+    </Group>
       <Pagination
         
         className="relative my-5"
@@ -70,18 +106,11 @@ function Animes() {
         value={activePage}
         onChange={setPage}
       />
-      <NumberInput defaultValue={itemsPerPages} onChange={setItemsPerPages} className="w-20 text-center" styles={{ input: { textAlign: 'center' } }}/>
+    <NumberInput defaultValue={itemsPerPages} onChange={setItemsPerPages} className="w-20 text-center" styles={{ input: { textAlign: 'center' } }}/>
    </Group>
       
-        <AnimesTable dataHeaders={getHeaders()} data={paginatedData} tableOption={{isSticky: true}} />
-        
-
-
-    
-  
-
-
- 
+      
+        <AnimesTable spacingOptions={{verticalSpacing: vSpacing !== undefined ? vSpacing : "", fontSize: fontSize !== undefined ? fontSize: "" }} dataHeaders={getHeaders()} data={paginatedData} tableOption={{isSticky: true}} />
     </>
   )
 }
