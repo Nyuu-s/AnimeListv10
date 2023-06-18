@@ -3,8 +3,9 @@
 import { invoke } from "@tauri-apps/api";
 import { useCallback, useEffect, useState } from "react";
 import { useDataState } from "../context";
-import { Group, NumberInput, Pagination, Slider } from '@mantine/core';
+import { Pagination } from '@mantine/core';
 import AnimesTable from "../Components/AnimesTable";
+import { useAppState } from "../context/AppContext";
 
 type AnimesData = {    
   headers: string[];
@@ -12,13 +13,13 @@ type AnimesData = {
 };
 
 function Animes() {
-   
-    const [itemsPerPages, setItemsPerPages] = useState<number | ''>(10);
+    const {vSpacing, itemsPerPages, fontSize} = useAppState().tableSettings;
+
     const {set, getData, setDataOnly, setHeadersOnly, isEmpty, getHeaders} = useDataState();
     const [paginatedData, setPaginatedData] = useState<object>({})
     const [activePage, setPage] = useState(1);
-    const [vSpacing, setVSpacing] = useState<string | undefined>("");
-    const [fontSize, setfontSize] = useState<string | undefined>("");
+    
+
     // const {active} = usePagination({});
     const extractDataOnly = useCallback(
       (obj: AnimesData): object => {
@@ -34,15 +35,18 @@ function Animes() {
     );
 
     useEffect(() => {
+      console.log("VALUE HAS CHANGED ", itemsPerPages);
+      
       const items = (itemsPerPages === '' ? 0 : itemsPerPages)
-      const t = Object.values(getData()).slice(
+      const slicedData = Object.values(getData()).slice(
         (activePage - 1) * (itemsPerPages === '' ? 0 : items),
         activePage * items
       );
-      setPaginatedData(t);
+      setPaginatedData(slicedData);
     }, [getData(), activePage, itemsPerPages])
     
     useEffect(() => {
+      console.log();
       
       if(isEmpty.all || isEmpty.data || isEmpty.headers){
         const fetchData = async () => {
@@ -59,58 +63,18 @@ function Animes() {
 
     }, [isEmpty.all])
 
-    const MARKS = [
-      { value: 0, label: 'xs' },
-      { value: 25, label: 'sm' },
-      { value: 50, label: 'md' },
-      { value: 75, label: 'lg' },
-      { value: 100, label: 'xl' },
-    ];
+
 
   return (
     <>
-  
-   <Group position="center" className="mt-5 justify-evenly">
-    <Group >
-      <span className="mb-2">Vertical space</span>
-      <Slider
-            id="vspacing"
-            
-            w={150}
-            defaultValue={50}
-            step={25}
-            marks={MARKS}
-            onChange={(value) => setVSpacing(MARKS.find((v) => v.value === value)?.label)}
-            styles={{ markLabel: { display: 'none' } }}
-        /> 
-
-    </Group>
-    <Group>
-      <span className="mb-2">Font</span>
-     <Slider
-        id="fontsize"
-       
-        w={150}
-        defaultValue={50}
-        step={25}
-        marks={MARKS}
-        onChange={(value) => setfontSize(MARKS.find((v) => v.value === value)?.label)}
-        styles={{ markLabel: { display: 'none' } }}
-    />
-    </Group>
       <Pagination
-        
         className="relative my-5"
         position="center"
         total={Math.ceil(Object.entries(getData()).length / (itemsPerPages === '' ? 0 : itemsPerPages))}
         value={activePage}
         onChange={setPage}
       />
-    <NumberInput defaultValue={itemsPerPages} onChange={setItemsPerPages} className="w-20 text-center" styles={{ input: { textAlign: 'center' } }}/>
-   </Group>
-      
-      
-        <AnimesTable spacingOptions={{verticalSpacing: vSpacing !== undefined ? vSpacing : "", fontSize: fontSize !== undefined ? fontSize: "" }} dataHeaders={getHeaders()} data={paginatedData} tableOption={{isSticky: true}} />
+      <AnimesTable spacingOptions={{verticalSpacing: vSpacing !== undefined ? vSpacing : "", fontSize: fontSize !== undefined ? fontSize: "" }} dataHeaders={getHeaders()} data={paginatedData} tableOption={{isSticky: true}} />
     </>
   )
 }

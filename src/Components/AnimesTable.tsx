@@ -26,7 +26,7 @@ function AnimesTable(props: DataProps) {
         <tr className={`${Options} `}>
             <th>ID</th>
             {props.dataHeaders.map((header) => (
-            <th>{header}</th>
+            <th key={header}>{header}</th>
             ))}
         </tr>
         </thead>
@@ -35,8 +35,8 @@ function AnimesTable(props: DataProps) {
             return (
             <tr key={key}>
                 <td>{index}</td>
-                {props.dataHeaders.map((header) => (
-                <td>{value[header]?.value}</td>
+                {props.dataHeaders.map((header, i) => (
+                <td key={i}>{value[header]?.value}</td>
                 ))}
             </tr>   
             )})
