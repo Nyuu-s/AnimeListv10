@@ -3,7 +3,7 @@ on:
   push
 
 jobs:
-  release:
+  push:
     strategy:
       fail-fast: false
       matrix:
