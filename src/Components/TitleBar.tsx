@@ -41,7 +41,7 @@ const [test, { open, close }] = useDisclosure(false);
                 className={`${activeTab === USER_SETTINGS_ID ? "border-blue-500 hover:border-blue-500": ""}`} 
                 icon={<IconUserShield size="0.8rem" />}>
                   
-                  Users Settings 
+                  Users Settings
             </Tabs.Tab> 
           
             <Tabs.Tab value={NOTIFICATIONS_ID} disabled className={`${activeTab === NOTIFICATIONS_ID ? "border-blue-500 hover:border-blue-500": ""}`} icon={<IconMessageCircle size="0.8rem" />}>Notifications</Tabs.Tab>
