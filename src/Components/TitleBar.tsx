@@ -13,7 +13,7 @@ const {opened, toggle} = useNavState();
           <Burger opened={opened} onClick={toggle} className='mt-1'/>
           <Tabs defaultValue="gallery" className='mx-10 bottom-0 right-0 absolute'>
           <Tabs.List>
-            <Tabs.Tab value="gallery" icon={<IconUserShield size="0.8rem" />}>Users Settings</Tabs.Tab>
+            <Tabs.Tab value="gallery" icon={<IconUserShield size="0.8rem" />}>User Settings</Tabs.Tab>
             <Tabs.Tab value="settings" icon={<IconSettings size="0.8rem" />}>Table Settings</Tabs.Tab>
             <Tabs.Tab value="messages" icon={<IconMessageCircle size="0.8rem" />}>Notifications</Tabs.Tab>
           </Tabs.List>
