@@ -7,14 +7,29 @@ type AuthContextType = {
     logout: () => void;
   };
 
-type NavContextType = {
+  type NavState = {
     opened: boolean;
     toggle: () => void,
     open: () => void,
-    close: () => void,
-    
-    
+    close: () => void, 
+  }
+
+  type TableSettings = {
+    vSpacing: string | undefined,
+    fontSize: string| undefined,
+    itemsPerPages: number | '',
+    changeVSpacing(str: string | undefined): void
+    changefontSize(str: string | undefined): void
+    changeItemsPP(nb: number | ''): void
+  }
+
+type AppContextType = {
+    navState: NavState
+    tableSettings: TableSettings
 }
+
+
+
 
 
 const AuthContext = createContext<AuthContextType>({
@@ -23,14 +38,27 @@ const AuthContext = createContext<AuthContextType>({
   logout: () => {},
 });
 
-const NavContext = createContext<NavContextType>({
-    opened: false,
+const AppContext = createContext<AppContextType>({
+    navState: {
+      opened: false,
     
-    toggle: () => {},
-    open: () => {},
-    close: () => {},
+      toggle: () => {},
+      open: () => {},
+      close: () => {},
+    },
+    tableSettings: {
+      vSpacing: "",
+      fontSize: "",
+      itemsPerPages: '',
+      changeVSpacing: () => {},
+      changefontSize: () => {},
+      changeItemsPP: () => {}
+    }
+    
     
   });
+
+
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<boolean>(false);
@@ -52,27 +80,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function NavProvider({children}: {children: React.ReactNode})
+export function AppProvider({children}: {children: React.ReactNode})
 {
-    const [opened, setOpened] = useState<boolean>(false);
-
+  const [vSpacing, setVSpacing] = useState<string | undefined>("");
+  const [fontSize, setfontSize] = useState<string | undefined>("");
+  const [itemsPerPages, setItemsPerPages] = useState<number | ''>(10);
+  const changefontSize = (value: string | undefined) => setfontSize(value);
+  const changeItemsPP = (value: number | '') => {
+    setItemsPerPages(value)
+    console.log(value);
     
-        const toggle =  () => {
-            console.log("dsgsg", opened);
-            setOpened(() => !opened)
-        }
-        const open = () => {setOpened(true)}
-        const close =  () => {setOpened(false)}
+  };
+  const changeVSpacing = (value: string | undefined) => setVSpacing(value);
+
+  
+  const [opened, setOpened] = useState<boolean>(false);
+  const toggle =  () => {
+    console.log("dsgsg", opened);
+    setOpened(() => !opened)
+  }
+  const open = () => {setOpened(true)}
+  const close =  () => {setOpened(false)}
+  const tableSettings = {
+    vSpacing,
+    fontSize,
+    itemsPerPages,
+    changeItemsPP,
+    changeVSpacing,
+    changefontSize
+  }
+
+  const navState = {
+    opened,
+    toggle,
+    open,
+    close
+  }
     
 
     return (
-        <NavContext.Provider value={{ opened, toggle, close, open}}>
+        <AppContext.Provider value={{ navState, tableSettings }}>
             {children}
-        </NavContext.Provider>
+        </AppContext.Provider>
     )
 }
 
-export function useNavState() 
+export function useAppState() 
 {
-    return useContext(NavContext);
+    return useContext(AppContext);
 }
+

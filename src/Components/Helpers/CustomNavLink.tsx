@@ -3,7 +3,7 @@
 import { Divider} from "@mantine/core";
 
 import { useMediaQuery } from '@mantine/hooks';
-import { useNavState } from "../../context/AppContext";
+import { useAppState } from "../../context/AppContext";
 import { useNavigate   } from "react-router-dom";
 
 
@@ -15,7 +15,7 @@ interface CustomNavLinkProps {
 
 function CustomNavLink({path, display}: CustomNavLinkProps) {
     const navigate = useNavigate ();
-    const { close } = useNavState();
+    const { close } = useAppState().navState;
     const matches = useMediaQuery('(min-width: 48em)');
     console.log(path);
     
