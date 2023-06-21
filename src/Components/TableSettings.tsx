@@ -59,7 +59,7 @@ function TableSettings() {
 
             <Group className='flex justify-between mt-5'>
             <div className="mb-2">Sticky Header</div>
-            <Checkbox  w={150} className='mr-14' checked={tableSettings.isSticky} size="md" onClick={() => tableSettings.changeStickness()}/>
+            <Checkbox  w={150} className='mr-14' checked={tableSettings.isSticky} size="md" onChange={() => tableSettings.changeStickness()}/>
             </Group>
         </div>
     </>

@@ -1,5 +1,19 @@
 import {Table } from "@mantine/core";
+import AnimesTableURL from "./AnimesTableURL";
 
+import { invoke } from "@tauri-apps/api";
+
+async function openExternalUrl(url: string) {
+    try {
+    //   await open(url);
+    await invoke("open_external_url", {url})
+      
+    } catch (error) {
+        console.log(url);
+        
+      console.error('Failed to open external URL:', error);
+    }
+  }
 type TableOption = {
     isSticky: boolean,
 }
@@ -39,7 +53,7 @@ function AnimesTable(props: DataProps) {
                 {props.dataHeaders.map((header, i) => {
                     if(value[header] && value[header].url != "")
                     {
-                        return(<td key={i} className="cursor-pointer hover:text-blue-500 hover:underline" onClick={()=> console.log("Invoke open in browser comand",value[header].url )}>{value[header]?.value}</td>)
+                        return( <AnimesTableURL key={i} clickFunc={()=> openExternalUrl(value[header].url)} display={value[header]?.value}/>)
                     }
                     return(<td key={i} >{value[header]?.value}</td>)
         })}

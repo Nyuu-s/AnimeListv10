@@ -7,7 +7,22 @@ use crate::file_manager::{calculate_file_hash, write_json_file, compress_json_fi
 
 use std::process::Command;
 
-
+#[tauri::command]
+pub fn open_external_url(url: &str) -> Result<(), String> {
+  let command = match std::env::consts::OS {
+    "macos" => "open",
+    "windows" => "cmd",
+    _ => "xdg-open",
+  };
+  let args = match std::env::consts::OS {
+    "windows" => vec!["/c", "start", "", url],
+    _ => vec![url],
+  };
+  Command::new(command)
+  .args(&args)
+  .spawn().map_err(|err| format!("{} {}",url, err))?;  
+    Ok(())
+}
 
 #[tauri::command]
 pub async fn init_app_on_ready(data_state: State<'_, SessionDataState>, filenames: State<'_, DataFiles<'_>>, ctx: State<'_, TauriConfig>) -> Result<(), String> {

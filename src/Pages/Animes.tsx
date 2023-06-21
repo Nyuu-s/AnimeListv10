@@ -71,13 +71,13 @@ function Animes() {
    
       <Pagination
         position="center"
-        
+        className="my-5"
         total={Math.ceil(Object.entries(getData()).length / (itemsPerPages === '' ? 0 : itemsPerPages))}
         value={activePage}
         onChange={setPage}
       />
     
-    <ScrollArea offsetScrollbars w={width} h={height} className="my-5">
+    <ScrollArea offsetScrollbars w={width} h={height-200} className="">
 
         <AnimesTable 
           spacingOptions={{verticalSpacing: vSpacing !== undefined ? vSpacing : "", fontSize: fontSize !== undefined ? fontSize: "" }}

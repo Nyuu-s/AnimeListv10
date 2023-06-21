@@ -30,6 +30,13 @@
         "unminimize": true,
         "startDragging": true
       },
+      "shell": {
+        "all": false,
+        "execute": false,
+        "open": false,
+        "scope": [],
+        "sidecar": false
+      },
       "dialog": {
         "all": false, 
         "ask": true, 

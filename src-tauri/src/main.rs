@@ -18,7 +18,7 @@ use data_commands::{
   get_data
 };
 use commands::{
-  
+  open_external_url,
   init_app_on_ready,
   import_file,
   safe_to_quit
@@ -51,7 +51,8 @@ tauri::Builder::default()
     safe_to_quit, 
     init_app_on_ready, 
     saved_data,
-    get_data
+    get_data,
+    open_external_url
     ])
   .on_window_event( |event| match event.event() {
         tauri::WindowEvent::CloseRequested { api, .. } => {
