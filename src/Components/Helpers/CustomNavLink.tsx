@@ -17,7 +17,7 @@ function CustomNavLink({path, display}: CustomNavLinkProps) {
     const navigate = useNavigate ();
     const { close } = useAppState().navState;
     const matches = useMediaQuery('(min-width: 48em)');
-    console.log(path);
+  
     
 
   return ( 

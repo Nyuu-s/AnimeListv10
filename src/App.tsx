@@ -6,11 +6,14 @@ import Custom404 from './Pages/404'
 function App() {
   return (
     <> 
+    <div className=''>
+      
       <Routes> 
         <Route path='/' element={<Home />}/>
         <Route path='/list' element={<Animes />}/>
         <Route path="*" element={<Custom404 />} />
       </Routes>
+    </div>
     </>
   )
 }

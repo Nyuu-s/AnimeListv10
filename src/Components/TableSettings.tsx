@@ -1,4 +1,4 @@
-import { Group, NumberInput, Slider } from "@mantine/core"
+import { Checkbox, Group, NumberInput, Slider, Switch } from "@mantine/core"
 
 import { useAppState } from "../context/AppContext";
 
@@ -27,6 +27,7 @@ function TableSettings() {
                     marks={MARKS}
                     onChange={(value) => tableSettings.changeVSpacing(MARKS.find((v) => v.value === value)?.label)}
                     styles={{ markLabel: { display: 'none' } }}
+                    value={MARKS.find((v) => v.label === tableSettings.vSpacing)?.value}
                 /> 
             </Group>
 
@@ -42,17 +43,23 @@ function TableSettings() {
                 marks={MARKS}
                 onChange={(value) => tableSettings.changefontSize(MARKS.find((v) => v.value === value)?.label)}
                 styles={{ markLabel: { display: 'none' } }}
+                value={MARKS.find((v) => v.label === tableSettings.fontSize)?.value}
             />
             </Group>
             {/* <NumberInput defaultValue={itemsPerPages} onChange={setItemsPerPages} className="w-20 text-center" styles={{ input: { textAlign: 'center' } }}/> */}
 
             <Group className='flex justify-between mt-5'>
             <div className="mb-2">Items per pages</div>
-            <NumberInput defaultValue={tableSettings.itemsPerPages} onChange={(value) => {
+            <NumberInput defaultValue={tableSettings.itemsPerPages} value={tableSettings.itemsPerPages} onChange={(value) => {
                 tableSettings.changeItemsPP(value)
                 
                 
             }} w={150} className='mr-14' styles={{ input: { textAlign: 'center' } }}/>
+            </Group>
+
+            <Group className='flex justify-between mt-5'>
+            <div className="mb-2">Sticky Header</div>
+            <Checkbox  w={150} className='mr-14' checked={tableSettings.isSticky} size="md" onClick={() => tableSettings.changeStickness()}/>
             </Group>
         </div>
     </>

@@ -3,18 +3,18 @@
 import { invoke } from "@tauri-apps/api";
 import { useCallback, useEffect, useState } from "react";
 import { useDataState } from "../context";
-import { Pagination } from '@mantine/core';
+import { Pagination, ScrollArea } from '@mantine/core';
 import AnimesTable from "../Components/AnimesTable";
 import { useAppState } from "../context/AppContext";
-
+import { useViewportSize } from '@mantine/hooks';
 type AnimesData = {    
   headers: string[];
   [key: string]: string[] | { hyperlink: string; value: string };
 };
 
 function Animes() {
-    const {vSpacing, itemsPerPages, fontSize} = useAppState().tableSettings;
-
+    const {vSpacing, itemsPerPages, fontSize, isSticky} = useAppState().tableSettings;
+    const { width, height } = useViewportSize();
     const {set, getData, setDataOnly, setHeadersOnly, isEmpty, getHeaders} = useDataState();
     const [paginatedData, setPaginatedData] = useState<object>({})
     const [activePage, setPage] = useState(1);
@@ -34,6 +34,7 @@ function Animes() {
       [],
     );
 
+      
     useEffect(() => {
       console.log("VALUE HAS CHANGED ", itemsPerPages);
       
@@ -67,14 +68,24 @@ function Animes() {
 
   return (
     <>
+   
       <Pagination
-        className="relative my-5"
         position="center"
+        
         total={Math.ceil(Object.entries(getData()).length / (itemsPerPages === '' ? 0 : itemsPerPages))}
         value={activePage}
         onChange={setPage}
       />
-      <AnimesTable spacingOptions={{verticalSpacing: vSpacing !== undefined ? vSpacing : "", fontSize: fontSize !== undefined ? fontSize: "" }} dataHeaders={getHeaders()} data={paginatedData} tableOption={{isSticky: true}} />
+    
+    <ScrollArea offsetScrollbars w={width} h={height} className="my-5">
+
+        <AnimesTable 
+          spacingOptions={{verticalSpacing: vSpacing !== undefined ? vSpacing : "", fontSize: fontSize !== undefined ? fontSize: "" }}
+          dataHeaders={getHeaders()} data={paginatedData} 
+          tableOption={{isSticky}} 
+        />
+    </ScrollArea>
+      
     </>
   )
 }

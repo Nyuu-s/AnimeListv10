@@ -17,27 +17,32 @@ interface DataProps {
 
 function AnimesTable(props: DataProps) {
  const Options = 
-    props.tableOption.isSticky ? "sticky top-0 bg-black" : ""
+    props.tableOption.isSticky ? "text-red-500 sticky top-0 bg-black" : ""
 
   return (
-    <Table highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
+    <Table striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
         
         <thead>
-        <tr className={`${Options} `}>
+        <tr className={`${Options}  `}>
             <th>ID</th>
             {props.dataHeaders.map((header) => (
-            <th key={header}>{header}</th>
+            <th  key={header}>{header}</th>
             ))}
         </tr>
         </thead>
         <tbody>
         {Object.entries(props.data).map(([key, value], index) =>{ 
+            
             return (
             <tr key={key}>
                 <td>{index}</td>
-                {props.dataHeaders.map((header, i) => (
-                <td key={i}>{value[header]?.value}</td>
-                ))}
+                {props.dataHeaders.map((header, i) => {
+                    if(value[header] && value[header].url != "")
+                    {
+                        return(<td key={i} className="cursor-pointer hover:text-blue-500 hover:underline" onClick={()=> console.log("Invoke open in browser comand",value[header].url )}>{value[header]?.value}</td>)
+                    }
+                    return(<td key={i} >{value[header]?.value}</td>)
+        })}
             </tr>   
             )})
         }

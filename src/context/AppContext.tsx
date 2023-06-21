@@ -18,9 +18,11 @@ type AuthContextType = {
     vSpacing: string | undefined,
     fontSize: string| undefined,
     itemsPerPages: number | '',
+    isSticky: boolean,
     changeVSpacing(str: string | undefined): void
     changefontSize(str: string | undefined): void
     changeItemsPP(nb: number | ''): void
+    changeStickness(value?: boolean): void
   }
 
 type AppContextType = {
@@ -50,6 +52,8 @@ const AppContext = createContext<AppContextType>({
       vSpacing: "",
       fontSize: "",
       itemsPerPages: '',
+      isSticky: false,
+      changeStickness: () => {},
       changeVSpacing: () => {},
       changefontSize: () => {},
       changeItemsPP: () => {}
@@ -84,6 +88,7 @@ export function AppProvider({children}: {children: React.ReactNode})
 {
   const [vSpacing, setVSpacing] = useState<string | undefined>("");
   const [fontSize, setfontSize] = useState<string | undefined>("");
+  const [isSticky, setIsSticky] = useState<boolean>(false);
   const [itemsPerPages, setItemsPerPages] = useState<number | ''>(10);
   const changefontSize = (value: string | undefined) => setfontSize(value);
   const changeItemsPP = (value: number | '') => {
@@ -92,7 +97,16 @@ export function AppProvider({children}: {children: React.ReactNode})
     
   };
   const changeVSpacing = (value: string | undefined) => setVSpacing(value);
-
+  const changeStickness = (value?: boolean ) => {
+    if(value !== undefined)
+    {
+      setIsSticky(value);
+    }
+    else
+    {
+      setIsSticky(() => (!isSticky));
+    }
+  }
   
   const [opened, setOpened] = useState<boolean>(false);
   const toggle =  () => {
@@ -101,10 +115,13 @@ export function AppProvider({children}: {children: React.ReactNode})
   }
   const open = () => {setOpened(true)}
   const close =  () => {setOpened(false)}
+
   const tableSettings = {
     vSpacing,
     fontSize,
     itemsPerPages,
+    isSticky,
+    changeStickness,
     changeItemsPP,
     changeVSpacing,
     changefontSize

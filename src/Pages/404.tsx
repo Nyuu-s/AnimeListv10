@@ -1,6 +1,6 @@
 
 import { Button } from '@mantine/core';
-import './test.css'
+
 type Custom404Props = {};
 
 const Custom404: React.FC<Custom404Props> = () => {
