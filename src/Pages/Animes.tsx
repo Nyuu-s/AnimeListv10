@@ -43,6 +43,8 @@ function Animes() {
         (activePage - 1) * (itemsPerPages === '' ? 0 : items),
         activePage * items
       );
+     
+      
       setPaginatedData(slicedData);
     }, [getData(), activePage, itemsPerPages])
     

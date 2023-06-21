@@ -9,7 +9,7 @@ ws = wb[sheetnames[0]]
 # if End col is specified / not None stop looping after this col other wise read the whole thing
 end_col = None
 
-row_data = {'headers': []}
+row_data = {'headers': ['ID']}
 
 # Find the column index for the header you want
 header_name = 'Note'
@@ -28,7 +28,8 @@ for row in ws.iter_rows(min_row=2, max_col=header_col_index):
             cell_dict = {'value': cell.value, 'url': ""}
             if cell.hyperlink is not None:
                 cell_dict['url'] = cell.hyperlink.target
-            cell_data[row_data['headers'][cell.column-1]] = cell_dict
+            cell_data[row_data['headers'][cell.column]] = cell_dict
+            cell_data['ID'] = cell.row
     row_data[row[0].row] = cell_data
 
 # with open('cell_values.json', 'w') as outfile:

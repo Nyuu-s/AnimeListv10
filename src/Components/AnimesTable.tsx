@@ -38,19 +38,19 @@ function AnimesTable(props: DataProps) {
         
         <thead>
         <tr className={`${Options}  `}>
-            <th>ID</th>
             {props.dataHeaders.map((header) => (
             <th  key={header}>{header}</th>
             ))}
         </tr>
         </thead>
         <tbody>
-        {Object.entries(props.data).map(([key, value], index) =>{ 
+        {Object.entries(props.data).map(([key, value]) =>{ 
             
             return (
             <tr key={key}>
-                <td>{index}</td>
+                <td>{value['ID']-1}</td>
                 {props.dataHeaders.map((header, i) => {
+                
                     if(value[header] && value[header].url != "")
                     {
                         return( <AnimesTableURL key={i} clickFunc={()=> openExternalUrl(value[header].url)} display={value[header]?.value}/>)
