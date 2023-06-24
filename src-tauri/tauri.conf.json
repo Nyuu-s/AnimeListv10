@@ -100,7 +100,8 @@
         "resizable": true,
         "title": "AnimesList",
         "width": 800,
-        "decorations": false
+        "decorations": false,
+        "visible": true
       }
     ]
   }

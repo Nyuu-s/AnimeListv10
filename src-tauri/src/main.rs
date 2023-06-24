@@ -15,15 +15,17 @@ use data_commands::{
   loading_data_status, 
   load_data, 
   init_session_state,
-  get_data
+  get_data, read_window_config
 };
 use commands::{
   open_external_url,
   init_app_on_ready,
   import_file,
-  safe_to_quit
+  safe_to_quit,
+  save_window_config
 };
 use se_app_infos::{TauriConfig, DataFiles, InitialDataState};
+use tauri::{Manager, Position, LogicalPosition};
 use std::sync::Mutex;
 
 fn main() {
@@ -38,6 +40,7 @@ fn main() {
 
   let session = init_session_state(&config, &data_files_names).expect("init session error");
 
+  let window_config = read_window_config(&config, &data_files_names).expect("error");
 
 tauri::Builder::default()
   .manage(config)
@@ -52,8 +55,16 @@ tauri::Builder::default()
     init_app_on_ready, 
     saved_data,
     get_data,
-    open_external_url
+    open_external_url,
+    save_window_config
     ])
+    .setup(move |app|{
+      let main_window = app.get_window("main").unwrap();
+      main_window.set_size(tauri::Size::Logical(tauri::LogicalSize { width: *window_config.window_sizex.lock().unwrap(), height: *window_config.window_sizey.lock().unwrap() })).expect("failed to set window size");
+      main_window.set_position(Position::Logical(LogicalPosition { x: *window_config.window_posx.lock().unwrap(), y: *window_config.window_posy.lock().unwrap() })).expect("failed to set window position");
+
+      Ok(())
+    })
   .on_window_event( |event| match event.event() {
         tauri::WindowEvent::CloseRequested { api, .. } => {
           // Intercept closing app from shortcut + windows right click --> close

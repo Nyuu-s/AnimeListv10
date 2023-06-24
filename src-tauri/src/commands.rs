@@ -1,9 +1,9 @@
 
 
 use tauri::State;
-use crate::se_app_infos::{DataFiles, TauriConfig, SessionDataState, CustomResponse ,DirName};
+use crate::se_app_infos::{DataFiles, TauriConfig, SessionDataState, CustomResponse ,DirName, WindowConfig, Configurations};
 use crate::path_helper::{get_app_dir_path, get_app_dir_string};
-use crate::file_manager::{calculate_file_hash, write_json_file, compress_json_file, helper_write_file , get_file_metadata};
+use crate::file_manager::{calculate_file_hash, write_json_file, compress_json_file, helper_write_file , get_file_metadata, write_config};
 
 use std::process::Command;
 
@@ -31,6 +31,21 @@ pub async fn init_app_on_ready(data_state: State<'_, SessionDataState>, filename
   let mut data_guard = data_state.hashcode.lock().unwrap();
   *data_guard = hashcode;
   
+    Ok(())
+}
+
+#[tauri::command]
+pub fn save_window_config(
+  filenames: State<'_, DataFiles<'_>>, 
+  ctx: State<'_, TauriConfig>,
+  posx: f64,
+  posy: f64,
+  sizex: f64,
+  sizey: f64
+) -> Result<(), String> {
+  let path = get_app_dir_path(DirName::WindowConfig, ctx.config.clone(), &filenames);
+  let cfg = WindowConfig::new(posx, posy, sizex, sizey);
+  write_config(path, Configurations::Window(cfg)).expect("oopsie");
     Ok(())
 }
 

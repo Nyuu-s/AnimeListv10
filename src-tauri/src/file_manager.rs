@@ -7,6 +7,11 @@ use std::fs;
 use std::io::{Read, Write};
 use sha2::{Digest, Sha256};
 
+use crate::path_helper::get_app_dir_path;
+use crate::se_app_infos::Configurations;
+
+
+
 fn helper_compress( contents: &str) -> Result<Vec<u8>, String>
 {
 
@@ -82,6 +87,17 @@ pub fn write_json_file(str: String, file_path: &str) -> Result<(), String>
   Ok(())
   
 }
+
+pub fn write_config(filepath: PathBuf, cfg: Configurations) -> Result<(), String> {
+  match cfg {
+      Configurations::Window(window_cfg) => {
+        fs::write(filepath, window_cfg.to_byte_array()).expect("ooopsie");
+      },
+      Configurations::User(user_cfg) => {}
+  }
+  Ok(())
+}
+
 pub async fn calculate_file_hash(file_path: &str) -> Result<String, String> {
 
   // let mut file = fs::File::open(file_path)?;
