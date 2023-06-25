@@ -7,7 +7,7 @@ use std::fs;
 use std::io::{Read, Write};
 use sha2::{Digest, Sha256};
 
-use crate::path_helper::get_app_dir_path;
+
 use crate::se_app_infos::Configurations;
 
 
@@ -88,7 +88,7 @@ pub fn write_json_file(str: String, file_path: &str) -> Result<(), String>
   
 }
 
-pub fn write_config(filepath: PathBuf, cfg: Configurations) -> Result<(), String> {
+pub fn write_config(filepath: &PathBuf, cfg: Configurations) -> Result<(), String> {
   match cfg {
       Configurations::Window(window_cfg) => {
         fs::write(filepath, window_cfg.to_byte_array()).expect("ooopsie");

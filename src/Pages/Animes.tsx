@@ -4,7 +4,7 @@ import { invoke } from "@tauri-apps/api";
 import { useCallback, useEffect, useState } from "react";
 import { useDataState } from "../context";
 import { Pagination, ScrollArea } from '@mantine/core';
-import AnimesTable from "../Components/AnimesTable";
+import AnimesTable from "../Components/AnimesTable/AnimesTable";
 import { useAppState } from "../context/AppContext";
 import { useViewportSize } from '@mantine/hooks';
 type AnimesData = {    
@@ -36,7 +36,7 @@ function Animes() {
 
       
     useEffect(() => {
-      console.log("VALUE HAS CHANGED ", itemsPerPages);
+      
       
       const items = (itemsPerPages === '' ? 0 : itemsPerPages)
       const slicedData = Object.values(getData()).slice(
@@ -49,7 +49,7 @@ function Animes() {
     }, [getData(), activePage, itemsPerPages])
     
     useEffect(() => {
-      console.log();
+   
       
       if(isEmpty.all || isEmpty.data || isEmpty.headers){
         const fetchData = async () => {

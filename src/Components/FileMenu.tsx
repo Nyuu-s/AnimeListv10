@@ -29,7 +29,7 @@ async function handleDialog() : Promise<AnimeFile>
                 extensions: ['xlsx']
             }]
         })
-        console.log(selection);
+
         if(selection)
         {
             const selectionStrings = selection.toString().split('\\')
@@ -39,7 +39,7 @@ async function handleDialog() : Promise<AnimeFile>
         }
         return {file:"", path: ""}
     } catch (error) {
-        console.log(error);
+  
         return {file:"", path: ""}
     }
 }
@@ -75,7 +75,7 @@ function FileMenu() {
                 try {
                     await onInvoke('check_current_data', {});
                     setDataAlreadyImportedMessage(undefined);
-                    console.log("log everything is fine");
+              
                 } catch (error: any) {
                     setDataAlreadyImportedMessage("Data already exist do you want to overwrite it all? "); 
                 }
@@ -115,16 +115,16 @@ function FileMenu() {
                                   <p>Importing will overwrite the existing data. Do you still want to proceed?</p>
                                   <div className='flex justify-start  mt-5'>
 
-                                  <Button className='mr-5' compact variant="light" color="yellow" onClick={() => {
-                                    console.log("yes")
+                                  <Button className='mr-5' compact variant="outline" color="yellow" onClick={() => {
+                                
                                     toast.dismiss("confirmYesNo")
                                     setIsButtonDisabled(false);
                                   }}>
                                     Yes
                                   </Button>
                     
-                                  <Button compact variant="light" color="green" onClick={() => {
-                                    console.log("no")
+                                  <Button compact variant="outline" color="green" onClick={() => {
+                                
                                     toast.dismiss("confirmYesNo")
                                     close()
                                     }}>No</Button>
@@ -135,7 +135,7 @@ function FileMenu() {
                                   closeOnClick: false, // Disable closing on click
                                   draggable: false, // Disable dragging
                                   closeButton: false, // Disable close button
-                                  position: toast.POSITION.BOTTOM_CENTER,
+                                  position: toast.POSITION.TOP_RIGHT,
                                   toastId: 'confirmYesNo',
                                   theme: 'dark'
                                 }
@@ -181,7 +181,7 @@ function FileMenu() {
                         },
                         {
                             theme: 'dark',
-                            position: 'bottom-center'
+                            position: 'top-right'
                         }
                     ) 
                   

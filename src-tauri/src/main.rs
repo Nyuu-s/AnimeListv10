@@ -15,7 +15,8 @@ use data_commands::{
   loading_data_status, 
   load_data, 
   init_session_state,
-  get_data, read_window_config
+  get_data, read_window_config,
+  read_user_config
 };
 use commands::{
   open_external_url,
@@ -25,7 +26,7 @@ use commands::{
   save_window_config
 };
 use se_app_infos::{TauriConfig, DataFiles, InitialDataState};
-use tauri::{Manager, Position, LogicalPosition};
+use tauri::{Manager, Position};
 use std::sync::Mutex;
 
 fn main() {
@@ -56,12 +57,13 @@ tauri::Builder::default()
     saved_data,
     get_data,
     open_external_url,
-    save_window_config
+    save_window_config,
+    read_user_config
     ])
     .setup(move |app|{
       let main_window = app.get_window("main").unwrap();
-      main_window.set_size(tauri::Size::Logical(tauri::LogicalSize { width: *window_config.window_sizex.lock().unwrap(), height: *window_config.window_sizey.lock().unwrap() })).expect("failed to set window size");
-      main_window.set_position(Position::Logical(LogicalPosition { x: *window_config.window_posx.lock().unwrap(), y: *window_config.window_posy.lock().unwrap() })).expect("failed to set window position");
+      main_window.set_size(tauri::Size::Physical(tauri::PhysicalSize { width: *window_config.window_sizex.lock().unwrap() as u32, height: *window_config.window_sizey.lock().unwrap() as u32 })).expect("failed to set window size");
+      main_window.set_position(Position::Physical(tauri::PhysicalPosition { x: *window_config.window_posx.lock().unwrap() as i32, y: *window_config.window_posy.lock().unwrap() as i32 })).expect("failed to set window position");
 
       Ok(())
     })

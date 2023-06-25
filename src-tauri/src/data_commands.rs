@@ -5,11 +5,12 @@ use crate::se_app_infos::InitialDataState;
 use crate::se_app_infos::TauriConfig;
 use crate::se_app_infos::DataFiles;
 use crate::se_app_infos::DirName;
+use crate::se_app_infos::UserConfig;
 use crate::se_app_infos::WindowConfig;
 use tauri::api::path;
 use crate::path_helper::{get_app_dir_path};
 use crate::file_manager::{decompress_file_json, helper_write_file, get_file_metadata};
-use std::io::{BufReader, BufRead, Error};
+use std::io::{BufReader, BufRead};
 
 use std::sync::Mutex;
 use std::fs;
@@ -74,6 +75,23 @@ pub fn load_data( config: &TauriConfig, filenames: &DataFiles) -> Result<String,
 
 }
 
+#[tauri::command]
+pub async fn read_user_config(ctx: State<'_, TauriConfig>,  data_files_names: State<'_, DataFiles<'_>>) -> Result<UserConfig, String> {
+  let ucfg_path = get_app_dir_path(DirName::UserConfig, ctx.config.clone(), &data_files_names);
+  let ucfg_file = std::fs::File::open(ucfg_path).map_err(|err| format!("{}", err))?;
+  let reader = BufReader::new(ucfg_file);
+  let user_cfg = UserConfig::default();
+  for line in reader.lines()
+  {
+    let line = line.map_err(|err| format!("{}", err))?; 
+    let (conext_var, value) = parse_cfg_line(&line, "=");
+    match conext_var {
+      "isAutoWSave" => {let mut is_auto_window_save  = user_cfg.is_auto_window_save.lock().unwrap(); *is_auto_window_save = value.parse::<bool>().map_err(|err| format!("{}", err))?},
+      _ => () 
+    }
+  }
+  Ok(user_cfg)
+}
 
 
 pub fn read_window_config(config: &TauriConfig,  data_files_names: &DataFiles) -> Result<WindowConfig, String> {
@@ -82,7 +100,7 @@ pub fn read_window_config(config: &TauriConfig,  data_files_names: &DataFiles) -
   let wcfg_file = std::fs::File::open(wcfg_path).map_err(|err| format!("{}", err))?;
   let reader = BufReader::new(wcfg_file);
 
-  let window_cfg = WindowConfig::new(0f64, 0f64, 800f64, 600f64);
+  let window_cfg = WindowConfig::default();
 
   for line in reader.lines()
   {

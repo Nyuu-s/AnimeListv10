@@ -1,6 +1,6 @@
 
 use std::{sync::Mutex};
-
+use serde::Serialize;
 pub struct TauriConfig {
   pub config: tauri::Config
 }
@@ -63,24 +63,45 @@ impl WindowConfig {
         window_sizey: Mutex::from(sy)
       }
   }
+
+  pub fn to_byte_array(&self) -> Vec<u8> {
+    let value1 = *self.window_posx.lock().unwrap();
+    let value2 = *self.window_posy.lock().unwrap();
+    let value3 = *self.window_sizex.lock().unwrap();
+    let value4 = *self.window_sizey.lock().unwrap();
+
+    let formatted_string = format!("windowX={}\nwindowY={}\nwindowSizeX={}\nwindowSizeY={}",
+                                  value1, value2, value3, value4);
+    formatted_string.into_bytes()
+  }
+
+
+
 }
 
-impl WindowConfig {
-  // Custom function to create the formatted string and convert it to a byte array
-  pub fn to_byte_array(&self) -> Vec<u8> {
-      let value1 = *self.window_posx.lock().unwrap();
-      let value2 = *self.window_posy.lock().unwrap();
-      let value3 = *self.window_sizex.lock().unwrap();
-      let value4 = *self.window_sizey.lock().unwrap();
-
-      let formatted_string = format!("windowX={}\nwindowY={}\nwindowSizeX={}\nwindowSizeY={}",
-                                     value1, value2, value3, value4);
-      formatted_string.into_bytes()
+impl Default for WindowConfig {
+   fn default() -> Self {
+    Self {
+      window_posx: Mutex::from(0f64),
+      window_posy: Mutex::from(0f64),
+      window_sizex: Mutex::from(800f64),
+      window_sizey: Mutex::from(800f64)
+    }
   }
 }
 
+#[derive(Serialize)]
 pub struct UserConfig {
   //todo: add user config fields like color theme, notification pref and so on,
+  pub is_auto_window_save: Mutex<bool>
+}
+
+impl Default for UserConfig {
+  fn default() -> Self {
+   Self {
+    is_auto_window_save: Mutex::from(true),
+   }
+ }
 }
 
 pub enum Configurations {

@@ -1,8 +1,9 @@
 
 import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
+
 import { toast } from 'react-toastify';
-import { useEffect } from 'react'
-import { invoke } from '@tauri-apps/api'
+import { useAppState } from '../context/AppContext';
+
 
 
 function transformhHours(hours: number) : {Total_minutes: number, Total_days: number, Total_years: number,Total_Hours: number, sentence: string }
@@ -52,10 +53,11 @@ function transformhHours(hours: number) : {Total_minutes: number, Total_days: nu
 }
 
 export default function Home() {
-
-  const notify = () =>{
+  const t = useAppState()
+  const notify =  async () =>{
      toast("Wow so easy !")
-     invoke("save_window_config", { posx: 0, posy:0, sizex: 800, sizey: 9000})
+    console.log(t.userSettings.isAutoWindowCfgSave);
+    
     };
 
   const tansformedHours = transformhHours(1800);

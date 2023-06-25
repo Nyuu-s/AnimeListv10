@@ -9,7 +9,7 @@ async function openExternalUrl(url: string) {
     await invoke("open_external_url", {url})
       
     } catch (error) {
-        console.log(url);
+      
         
       console.error('Failed to open external URL:', error);
     }
@@ -44,16 +44,16 @@ function AnimesTable(props: DataProps) {
         </tr>
         </thead>
         <tbody>
-        {Object.entries(props.data).map(([key, value]) =>{ 
+        {Object.entries(props.data).map(([key, value], index) =>{ 
             
             return (
             <tr key={key}>
-                <td>{value['ID']-1}</td>
+                <td key={index}>{value['ID']-1}</td>
                 {props.dataHeaders.map((header, i) => {
                 
                     if(value[header] && value[header].url != "")
                     {
-                        return( <AnimesTableURL key={i} clickFunc={()=> openExternalUrl(value[header].url)} display={value[header]?.value}/>)
+                        return( <AnimesTableURL key={i} id={i} clickFunc={()=> openExternalUrl(value[header].url)} display={value[header]?.value}/>)
                     }
                     return(<td key={i} >{value[header]?.value}</td>)
         })}

@@ -1,6 +1,6 @@
 import { Checkbox, Group, NumberInput, Slider, Switch } from "@mantine/core"
 
-import { useAppState } from "../context/AppContext";
+import { useAppState } from "../../context/AppContext";
 
 function TableSettings() {
     const tableSettings = useAppState().tableSettings;

@@ -26,13 +26,16 @@ pub fn open_external_url(url: &str) -> Result<(), String> {
 
 #[tauri::command]
 pub async fn init_app_on_ready(data_state: State<'_, SessionDataState>, filenames: State<'_, DataFiles<'_>>, ctx: State<'_, TauriConfig>) -> Result<(), String> {
-  let json_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames);
-  let hashcode = calculate_file_hash(json_path.to_str().unwrap()).await.map_err(|err| format!("{}", err))?;
-  let mut data_guard = data_state.hashcode.lock().unwrap();
-  *data_guard = hashcode;
+
+  // let json_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames);
+  // let hashcode = calculate_file_hash(json_path.to_str().unwrap()).await.map_err(|err| format!("{}", err))?;
+  // let mut data_guard = data_state.hashcode.lock().unwrap();
+  // *data_guard = hashcode;
   
     Ok(())
 }
+
+
 
 #[tauri::command]
 pub fn save_window_config(
@@ -41,11 +44,20 @@ pub fn save_window_config(
   posx: f64,
   posy: f64,
   sizex: f64,
-  sizey: f64
+  sizey: f64,
+  use_default: bool
 ) -> Result<(), String> {
-  let path = get_app_dir_path(DirName::WindowConfig, ctx.config.clone(), &filenames);
-  let cfg = WindowConfig::new(posx, posy, sizex, sizey);
-  write_config(path, Configurations::Window(cfg)).expect("oopsie");
+
+
+    let path = get_app_dir_path(DirName::WindowConfig, ctx.config.clone(), &filenames);
+    let cfg = WindowConfig::new(posx, posy, sizex, sizey);
+    if use_default
+    {
+      let cfg =  WindowConfig::default();
+      write_config(&path, Configurations::Window(cfg)).expect("oopsie");
+    }
+    write_config(&path, Configurations::Window(cfg)).expect("oopsie");
+  
     Ok(())
 }
 

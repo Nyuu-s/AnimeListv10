@@ -1,7 +1,7 @@
 
 
 interface UrlProps {
-    key: any,
+    id: any,
     clickFunc: () => void,
     display: string,
 
@@ -11,7 +11,7 @@ const AnimesTableURL = (props: UrlProps) => {
   return (
     <td 
 
-        key={props.key}
+        key={props.id}
         className="cursor-text"
         //onClick={}  on click cell edit cell value
         

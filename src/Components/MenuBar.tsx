@@ -15,7 +15,7 @@ function MenuBar() {
     const [showDialog, setShowDialog] = useState(false);
 
     const handleDialogButtonClick = (buttonIndex: number) => {
-      console.log(`Button ${buttonIndex} clicked`);
+     
       setShowDialog(false);
     };
     

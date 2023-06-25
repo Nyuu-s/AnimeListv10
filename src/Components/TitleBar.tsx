@@ -5,7 +5,8 @@ import { Header, Burger, Tabs, Group, Drawer } from '@mantine/core'
 import {  useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useDisclosure } from '@mantine/hooks';
-import TableSettings from './TableSettings';
+import TableSettings from './Tabs/TableSettings';
+import UserSettings from './Tabs/UserSettings';
 
 
 function TitleBar() {
@@ -16,6 +17,7 @@ const TABLE_SETTINGS_ID= 'table-settings';
 const NOTIFICATIONS_ID= 'notifications-pannel';
 const {pathname } = useLocation()
 const [test, { open, close }] = useDisclosure(false);
+
 
 
   return (
@@ -30,17 +32,14 @@ const [test, { open, close }] = useDisclosure(false);
                 onClick={() => {open()}}
                 className={`${activeTab === TABLE_SETTINGS_ID ? "border-blue-500 hover:border-blue-500": ""}`} 
                 icon={<IconSettings size="0.8rem" />}>
-                
-
                 Table Settings
               </Tabs.Tab>
             }
             <Tabs.Tab 
                 value={USER_SETTINGS_ID}
-                disabled
+                onClick={() => {open()}}
                 className={`${activeTab === USER_SETTINGS_ID ? "border-blue-500 hover:border-blue-500": ""}`} 
                 icon={<IconUserShield size="0.8rem" />}>
-                  
                   Users Settings
             </Tabs.Tab> 
           
@@ -48,19 +47,30 @@ const [test, { open, close }] = useDisclosure(false);
           </Tabs.List>
 
           <Tabs.Panel value={USER_SETTINGS_ID} pt="xs">
-          <Drawer position='right' overlayProps={{opacity: 0.5 }} withCloseButton={false} opened={test} onClose={close}>
+          <Drawer position='right' overlayProps={{opacity: 0.5 }} withCloseButton={false} opened={activeTab === TABLE_SETTINGS_ID && test} onClose={close}>
             {/* Drawer content */}
-            <Drawer.Content>
+        
               <Drawer.Header >
                 <Drawer.Title className='mt-20 text-2xl'>Table Settings</Drawer.Title>
                 <Drawer.CloseButton size={30} className='absolute right-10' />
               </Drawer.Header>
               <Drawer.Body>
-                
                 <TableSettings />
-             
               </Drawer.Body>
-            </Drawer.Content>
+          
+          </Drawer>
+
+          <Drawer position='right'  withCloseButton={false} opened={activeTab === USER_SETTINGS_ID && test} onClose={close}>
+            {/* Drawer content */}
+         
+              <Drawer.Header >
+                <Drawer.Title  className='mt-20 text-2xl'>User Settings</Drawer.Title>
+                <Drawer.CloseButton size={30} className='absolute right-10' />
+              </Drawer.Header>
+              <Drawer.Body >
+                <UserSettings />
+              </Drawer.Body >
+           
           </Drawer>
           </Tabs.Panel>
           
