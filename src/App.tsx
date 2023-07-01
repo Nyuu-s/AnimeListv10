@@ -8,6 +8,7 @@ import { appWindow} from '@tauri-apps/api/window'
 import { invoke } from '@tauri-apps/api'
 import { useAppState } from './context/AppContext'
 import { toast } from 'react-toastify'
+import Details from './Pages/Details'
 
 type UProperties = {
   is_auto_window_save: boolean
@@ -20,11 +21,9 @@ const {userSettings} = useAppState()
 
 useEffect(() => {
   const readUserCfg = async () => {
-    
     try {
       let userCfg: UProperties = await invoke("read_user_config", {});
       userSettings.changeIsAutoWindowCfgSave(userCfg.is_auto_window_save)
-      
     } catch (error) {
       toast.warn("Invalid user config", {toastId: "warn:usercfg", progress: "false"})
     }
@@ -35,57 +34,56 @@ useEffect(() => {
 
 
 
-useEffect(() => {
-  let resizetimeout: any;
+// useEffect(() => {
+//   let resizetimeout: any;
 
-  let movetimeout: any;
-  const resize = async () => {
-    const pos = await appWindow.outerPosition();
-    const isMaxed = await appWindow.isFullscreen();
+//   let movetimeout: any;
+//   const resize = async () => {
+//     const pos = await appWindow.outerPosition();
+//     const isMaxed = await appWindow.isFullscreen();
 
-    const unlisten = await appWindow.onResized(({ payload: size }) => {
-      clearTimeout(resizetimeout)
-      resizetimeout = setTimeout(() => {
-        if(userSettings.isAutoWindowCfgSave){
-          isMaxed ? invoke("save_window_config", {posx: 0, posy: 0, sizex: 0, sizey: 0, useDefault: true})
-          :
-          invoke("save_window_config", {posx: pos.x, posy: pos.y, sizex: size.width, sizey: size.height, useDefault: false})
+//     const unlisten = await appWindow.onResized(({ payload: size }) => {
+//       clearTimeout(resizetimeout)
+//       resizetimeout = setTimeout(() => {
+//           isMaxed ? invoke("save_window_config", {posx: 0, posy: 0, sizex: 0, sizey: 0, useDefault: true, active: userSettings.isAutoWindowCfgSave})
+//           :
+//           invoke("save_window_config", {posx: pos.x, posy: pos.y, sizex: size.width, sizey: size.height, useDefault: false, active: userSettings.isAutoWindowCfgSave})
           
-        }
-      }, 1000);
-    });
-    return unlisten;
-  };
+        
+//       }, 1000);
+//     });
+//     return unlisten;
+//   };
 
-  const move = async () => {
-    let size = await appWindow.innerSize();
-    const isMaxed = await appWindow.isFullscreen();
+//   const move = async () => {
+//     let size = await appWindow.innerSize();
+//     const isMaxed = await appWindow.isFullscreen();
+    
+//     const unlisten = await appWindow.onMoved(({ payload: position }) => {
+//       clearTimeout(movetimeout)
+//       movetimeout = setTimeout(() => {
+//           isMaxed ? invoke("save_window_config", {posx: 0, posy: 0, sizex: 0, sizey: 0, useDefault: true, active: userSettings.isAutoWindowCfgSave})
+//           :
+//           invoke("save_window_config", {posx: position.x, posy: position.y, sizex: size.width, sizey: size.height, useDefault:false, active: userSettings.isAutoWindowCfgSave})
+//       }, 1000);
+//     });
+//     return unlisten;
+//   }; 
 
-    const unlisten = await appWindow.onMoved(({ payload: position }) => {
-      clearTimeout(movetimeout)
-      movetimeout = setTimeout(() => {
-        if(userSettings.isAutoWindowCfgSave){
-          isMaxed ? invoke("save_window_config", {posx: 0, posy: 0, sizex: 0, sizey: 0, useDefault: true})
-          :
-          invoke("save_window_config", {posx: position.x, posy: position.y, sizex: size.width, sizey: size.height, useDefault:false})
-          
-        }
-      }, 1000);
-    });
-    return unlisten;
-  }; 
-
-    (async () => {
+  
+//     (async () => {
       
-      const unListenResize = await resize(); 
-      const unListenMove = await move(); 
-      // Return the cleanup function directly
-      return () => {
-        unListenResize();
-        unListenMove();
-      };
-    })();
-}, [userSettings.isAutoWindowCfgSave])
+//       const unListenResize = await resize(); 
+//       const unListenMove = await move(); 
+
+//       // Return the cleanup function directly
+//       return () => {
+        
+//         unListenResize();
+//         unListenMove();
+//       };
+//     })();
+// }, [userSettings.isAutoWindowCfgSave])
 
   
   return (
@@ -93,6 +91,7 @@ useEffect(() => {
       <Routes> 
         <Route path='/' element={<Home />}/>
         <Route path='/list' element={<Animes />}/>
+        <Route path='/details/:id' element={<Details />}/>
         <Route path="*" element={<Custom404 />} />
       </Routes>
 

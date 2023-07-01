@@ -2,6 +2,7 @@ import {Table } from "@mantine/core";
 import AnimesTableURL from "./AnimesTableURL";
 
 import { invoke } from "@tauri-apps/api";
+import { useNavigate } from "react-router-dom";
 
 async function openExternalUrl(url: string) {
     try {
@@ -30,24 +31,25 @@ interface DataProps {
 }
 
 function AnimesTable(props: DataProps) {
+    const navigate = useNavigate()
  const Options = 
     props.tableOption.isSticky ? "text-red-500 sticky top-0 bg-black" : ""
 
   return (
     <Table striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
-        
+    
         <thead>
-        <tr className={`${Options}  `}>
-            {props.dataHeaders.map((header) => (
-            <th  key={header}>{header}</th>
-            ))}
-        </tr>
+            <tr className={`${Options}  `}>
+                {props.dataHeaders.map((header) => (
+                <th  key={header}>{header}</th>
+                ))}
+            </tr>
         </thead>
         <tbody>
         {Object.entries(props.data).map(([key, value], index) =>{ 
             
             return (
-            <tr key={key}>
+            <tr key={key} onClick={() => navigate("/details/"+value['ID'])}>
                 <td key={index}>{value['ID']-1}</td>
                 {props.dataHeaders.map((header, i) => {
                 

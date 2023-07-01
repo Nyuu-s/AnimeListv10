@@ -14,7 +14,7 @@ function MenuBar() {
     const {colors, colorScheme} = useMantineTheme();
     const [showDialog, setShowDialog] = useState(false);
 
-    const handleDialogButtonClick = (buttonIndex: number) => {
+    const handleDialogButtonClick = () => {
      
       setShowDialog(false);
     };

@@ -45,10 +45,11 @@ pub fn save_window_config(
   posy: f64,
   sizex: f64,
   sizey: f64,
-  use_default: bool
+  use_default: bool,
+  active: bool
 ) -> Result<(), String> {
-
-
+  if active
+  {
     let path = get_app_dir_path(DirName::WindowConfig, ctx.config.clone(), &filenames);
     let cfg = WindowConfig::new(posx, posy, sizex, sizey);
     if use_default
@@ -57,6 +58,7 @@ pub fn save_window_config(
       write_config(&path, Configurations::Window(cfg)).expect("oopsie");
     }
     write_config(&path, Configurations::Window(cfg)).expect("oopsie");
+  }
   
     Ok(())
 }
