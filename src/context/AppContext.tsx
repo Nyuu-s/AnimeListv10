@@ -1,11 +1,7 @@
 import { createContext, useContext, useState } from "react";
 
 
-type AuthContextType = {
-    user: boolean;
-    login: () => void;
-    logout: () => void;
-  };
+
 
 
   type NavState = {
@@ -41,12 +37,6 @@ type AppContextType = {
 
 
 
-const AuthContext = createContext<AuthContextType>({
-  user: false,
-  login: () => {},
-  logout: () => {},
-});
-
 const AppContext = createContext<AppContextType>({
     navState: {
       opened: false,
@@ -73,26 +63,6 @@ const AppContext = createContext<AppContextType>({
   });
 
 
-
-// export function AuthProvider({ children }: { children: React.ReactNode }) {
-//   const [user, setUser] = useState<boolean>(false);
-
-//   const login = () => {
-   
-    
-//     setUser(true);
-//   };
-
-//   const logout = () => {
-//     setUser(false);
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ user, login, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// }
 
 export function AppProvider({children}: {children: React.ReactNode})
 {

@@ -1,4 +1,4 @@
-import { Checkbox, Group, NumberInput, Slider, Switch } from "@mantine/core"
+import { Checkbox, Group, NumberInput, Slider } from "@mantine/core"
 
 import { useAppState } from "../../context/AppContext";
 

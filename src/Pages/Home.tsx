@@ -2,7 +2,7 @@
 import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
 
 import { toast } from 'react-toastify';
-import { useAppState } from '../context/AppContext';
+
 
 
 
@@ -53,7 +53,7 @@ function transformhHours(hours: number) : {Total_minutes: number, Total_days: nu
 }
 
 export default function Home() {
-  const t = useAppState()
+
   const notify =  async () =>{
      toast("Wow so easy !")
   

@@ -4,7 +4,7 @@ import Home from './Pages/Home'
 import Animes from './Pages/Animes'
 import Custom404 from './Pages/404'
 import { useEffect } from 'react'
-import { appWindow} from '@tauri-apps/api/window'
+
 import { invoke } from '@tauri-apps/api'
 import { useAppState } from './context/AppContext'
 import { toast } from 'react-toastify'
