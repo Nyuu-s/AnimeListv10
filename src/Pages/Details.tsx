@@ -109,7 +109,7 @@ function Details() {
                     <li className="">
                       <span className="font-bold">{key}</span>: 
                       {
-                        EditMode ? <TextInput value={currentAnime.elements[key].value} /> : currentAnime.elements[key].value
+                        EditMode ? <TextInput defaultValue={currentAnime.elements[key].value} /> : currentAnime.elements[key].value
                       } 
                     </li>)
                   }
