@@ -1,8 +1,8 @@
-import { Accordion, ActionIcon, Affix, Button, Center, Group, Portal, ScrollArea, TextInput, rem } from "@mantine/core"
+import {  Affix, Button, Center, ScrollArea, TextInput, rem } from "@mantine/core"
 import { useCallback, useEffect, useState } from "react"
-import { useLocation, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { useDataState } from "../context/"
-import { Icon3dCubeSphere, Icon3dRotate, IconAdjustments, IconArrowBadgeUp, IconEdit, IconEditOff, IconPlug, IconPlus, IconSettings } from "@tabler/icons-react"
+import {  IconPlus, IconTrash } from "@tabler/icons-react"
 import {
   IconButton,
   SpeedDial,
@@ -15,7 +15,7 @@ import {
 
 import { useAppState } from "../context/AppContext"
 import { useMediaQuery } from "@mantine/hooks"
-import { MdEdit, MdHome, MdSettings } from "react-icons/md"
+import { MdEdit } from "react-icons/md"
 
 type Anime = {
   headers: string[],
@@ -47,7 +47,7 @@ const SaveButton = (props : SaveProps ) => {
 }
 
 function Details() {
-  const { pathname} = useLocation()
+
   const param = useParams()
   const {getData, getHeaders} = useDataState()
   const [currentAnime, setCurrentAnime] = useState<Anime | undefined>(undefined)
@@ -69,14 +69,10 @@ function Details() {
   )
   
 
-  useEffect(() => {
-    console.log(EditMode);
-    
 
-  }, [EditMode])
   
   useEffect(() => {
-    console.log(pathname, param);
+
     const headers = getHeaders()
     const value = Object.values(getData()).find((value) => value['ID'] == param['id']);
     
@@ -84,8 +80,7 @@ function Details() {
     
     
   }, [])
-  
-  console.log(currentAnime?.elements[currentAnime.headers[1]]);
+
   return (
     <div className="grid grid-cols-5  gap-0 h-full">
 
@@ -93,7 +88,7 @@ function Details() {
       <section id="image" className="col-span-2">
         <div className="flex flex-col justify-center items-center w-full ">
                     <img src="https://picsum.photos/200/300" className="w-1/2" alt="" />
-                    {<SaveButton show={(EditMode && matches)} clickFunc={() => setEditMode(false)}></SaveButton>}
+                    {<SaveButton show={(EditMode && matches)} clickFunc={onSave}></SaveButton>}
         </div>
       </section>}
 
@@ -117,7 +112,7 @@ function Details() {
                   return ""
                 })}
 
-                <li className="text-center">{<SaveButton show={(EditMode && !matches)} clickFunc={() => setEditMode(false)}></SaveButton>}    </li>
+                <li className="text-center">{<SaveButton show={(EditMode && !matches)} clickFunc={onSave}></SaveButton>}    </li>
               </ul>        
             </Center>
               
@@ -139,9 +134,13 @@ function Details() {
             </IconButton>
           </SpeedDialHandler>
           <SpeedDialContent>
-            <SpeedDialAction  className="relative bg-blue-200 md:mb-16" >
+            <SpeedDialAction  className="relative md:mb-7" >
               <MdEdit className=" md:h-10 md:w-10 h-5 w-5 text-black" onClick={() => setEditMode(true)} />
               <Typography {...labelProps}>Edit</Typography>
+            </SpeedDialAction>
+            <SpeedDialAction  className="relative md:mb-7" >
+              <IconTrash className=" md:h-10 md:w-10 h-5 w-5 text-red-500" onClick={() => console.log("delete trigger")} />
+              <Typography {...labelProps}>Delete</Typography>
             </SpeedDialAction>
           </SpeedDialContent>
         </SpeedDial>

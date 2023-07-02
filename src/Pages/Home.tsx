@@ -56,7 +56,7 @@ export default function Home() {
   const t = useAppState()
   const notify =  async () =>{
      toast("Wow so easy !")
-    console.log(t.userSettings.isAutoWindowCfgSave);
+  
     
     };
 
