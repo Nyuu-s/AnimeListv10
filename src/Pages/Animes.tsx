@@ -39,6 +39,10 @@ function Animes() {
       
       
       const items = (itemsPerPages === '' ? 0 : itemsPerPages)
+      console.log(getData(), (activePage - 1) * (itemsPerPages === '' ? 0 : items), activePage * items);
+      
+      
+      
       const slicedData = Object.values(getData()).slice(
         (activePage - 1) * (itemsPerPages === '' ? 0 : items),
         activePage * items

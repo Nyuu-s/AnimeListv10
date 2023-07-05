@@ -49,7 +49,7 @@ const SaveButton = (props : SaveProps ) => {
 function Details() {
 
   const param = useParams()
-  const {getData, getHeaders} = useDataState()
+  const {getData, getHeaders, setDataOnly} = useDataState()
   const [currentAnime, setCurrentAnime] = useState<Anime | undefined>(undefined)
   const [EditMode, setEditMode] = useState<boolean>(false)
   const {opened} = useAppState().navState;
@@ -64,6 +64,10 @@ function Details() {
   const onSave = useCallback(
     () => {
       setEditMode(false)
+      //Edit context data
+     
+      
+      //Call invoke(save_data)
     },
     [],
   )
@@ -102,7 +106,7 @@ function Details() {
                   {              
                     return (
                     <li className="">
-                      <span className="font-bold">{key}</span>: 
+                      <span className="font-bold">{key}: </span> 
                       {
                         EditMode ? <TextInput defaultValue={currentAnime.elements[key].value} /> : currentAnime.elements[key].value
                       } 

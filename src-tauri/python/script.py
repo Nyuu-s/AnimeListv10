@@ -24,13 +24,13 @@ for col in ws.iter_cols():
 for row in ws.iter_rows(min_row=2, max_col=header_col_index):
     cell_data = {}
     for cell in row:
-        if cell.value is not None and cell.data_type == 's':
-            cell_dict = {'value': cell.value, 'url': ""}
-            if cell.hyperlink is not None:
-                cell_dict['url'] = cell.hyperlink.target
-            cell_data[row_data['headers'][cell.column]] = cell_dict
-            cell_data['ID'] = cell.row
-    row_data[row[0].row] = cell_data
+       
+        cell_dict = {'value': cell.value, 'url': ""}
+        if cell.hyperlink is not None:
+            cell_dict['url'] = cell.hyperlink.target
+        cell_data[row_data['headers'][cell.column]] = cell_dict
+        cell_data['ID'] = cell.row #same as key because when object will be transformed in array, and key will be lost if not here
+    row_data[cell.row] = cell_data
 
 # with open('cell_values.json', 'w') as outfile:
 json.dump(row_data, sys.stdout)

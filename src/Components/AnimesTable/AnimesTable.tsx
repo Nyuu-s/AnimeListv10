@@ -3,7 +3,8 @@ import AnimesTableURL from "./AnimesTableURL";
 
 import { invoke } from "@tauri-apps/api";
 import { useNavigate } from "react-router-dom";
-
+import { useAppState } from "../../context/AppContext";
+import { useEffect, useState } from "react";
 async function openExternalUrl(url: string) {
     try {
     //   await open(url);
@@ -31,39 +32,52 @@ interface DataProps {
 }
 
 function AnimesTable(props: DataProps) {
+    const {opened} = useAppState().navState; 
+    const [first, setfirst] = useState(opened) 
     const navigate = useNavigate()
  const Options = 
     props.tableOption.isSticky ? "text-red-500 sticky top-0 bg-black" : ""
+  useEffect(() => {
+    setfirst(opened)
 
+  }, [opened])
+  
   return (
-    <Table striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
+ 
+    
+    <Table  striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
     
         <thead>
-            <tr className={`${Options}  `}>
+            <tr className={`${Options} `}>
                 {props.dataHeaders.map((header) => (
-                <th  key={header}>{header}</th>
-                ))}
+                    <th  key={header}>{header}</th>
+                    ))}
             </tr>
         </thead>
         <tbody>
         {Object.entries(props.data).map(([key, value], index) =>{ 
             
             return (
-            <tr key={key} onClick={() => navigate("/details/"+value['ID'])}>
+                <tr key={key} onClick={() => "" /* navigate("/details/"+value['ID'])*/}>
                 <td key={index}>{value['ID']-1}</td>
                 {props.dataHeaders.map((header, i) => {
-                
-                    if(value[header] && value[header].url != "")
+                    
+                    if(header != "ID")
                     {
-                        return( <AnimesTableURL key={i} id={i} clickFunc={()=> openExternalUrl(value[header].url)} display={value[header]?.value}/>)
+                        if(value[header] && value[header].url != "")
+                        {
+                            console.log(value);
+                            return( <AnimesTableURL key={i} id={i} clickFunc={()=> openExternalUrl(value[header].url)} display={value[header]?.value}/>)
+                        }
+                        return(<td key={i} >{value[header]?.value }</td>)
                     }
-                    return(<td key={i} >{value[header]?.value}</td>)
-        })}
+                })}
             </tr>   
             )})
         }
         </tbody>
     </Table>
+
   )
 }
 
