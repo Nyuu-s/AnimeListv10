@@ -23,7 +23,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <AppProvider>
 
         <MantineProvider
-        
+          
           withGlobalStyles
           withNormalizeCSS
           theme={{
@@ -41,9 +41,13 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <DataProvider>
             <MenuBar />
         
-            <AppShell mt={24} padding={'md'}  navbarOffsetBreakpoint={"sm"}
+            <AppShell  
+                  mt={24}    
+                  navbarOffsetBreakpoint={"sm"}
                   navbar={<Sidebar />}
                   header={<TitleBar />}
+                  className='pl-2'
+                  
             
               >
 

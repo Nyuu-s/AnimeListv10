@@ -15,7 +15,7 @@ export default function Demo() {
   <div className=' left-2 top-0'>
 
 
-      {opened && <Navbar mt={26} height='100%'  width={{ sm:300, lg:400 }} p='xs' hiddenBreakpoint='sm' >
+      {opened && <Navbar mt={26} height='100%' fixed={false}  width={{ sm:300, lg:400 }} p='xs' hiddenBreakpoint='sm' >
         <Navbar.Section mt="xs">{
           <>
           

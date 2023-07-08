@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-html{
+body{
     overflow: hidden;
+}
+
+/* .mantine-1xelxnd{
+    padding-left: 5px;
+} */
+
+
+.mantine-h18gz2{
+    width: (100vw - (var(--mantine-navbar-width, 0px) + 2rem))
 }

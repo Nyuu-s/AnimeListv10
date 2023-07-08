@@ -49,7 +49,7 @@ const SaveButton = (props : SaveProps ) => {
 function Details() {
 
   const param = useParams()
-  const {getData, getHeaders, setDataOnly} = useDataState()
+  const {getData, getHeaders} = useDataState()
   const [currentAnime, setCurrentAnime] = useState<Anime | undefined>(undefined)
   const [EditMode, setEditMode] = useState<boolean>(false)
   const {opened} = useAppState().navState;

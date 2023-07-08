@@ -7,6 +7,7 @@ import { Pagination, ScrollArea } from '@mantine/core';
 import AnimesTable from "../Components/AnimesTable/AnimesTable";
 import { useAppState } from "../context/AppContext";
 import { useViewportSize } from '@mantine/hooks';
+
 type AnimesData = {    
   headers: string[];
   [key: string]: string[] | { hyperlink: string; value: string };
@@ -90,6 +91,7 @@ function Animes() {
           dataHeaders={getHeaders()} data={paginatedData} 
           tableOption={{isSticky}} 
         />
+        {/* <AnimesReactTable data={paginatedData} dataHeaders={getHeaders()}/> */}
     </ScrollArea>
       
     </>
