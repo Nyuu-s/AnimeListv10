@@ -10,6 +10,7 @@ import { useAppState } from './context/AppContext'
 import { toast } from 'react-toastify'
 import Details from './Pages/Details'
 
+
 type UProperties = {
   is_auto_window_save: boolean
 }

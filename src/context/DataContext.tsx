@@ -9,7 +9,7 @@ type EmptyBool = {
 type DataContextType = {
     get(): object,
     set(json: object): void,
-    getData(): object
+    getData(): any
     setDataOnly(data: object): void,
     getHeaders(): Array<string>,
     setHeadersOnly(headers: Array<string>): void,

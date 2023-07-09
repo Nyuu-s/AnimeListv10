@@ -61,7 +61,7 @@ function AnimesTable(props: DataProps) {
                         {
                             if(value[header] && value[header].url != "")
                             {
-                                console.log(value);
+                                
                                 return( <AnimesTableURL key={i} id={i} clickFunc={()=> openExternalUrl(value[header].url)} display={value[header]?.value}/>)
                             }
                             return(<td key={i} >{value[header]?.value }</td>)
