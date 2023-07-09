@@ -91,7 +91,7 @@ function Animes() {
           dataHeaders={getHeaders()} data={paginatedData} 
           tableOption={{isSticky}} 
         />
-        {/* <AnimesReactTable data={paginatedData} dataHeaders={getHeaders()}/> */}
+       
     </ScrollArea>
       
     </>

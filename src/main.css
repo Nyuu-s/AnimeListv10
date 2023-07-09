@@ -11,6 +11,7 @@ body{
 } */
 
 
-.mantine-h18gz2{
-    width: (100vw - (var(--mantine-navbar-width, 0px) + 2rem))
+.mantine-ScrollArea-root{
+     width: (100vw - (var(--mantine-navbar-width, 0px) + 1rem)) 
+
 }
