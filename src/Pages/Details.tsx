@@ -17,8 +17,9 @@ import { useCastToAnimeNoID, T_AnimeNoID, AnimeNoID  as Anime} from "../Componen
 import { Affix, Button, ScrollArea, TextInput, rem } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"
 import { IconPlus, IconTrash } from "@tabler/icons-react";
-import { MdEdit } from "react-icons/md";
+import { MdCancel, MdEdit } from "react-icons/md";
 import { useAppState } from "../context/AppContext";
+import { FaCross, FaSave } from "react-icons/fa";
 
 
 
@@ -34,7 +35,7 @@ function Details() {
 
   const [inputs, setInputs] = useState<T_AnimeNoID | undefined>(undefined)
   const [EditMode, setEditMode] = useState<boolean>(false)
-  const matches = useMediaQuery('(min-width: 56.25em)');
+  const matches = useMediaQuery('(min-width: 768px)');
   const {opened} = useAppState().navState;
   const labelProps = {
     variant: "small",
@@ -81,19 +82,18 @@ function Details() {
 
 
   return ( // return a list ul
-    <div className="grid grid-cols-5  gap-0 h-full">
+    <div className="grid grid-cols-5   gap-0 h-full">
       { matches && 
       <section id="image" className="col-span-2">
         <div className="flex flex-col justify-center items-center w-full ">
                     <img src="https://picsum.photos/200/300" className="w-1/2" alt="" />
-                    <Button onClick={handleSubmit}>SAVE</Button>
-                    <Button onClick={handleCancel}>CANCEL</Button>
+
         </div>
       </section>
       }
 
     { !EditMode ?     
-      <section id="fields" className="col-span-5 md:col-span-2" style={{height: 'calc(100vh - (var(--mantine-header-height, 0px) + 3rem))'}}>
+      <section id="fields" className="col-span-5 col-start-2 md:col-span-3  " style={{height: 'calc(100vh - (var(--mantine-header-height, 0px) + 3rem))'}}>
           <ScrollArea className="h-full" >
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-2  gap-y-10 select-none ">
                 {currentAnime && currentAnime.map((data, header) => (
@@ -114,10 +114,20 @@ function Details() {
                     <TextInput id="url" name={header}  className="mt-2" onChange={handleChange} placeholder="URL" defaultValue={data.url} /> 
                   </li>
                   ))}
+                  <li className="text-center">
+                    <Button className="" onClick={handleSubmit} variant="outline" color="green">SAVE</Button>
+                  </li>
+                  <li className="text-center">
+
+                    <Button className="" onClick={handleCancel} variant="outline" color="red">CANCEL</Button>
+                  </li>
               </ul>
 
                   </label>
-            
+                <div className="flex justify-around mb-10">
+
+                </div>
+             
             </form>
         </ScrollArea>
 
@@ -135,12 +145,22 @@ function Details() {
               </IconButton>
             </SpeedDialHandler>
             <SpeedDialContent>
-              <SpeedDialAction  className="relative md:mb-7" >
-                <MdEdit className=" md:h-10 md:w-10 h-5 w-5 text-black" onClick={() => setEditMode(true)} />
+            { EditMode && <> 
+            <SpeedDialAction  className="relative mb-3 md:mb-7" >
+                  <FaSave className=" md:h-10 md:w-10 h-7 w-7 text-green-500" onClick={handleSubmit} />
+                  <Typography {...labelProps}>Save</Typography>
+            </SpeedDialAction>
+            <SpeedDialAction  className="relative mb-3 md:mb-7" >
+                  <MdCancel className=" md:h-10 md:w-10 h-7 w-7 text-red-500" onClick={handleCancel} />
+                  <Typography {...labelProps}>Cancel</Typography>
+            </SpeedDialAction></>}
+
+              <SpeedDialAction  className="relative mb-3 md:mb-7" >
+                <MdEdit className=" md:h-10 md:w-10 h-7 w-7 text-black" onClick={() => setEditMode(true)} />
                 <Typography {...labelProps}>Edit</Typography>
               </SpeedDialAction>
-              <SpeedDialAction  className="relative md:mb-7" >
-                <IconTrash className=" md:h-10 md:w-10 h-5 w-5 text-red-500" onClick={() => console.log("delete trigger")} />
+              <SpeedDialAction  className="relative mb-3 md:mb-7" >
+                <IconTrash className=" md:h-10 md:w-10 h-7 w-7 text-red-500" onClick={() => console.log("delete trigger")} />
                 <Typography {...labelProps}>Delete</Typography>
               </SpeedDialAction>
             </SpeedDialContent>
