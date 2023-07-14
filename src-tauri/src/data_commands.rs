@@ -22,6 +22,7 @@ pub async fn save_data(data_state: State<'_, SessionDataState>, ctx: State<'_, T
   let data_path = get_app_dir_string(DirName::Cache, &ctx, filenames).unwrap();
 
   helper_write_file(&serde_json::to_string_pretty(&data).unwrap().as_bytes(), &data_path).map_err(|err| format!("{}", err))?;
+  println!("previous hash: {}",data_state.hashcode.lock().unwrap());
 
   let hash = calculate_file_hash(&data_path).await.map_err(|err| format!("{}", err))?;
   let (new_size, new_time) = get_file_metadata(&data_path).map_err(|err| format!("{}", err))?;
@@ -32,7 +33,7 @@ pub async fn save_data(data_state: State<'_, SessionDataState>, ctx: State<'_, T
   *modify_hashcode = hash;
   *modify_time = new_time;
   *modify_size = new_size;
-  *modify_is_unsaved = false;
+  *modify_is_unsaved = true;
   //set is_unsaved false
   Ok(true)
 }
@@ -56,7 +57,6 @@ pub fn loading_data_status(state: tauri::State<'_, InitialDataState>) -> Result<
 
 #[tauri::command]
 pub fn check_current_data( ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles>) -> Result<(), String> {
-  
   let mut directory_path = path::app_local_data_dir(&ctx.config).ok_or("Invalid cache data path".to_string())?;
   directory_path = directory_path.join("Data");
   if directory_path.is_dir() {
@@ -71,16 +71,16 @@ Ok(())
 pub fn load_data( config: &TauriConfig, filenames: &DataFiles) -> Result<String, String>
 {
   // check if data exist in the local app data folder.
-  let path = get_app_dir_path(DirName::LocalData, config.config.clone(), filenames.clone());
+  let path_data = get_app_dir_path(DirName::LocalData, config.config.clone(), filenames.clone());
   // let path = dir.join(filenames.saved_data);
   let output_path = get_app_dir_path(DirName::Cache, config.config.clone(),  filenames.clone());
-  
-  if path.exists()
+   
+  if path_data.exists() && (!output_path.exists() || output_path.metadata().unwrap().len() <= 0)
   {
-    
-    let decomrpessed = decompress_file_json( path.to_str().unwrap())?;
 
-    helper_write_file(&decomrpessed.to_string(), output_path.to_str().unwrap())?;
+      let decomrpessed = decompress_file_json( path_data.to_str().unwrap())?;
+      helper_write_file(&decomrpessed.to_string(), output_path.to_str().unwrap())?;
+    
   }
   else {
     return Err("No Data found".to_string());

@@ -54,7 +54,7 @@ function AnimesTable(props: DataProps) {
                 
                 return (
                     <tr  key={key} onClick={() =>   navigate("/details/"+value['ID'])}>
-                    <td key={index}>{value['ID']-1}</td>
+                    <td key={index}>{value['ID']}</td>
                     {props.dataHeaders.map((header, i) => {
                         
                         if(header != "ID")
