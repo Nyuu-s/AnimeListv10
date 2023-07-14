@@ -14,10 +14,7 @@ function Animes() {
     const { getData, getHeaders} = useDataState();
     const [paginatedData, setPaginatedData] = useState<object>({})
     const [activePage, setPage] = useState(1);
-    
-
-
-      
+ 
     useEffect(() => {
       const items = (itemsPerPages === '' ? 0 : itemsPerPages)
       const slicedData = Object.values(getData()).slice(

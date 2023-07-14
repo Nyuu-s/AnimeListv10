@@ -13,7 +13,7 @@ import {
 
 
 
-import { useCastToAnimeNoID, T_AnimeNoID, AnimeNoID  as Anime} from "../Components/Helpers/useAnime"
+import { useCastToAnimeNoID, T_AnimeNoID, AnimeNoID  as Anime, useCastTo} from "../Components/Helpers/useAnime"
 import { Affix, Button, ScrollArea, TextInput, rem } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"
 import { IconPlus, IconTrash } from "@tabler/icons-react";
@@ -30,7 +30,7 @@ function Details() {
 
   const {id} = useParams<{id: string}>()
   
-  const {getData, setDataOnly } = useDataState()
+  const {getData, setData, saveData} = useDataState()
   const [currentAnime, setCurrentAnime] = useState<Anime | undefined>(undefined)
 
   const [inputs, setInputs] = useState<T_AnimeNoID | undefined>(undefined)
@@ -45,10 +45,12 @@ function Details() {
   };
   const handleSubmit = (event: any) => {
     event.preventDefault()
+    const animeID = id as string
     console.log(inputs);
     if(inputs){
       currentAnime?.setAnime(inputs)
-      setDataOnly({...getData(), [id as string]: inputs})
+      setData({...getData(), [animeID]: {...inputs, ID: animeID}, })
+      saveData();
     }
     console.log(getData());
     
@@ -74,8 +76,8 @@ function Details() {
   }
 
   useEffect(() => {
-      const allData = getData() as T_AnimeNoID;
-      const anime = new Anime(useCastToAnimeNoID(allData[id as string]))
+      const allData = getData();
+      const anime = new Anime(useCastTo<T_AnimeNoID>(allData[id as string]))
       setCurrentAnime(anime);
 
       setInputs({...anime.getAnime()})
@@ -99,7 +101,7 @@ function Details() {
           <ScrollArea className="h-full" >
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-2  gap-y-10 select-none ">
                 {currentAnime && currentAnime.map((data, header) => (
-                  <li className="mt-1"><span className="font-bold"> {header}:</span> {data.value} </li>
+                  <li key={header} className="mt-1"><span className="font-bold"> {header}:</span> {data.value} </li>
                   ))}
             </ul>
           </ScrollArea>
@@ -111,7 +113,7 @@ function Details() {
                 <label htmlFor="fun">
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-2  gap-y-16 select-none pr-10 ">
                 {currentAnime && currentAnime.map((data, header) => (
-                  <li className=" pb-5"><span className="font-bold"> {header}:</span> 
+                  <li key={header} className=" pb-5"><span className="font-bold"> {header}:</span> 
                     <TextInput id="value" name={header} onChange={handleChange} placeholder="Value" defaultValue={data.value} /> 
                     <TextInput id="url" name={header}  className="mt-2" onChange={handleChange} placeholder="URL" defaultValue={data.url} /> 
                   </li>

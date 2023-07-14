@@ -12,7 +12,7 @@ export type Animes  = {
 }
 
 export type AnimeDataSet  = {
-    [key: string]:  string[] | Anime;
+    data:  Animes;
     headers: string[],   
 }
 

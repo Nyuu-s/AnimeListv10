@@ -46,7 +46,7 @@ async function handleDialog() : Promise<AnimeFile>
 
 
 function FileMenu() {
-    const {set} = useDataState();
+    const {setBothDataAndHeaders} = useDataState();
     const [opened, { open, close }] = useDisclosure(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [dataAlreadyImportedMessage, setDataAlreadyImportedMessage] = useState<string | undefined>(undefined);
@@ -165,7 +165,7 @@ function FileMenu() {
                                     close();
                                     setValue(undefined);
                                     setIsButtonDisabled(false);
-                                    set(data)
+                                    setBothDataAndHeaders(data);
                                     
                                     
                                     return `File parsed successfully 👌`

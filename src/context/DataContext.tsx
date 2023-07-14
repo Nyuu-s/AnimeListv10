@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import {AnimeDataSet, Animes, useCastTo} from '../Components/Helpers/useAnime'
+import { invoke } from "@tauri-apps/api";
 
 type DataContextType = {
     getData(): Animes
@@ -8,6 +9,8 @@ type DataContextType = {
     setData(data: object): void,
     setHeaders(headers: Array<string>): void,
     setBothDataAndHeaders(obj: object): void
+
+    saveData(data?: object): Promise<Boolean>
 }
 
 class AnimesData {
@@ -49,15 +52,23 @@ const DataContext = createContext<DataContextType>({
     },
     setBothDataAndHeaders: function (): void {
         throw new Error("Function not implemented.");
+    },
+    saveData:async function (): Promise<Boolean>{
+        throw new Error("Function not implemented.");
     }
 });
 
 function AnimeDataBuilder(obj: object): AnimesData
 {
     const inputObject = obj as AnimeDataSet
-    const DataSet = useCastTo<Animes>(inputObject);
+    const DataSet = inputObject.data as Animes;
     const DataHeaders = inputObject.headers
     return new AnimesData(DataSet,DataHeaders);
+}
+
+async function onSaveData(CurrentDataState: AnimesData): Promise<Boolean>
+{
+    return invoke('save_data', {data: CurrentDataState});
 }
 
 export function DataProvider({children}: {children: React.ReactNode})
@@ -71,8 +82,26 @@ export function DataProvider({children}: {children: React.ReactNode})
     const getHeaders = () => (AnimesContent ? AnimesContent.get_headers() : [])
     const getData = () => (AnimesContent ? AnimesContent.get_data() : {});
 
+    const saveData = async (data?: object) => {
+        if(AnimesContent === undefined)
+        {
+            return Promise.reject("Context is not yet defined")
+        }
+        if(data)
+        {
+            // modify current state before saving
+            if(Array.isArray(data)){
+                setHeaders(data as string[]);
+            }
+            else{
+                setData(useCastTo<Animes>(data))
+            }
+        }
+        return await onSaveData(AnimesContent)
+    }
+
     return (
-        <DataContext.Provider value={{ setBothDataAndHeaders, getData, setData, setHeaders, getHeaders }}>
+        <DataContext.Provider value={{ setBothDataAndHeaders, getData, setData, setHeaders, getHeaders, saveData }}>
             {children}
         </DataContext.Provider>
     )

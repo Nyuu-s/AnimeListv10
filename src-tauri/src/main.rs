@@ -10,7 +10,7 @@ mod file_manager;
 mod commands;
 mod data_commands;
 use data_commands::{
-  saved_data, 
+  save_data, 
   check_current_data, 
   loading_data_status, 
   load_data, 
@@ -54,7 +54,7 @@ tauri::Builder::default()
     loading_data_status, 
     safe_to_quit, 
     init_app_on_ready, 
-    saved_data,
+    save_data,
     get_data,
     open_external_url,
     save_window_config,

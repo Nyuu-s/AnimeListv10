@@ -8,16 +8,31 @@ use crate::se_app_infos::DirName;
 use crate::se_app_infos::UserConfig;
 use crate::se_app_infos::WindowConfig;
 use tauri::api::path;
-use crate::path_helper::{get_app_dir_path};
-use crate::file_manager::{decompress_file_json, helper_write_file, get_file_metadata};
+use crate::path_helper::{get_app_dir_path, get_app_dir_string};
+use crate::file_manager::{decompress_file_json, helper_write_file, get_file_metadata,calculate_file_hash};
 use std::io::{BufReader, BufRead};
 
 use std::sync::Mutex;
 use std::fs;
 
+
 #[tauri::command]
-pub fn saved_data(data_state: State<'_, SessionDataState>) -> Result<bool, String> {
+pub async fn save_data(data_state: State<'_, SessionDataState>, ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>, data: serde_json::Value) -> Result<bool, String> {
   //calculate new hash code and save it in the data state
+  let data_path = get_app_dir_string(DirName::Cache, &ctx, filenames).unwrap();
+
+  helper_write_file(&serde_json::to_string_pretty(&data).unwrap().as_bytes(), &data_path).map_err(|err| format!("{}", err))?;
+
+  let hash = calculate_file_hash(&data_path).await.map_err(|err| format!("{}", err))?;
+  let (new_size, new_time) = get_file_metadata(&data_path).map_err(|err| format!("{}", err))?;
+  let mut modify_hashcode = data_state.hashcode.lock().unwrap();
+  let mut modify_time = data_state.time.lock().unwrap();
+  let mut modify_is_unsaved = data_state.is_unsaved.lock().unwrap();
+  let mut modify_size = data_state.size.lock().unwrap();
+  *modify_hashcode = hash;
+  *modify_time = new_time;
+  *modify_size = new_size;
+  *modify_is_unsaved = false;
   //set is_unsaved false
   Ok(true)
 }

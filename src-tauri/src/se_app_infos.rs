@@ -42,7 +42,7 @@ pub struct SessionDataState {
   pub is_unsaved: Mutex<bool>,
   pub hashcode: Mutex<String>,
   pub size: Mutex<u64>,
-  pub  time: Mutex<std::time::SystemTime>
+  pub time: Mutex<std::time::SystemTime>
   
 }
 
