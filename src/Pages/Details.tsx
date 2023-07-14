@@ -30,7 +30,7 @@ function Details() {
 
   const {id} = useParams<{id: string}>()
   
-  const {getData} = useDataState()
+  const {getData, setDataOnly } = useDataState()
   const [currentAnime, setCurrentAnime] = useState<Anime | undefined>(undefined)
 
   const [inputs, setInputs] = useState<T_AnimeNoID | undefined>(undefined)
@@ -48,6 +48,7 @@ function Details() {
     console.log(inputs);
     if(inputs){
       currentAnime?.setAnime(inputs)
+      setDataOnly({...getData(), [id as string]: inputs})
     }
     console.log(getData());
     
@@ -75,7 +76,8 @@ function Details() {
   useEffect(() => {
       const allData = getData() as T_AnimeNoID;
       const anime = new Anime(useCastToAnimeNoID(allData[id as string]))
-      setCurrentAnime(anime);  
+      setCurrentAnime(anime);
+
       setInputs({...anime.getAnime()})
    
   }, [getData()])

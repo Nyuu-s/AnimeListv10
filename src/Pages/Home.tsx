@@ -1,7 +1,7 @@
 
 import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
-
 import { toast } from 'react-toastify';
+
 
 
 

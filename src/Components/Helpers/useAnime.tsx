@@ -4,7 +4,19 @@ export type T_AnimeNoID = {
 
 export type Anime  = {
     [key: string]: string | { url: string; value: string };
+    ID: string
 }
+
+export type Animes  = {
+  [key: string]: Anime;
+}
+
+export type AnimeDataSet  = {
+    [key: string]:  string[] | Anime;
+    headers: string[],   
+}
+
+
 
 export class AnimeNoID {
     private data: T_AnimeNoID;
@@ -48,7 +60,21 @@ export class AnimeNoID {
       }
 
 }
+type ConditionalType<T> = T extends Animes ? Animes : T_AnimeNoID;
+export function  useCastTo<T extends T_AnimeNoID | Animes> (obj: any) : ConditionalType<T>{
+  
+  // Initialize the new object
+  const newObject: ConditionalType<T> = {};
 
+  for (const key in obj) {
+    // Check if the property is of the desired format
+    if (!Array.isArray(obj[key]) && typeof obj[key] === 'object' ) 
+      {
+          newObject[key] = obj[key];
+      }
+  }
+  return newObject;
+}
 
 export const useCastToAnimeNoID = (obj: any): T_AnimeNoID => {
   

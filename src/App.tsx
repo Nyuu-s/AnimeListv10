@@ -9,6 +9,7 @@ import { invoke } from '@tauri-apps/api'
 import { useAppState } from './context/AppContext'
 import { toast } from 'react-toastify'
 import Details from './Pages/Details'
+import { useDataState } from './context'
 
 
 type UProperties = {
@@ -19,6 +20,19 @@ type UProperties = {
 function App() {
 
 const {userSettings} = useAppState()
+
+const {setBothDataAndHeaders} = useDataState()
+useEffect(() => {
+    const fetchData = async () => {
+        const data: object = await invoke("get_data", {});
+        setBothDataAndHeaders(data)
+        //set data + headers object in context
+
+    }
+    fetchData();
+  
+
+}, [])
 
 useEffect(() => {
   const readUserCfg = async () => {
