@@ -5,6 +5,7 @@ use crate::se_app_infos::{DataFiles, TauriConfig, SessionDataState, CustomRespon
 use crate::path_helper::{get_app_dir_path, get_app_dir_string};
 use crate::file_manager::{calculate_file_hash, write_json_file, compress_json_file, helper_write_file , get_file_metadata, write_config};
 
+use std::fs::remove_file;
 use std::process::Command;
 
 #[tauri::command]
@@ -94,6 +95,21 @@ pub fn import_file(data_file_path: String,  ctx: State<'_, TauriConfig>, filenam
   
 }
 
+#[tauri::command]
+pub fn clean_on_quit(ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles<'_>>, is_saving: bool) -> Result<(), String>
+{
+  let cached_file_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames);
+
+  if is_saving  //compress json data
+  {
+    let local_data_file_path = get_app_dir_path(DirName::LocalData, ctx.config.clone(), &filenames);
+    let comp = compress_json_file(cached_file_path.to_str().unwrap()).map_err(|err| format!("{}", err))?;
+    helper_write_file(&comp, local_data_file_path.to_str().unwrap()).map_err(|err| format!("{}", err))?;
+  }
+  //delete json file
+  remove_file(cached_file_path).map_err(|err| format!("{}", err))?;
+    Ok(())
+}
 
 #[tauri::command]
 pub async fn safe_to_quit(data_state: State<'_, SessionDataState>, ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles<'_>>) -> Result<bool, CustomResponse> {

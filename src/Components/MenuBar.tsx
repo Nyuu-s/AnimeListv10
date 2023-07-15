@@ -24,15 +24,14 @@ function MenuBar() {
         const { invoke , dialog} = await import("@tauri-apps/api");
 
         try {
-
           // setShowDialog(true) TO USE 3 BUTTON DIALOG
           await invoke('safe_to_quit');
+          await invoke('clean_on_quit', {isSaving: true});
         } catch (error: any ) {
-          
           if(error.status && !await dialog.confirm(error.message, { title: 'Tauri', type: 'warning', okLabel: 'Quit' }))
             return;
+          await invoke('clean_on_quit', {isSaving: false});
         }
-        
         appWindow.close();
           
         

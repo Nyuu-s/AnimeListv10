@@ -82,7 +82,7 @@ pub fn write_json_file(str: String, file_path: &str) -> Result<(), String>
 {
   let json_value: serde_json::Value = serde_json::from_str(&str).map_err(|_| format!("Failed to write json file - Could not parse to json"))?;
 
-  helper_write_file(&serde_json::to_string_pretty(&json_value).unwrap().as_bytes(), file_path)?;
+  helper_write_file(&serde_json::to_string(&json_value).unwrap().as_bytes(), file_path)?;
 
   Ok(())
   

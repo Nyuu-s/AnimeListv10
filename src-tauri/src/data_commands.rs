@@ -21,7 +21,7 @@ pub async fn save_data(data_state: State<'_, SessionDataState>, ctx: State<'_, T
   //calculate new hash code and save it in the data state
   let data_path = get_app_dir_string(DirName::Cache, &ctx, filenames).unwrap();
 
-  helper_write_file(&serde_json::to_string_pretty(&data).unwrap().as_bytes(), &data_path).map_err(|err| format!("{}", err))?;
+  helper_write_file(&serde_json::to_string(&data).unwrap().as_bytes(), &data_path).map_err(|err| format!("{}", err))?;
   println!("previous hash: {}",data_state.hashcode.lock().unwrap());
 
   let hash = calculate_file_hash(&data_path).await.map_err(|err| format!("{}", err))?;
@@ -33,7 +33,7 @@ pub async fn save_data(data_state: State<'_, SessionDataState>, ctx: State<'_, T
   *modify_hashcode = hash;
   *modify_time = new_time;
   *modify_size = new_size;
-  *modify_is_unsaved = true;
+  *modify_is_unsaved = false;
   //set is_unsaved false
   Ok(true)
 }

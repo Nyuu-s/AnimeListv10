@@ -23,6 +23,7 @@ use commands::{
   init_app_on_ready,
   import_file,
   safe_to_quit,
+  clean_on_quit,
   save_window_config
 };
 use se_app_infos::{TauriConfig, DataFiles, InitialDataState};
@@ -52,7 +53,8 @@ tauri::Builder::default()
     check_current_data, 
     import_file, 
     loading_data_status, 
-    safe_to_quit, 
+    safe_to_quit,
+    clean_on_quit, 
     init_app_on_ready, 
     save_data,
     get_data,
