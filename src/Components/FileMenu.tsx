@@ -166,6 +166,7 @@ function FileMenu() {
                                     setValue(undefined);
                                     setIsButtonDisabled(false);
                                     setBothDataAndHeaders(data);
+                                    ;
                                     
                                     
                                     return `File parsed successfully 👌`

@@ -67,6 +67,7 @@ function AnimeDataBuilder(obj: object): AnimesData
     const inputObject = obj as AnimeDataSet
     const DataSet = inputObject.data as Animes;
     const DataHeaders = inputObject.headers
+    console.log(typeof inputObject);
     return new AnimesData(DataSet,DataHeaders);
 }
 
@@ -91,6 +92,8 @@ function onRemoveRecords(arr: string[], data: Animes) : Animes
           delete data[key];
         }
     })
+ 
+    
 
     
     return data;
@@ -123,7 +126,7 @@ export function DataProvider({children}: {children: React.ReactNode})
         }
         return await onSaveData(AnimesContent)
     }
-    
+
     const removeRecords = (idArray: string[]) => {
         setData(onRemoveRecords(idArray, getData()))
         saveData();

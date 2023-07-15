@@ -7,6 +7,7 @@ use crate::file_manager::{calculate_file_hash, write_json_file, compress_json_fi
 
 use std::fs::remove_file;
 use std::process::Command;
+use std::str::FromStr;
 
 #[tauri::command]
 pub fn open_external_url(url: &str) -> Result<(), String> {
@@ -82,8 +83,7 @@ pub fn import_file(data_file_path: String,  ctx: State<'_, TauriConfig>, filenam
         
         //Write json file in cache directory, to be edited, modified etc
         //And write a compressed json file in the data directory, will be used for persistance
-        //Todo Save extra copy of compressed as ultimate backup for a potential reset of the json
-        let result_value = serde_json::Value::from(json_str.clone());
+        let result_value = serde_json::Value::from_str(&json_str).map_err(|err| format!("{}", err.to_string()))?;
         write_json_file(json_str, &cache_path)?;
         let data = compress_json_file(&cache_path)?;
         helper_write_file(&data, &compressed_json_file_path)?;
