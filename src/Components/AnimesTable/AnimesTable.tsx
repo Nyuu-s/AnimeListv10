@@ -1,4 +1,4 @@
-import {Table } from "@mantine/core";
+import { Table } from "@mantine/core";
 import AnimesTableURL from "./AnimesTableURL";
 
 import { invoke } from "@tauri-apps/api";

@@ -9,7 +9,7 @@ import { AnimeNoID, Animes, T_AnimeNoID, useCastTo } from "./Helpers/useAnime"
 import { useAppState } from "../context/AppContext"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
-import { dialog } from "@tauri-apps/api";
+import { dialog } from "@tauri-apps/api"
 import { useDataState } from "../context"
 
 type DetailsType = {

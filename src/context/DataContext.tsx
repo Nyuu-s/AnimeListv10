@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import {AnimeDataSet, Animes, useCastTo} from '../Components/Helpers/useAnime'
+import { AnimeDataSet, Animes, useCastTo } from '../Components/Helpers/useAnime';
 import { invoke } from "@tauri-apps/api";
 
 type DataContextType = {

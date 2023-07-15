@@ -1,15 +1,15 @@
-import React from 'react'
-import "./main.css"
+import React from 'react';
+import "./main.css";
 import "react-toastify/dist/ReactToastify.css";
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import { AppShell,  MantineProvider} from '@mantine/core'
-import TitleBar from './Components/TitleBar.tsx'
-import MenuBar from './Components/MenuBar.tsx'
-import Sidebar from './Components/SideBar.tsx'
-import {AppProvider, DataProvider } from './context'
+import ReactDOM from 'react-dom/client';
+import App from './App.tsx';
+import { AppShell, MantineProvider } from '@mantine/core';
+import TitleBar from './Components/TitleBar.tsx';
+import MenuBar from './Components/MenuBar.tsx';
+import Sidebar from './Components/SideBar.tsx';
+import { AppProvider, DataProvider } from './context';
 import { ToastContainer } from 'react-toastify';
-import {MemoryRouter} from 'react-router-dom'
+import { MemoryRouter } from 'react-router-dom';
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

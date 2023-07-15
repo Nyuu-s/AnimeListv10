@@ -1,8 +1,8 @@
 
 import { IconMessageCircle, IconUserShield, IconSettings } from '@tabler/icons-react';
 import { useAppState } from '../context/AppContext';
-import { Header, Burger, Tabs, Group, Drawer } from '@mantine/core'
-import {  useState } from 'react';
+import { Header, Burger, Tabs, Group, Drawer } from '@mantine/core';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useDisclosure } from '@mantine/hooks';
 import TableSettings from './Tabs/TableSettings';

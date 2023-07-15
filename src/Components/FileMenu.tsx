@@ -1,6 +1,6 @@
 
-import {useCallback,useState} from 'react'
-import { TextInput ,  Modal , Menu, Button, Text } from '@mantine/core';
+import { useCallback, useState } from 'react';
+import { TextInput, Modal, Menu, Button, Text } from '@mantine/core';
 
 import { IconSettings, IconArrowRight, IconUserCircle, IconLogout, IconArrowsLeftRight } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
@@ -71,6 +71,18 @@ function FileMenu() {
         <Menu.Dropdown>
             <Menu.Label>Application</Menu.Label>
             <Menu.Item rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconSettings size={14} />}>Settings</Menu.Item>
+
+            <Menu.Item rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconUserCircle size={14} />}>Profiles</Menu.Item>
+            {/* <Menu.Item
+            icon={<IconSearch size={14} />}
+            rightSection={<Text size="xs" color="dimmed">⌘K</Text>}
+            >
+            Search
+            </Menu.Item> */}
+
+            <Menu.Divider />
+
+            <Menu.Label>Danger zone</Menu.Label>
             <Menu.Item onClick={async () => {
                 try {
                     await onInvoke('check_current_data', {});
@@ -83,17 +95,6 @@ function FileMenu() {
                open()
                 
                 }} icon={<IconArrowRight size={14} />}>Import</Menu.Item>
-            <Menu.Item rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconUserCircle size={14} />}>Profiles</Menu.Item>
-            {/* <Menu.Item
-            icon={<IconSearch size={14} />}
-            rightSection={<Text size="xs" color="dimmed">⌘K</Text>}
-            >
-            Search
-            </Menu.Item> */}
-
-            <Menu.Divider />
-
-            <Menu.Label>Danger zone</Menu.Label>
             <Menu.Item rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconArrowsLeftRight size={14} />}>Export to CSV</Menu.Item>
             <Menu.Item color="red" onClick={() => onWindowClose()} icon={<IconLogout size={14} />}>Exit</Menu.Item>
         </Menu.Dropdown>

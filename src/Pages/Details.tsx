@@ -1,5 +1,5 @@
 
-import { useParams } from "react-router-dom"
+import { useParams } from "react-router-dom";
 import DetailsInfo from "../Components/DetailsInfo";
 import { useDataState } from "../context";
 import { useState, useEffect } from "react";

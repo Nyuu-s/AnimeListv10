@@ -1,9 +1,9 @@
 
-import { Divider, Navbar, ScrollArea} from "@mantine/core";
+import { Divider, Navbar, ScrollArea } from "@mantine/core";
 // import Link from "next/link";
 import CustomNavLink from "./Helpers/CustomNavLink";
 
-import {useAppState} from '../context/AppContext'
+import { useAppState } from '../context/AppContext';
 
 export default function Demo() {
 
