@@ -8,9 +8,10 @@ type DataContextType = {
 
     setData(data: object): void,
     setHeaders(headers: Array<string>): void,
-    setBothDataAndHeaders(obj: object): void
+    setBothDataAndHeaders(obj: object): void,
 
-    saveData(data?: object): Promise<Boolean>
+    saveData(data?: object): Promise<Boolean>,
+    removeRecords(IDArray: string[]) : void
 }
 
 class AnimesData {
@@ -55,6 +56,9 @@ const DataContext = createContext<DataContextType>({
     },
     saveData:async function (): Promise<Boolean>{
         throw new Error("Function not implemented.");
+    },
+    removeRecords: function (): void {
+        throw new Error("Function not implemented.");
     }
 });
 
@@ -71,6 +75,27 @@ async function onSaveData(CurrentDataState: AnimesData): Promise<Boolean>
     return invoke('save_data', {data: CurrentDataState});
 }
 
+function onRemoveRecords(arr: string[], data: Animes) : Animes
+{
+    //find the smallest element in idArray, save the previous id of the smallest as iterator
+    let iterator = Math.min(...arr.map(Number));
+    // delete all objects with id in arr
+    arr.map((id:string) => delete data[id] )
+    //loop through data and update ID and key
+    let keys = Object.keys(data).map(Number);
+    
+    keys.forEach((key) => {
+        if (key > iterator) {
+          data[iterator] = data[key];
+          data[iterator].ID = `${iterator++}`
+          delete data[key];
+        }
+    })
+
+    
+    return data;
+}
+
 export function DataProvider({children}: {children: React.ReactNode})
 {
     const [AnimesContent, setAnimesContent] = useState<AnimesData>()
@@ -78,10 +103,9 @@ export function DataProvider({children}: {children: React.ReactNode})
     const setBothDataAndHeaders = (obj: object) => setAnimesContent(AnimeDataBuilder(obj));
     const setHeaders = (arr: string[]) => AnimesContent?.set_headers(arr); 
     const setData = (value: Animes) => AnimesContent?.set_data(value); 
-
+    
     const getHeaders = () => (AnimesContent ? AnimesContent.get_headers() : [])
     const getData = () => (AnimesContent ? AnimesContent.get_data() : {});
-
     const saveData = async (data?: object) => {
         if(AnimesContent === undefined)
         {
@@ -99,9 +123,13 @@ export function DataProvider({children}: {children: React.ReactNode})
         }
         return await onSaveData(AnimesContent)
     }
-
+    
+    const removeRecords = (idArray: string[]) => {
+        setData(onRemoveRecords(idArray, getData()))
+        saveData();
+    };
     return (
-        <DataContext.Provider value={{ setBothDataAndHeaders, getData, setData, setHeaders, getHeaders, saveData }}>
+        <DataContext.Provider value={{ setBothDataAndHeaders, removeRecords, getData, setData, setHeaders, getHeaders, saveData }}>
             {children}
         </DataContext.Provider>
     )

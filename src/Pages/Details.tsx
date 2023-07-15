@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useDataState } from "../context"
 import {
   IconButton,
@@ -20,6 +20,8 @@ import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { MdCancel, MdEdit } from "react-icons/md";
 import { useAppState } from "../context/AppContext";
 import { FaCross, FaSave } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { dialog } from "@tauri-apps/api";
 
 
 
@@ -29,8 +31,8 @@ import { FaCross, FaSave } from "react-icons/fa";
 function Details() {
 
   const {id} = useParams<{id: string}>()
-  
-  const {getData, setData, saveData} = useDataState()
+  const navigate = useNavigate()
+  const {getData, removeRecords,setData, saveData} = useDataState()
   const [currentAnime, setCurrentAnime] = useState<Anime | undefined>(undefined)
 
   const [inputs, setInputs] = useState<T_AnimeNoID | undefined>(undefined)
@@ -66,7 +68,7 @@ function Details() {
     const name = event.target.name;
     const value = event.target.value;
     const defaults = inputs as T_AnimeNoID
-    console.log(defaults);
+
     
     if(event.target.id == 'url')
       setInputs(values => ({...values, [name]: {url:value, value: defaults[name].value}}))
@@ -74,6 +76,40 @@ function Details() {
       setInputs(values => ({...values, [name]: {url:defaults[name].url, value }}))
 
   }
+
+  const handleDelete = async () => {
+    try {
+      let isdelete = await dialog.ask("Are you sure you want to delete this record from the table ?", {type: "warning"})
+      if(isdelete)
+      {
+        navigate('/list')
+        toast.warn('Record deleted', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        removeRecords([id as string])
+      }
+    } catch (error) {
+      toast.error('Something went wrong! No record deleted.', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        });
+    }
+
+  }
+
 
   useEffect(() => {
       const allData = getData();
@@ -164,7 +200,7 @@ function Details() {
                 <Typography {...labelProps}>Edit</Typography>
               </SpeedDialAction>
               <SpeedDialAction  className="relative mb-3 md:mb-7" >
-                <IconTrash className=" md:h-10 md:w-10 h-7 w-7 text-red-500" onClick={() => console.log("delete trigger")} />
+                <IconTrash className=" md:h-10 md:w-10 h-7 w-7 text-red-500" onClick={handleDelete} />
                 <Typography {...labelProps}>Delete</Typography>
               </SpeedDialAction>
             </SpeedDialContent>
