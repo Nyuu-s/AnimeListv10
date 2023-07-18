@@ -175,7 +175,7 @@ pub fn init_session_state(config: &TauriConfig,  data_files_names: &DataFiles) -
   {
     fs::File::create(win_cfg.clone()).map_err(|err| format!("{}",err))?;
   }
-  let (meta_size, meta_time) = get_file_metadata(json_path.to_str().unwrap()).unwrap_or_else(|str| {(0, std::time::SystemTime::now())});
+  let (meta_size, meta_time) = get_file_metadata(json_path.to_str().unwrap()).unwrap_or_else(|_| {(0, std::time::SystemTime::now())});
   println!("default size {}", meta_size);
 
   // Initialize the session state for the json file

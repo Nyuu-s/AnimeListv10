@@ -3,17 +3,10 @@ import AnimesTableURL from "./AnimesTableURL";
 
 import { invoke } from "@tauri-apps/api";
 import { useNavigate } from "react-router-dom";
-async function openExternalUrl(url: string) {
-    try {
-    //   await open(url);
-    await invoke("open_external_url", {url})
-      
-    } catch (error) {
-      
-        
-      console.error('Failed to open external URL:', error);
-    }
-  }
+import RecordRow from "./RecordRow";
+import { useState } from "react";
+import ContextMenu from "./ContextMenu";
+
 type TableOption = {
     isSticky: boolean,
 }
@@ -36,11 +29,21 @@ function AnimesTable(props: DataProps) {
  const Options = 
     props.tableOption.isSticky ? " sticky top-0 bg-black" : ""
 
-  
+    const [isShown, setIsShown] = useState(false);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [rowID, setRowID] = useState<string>('');
+    const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>, rowDataID: string) => {
+        event.preventDefault();
+        setIsShown(true);
+        setPosition({ x: event.clientX, y: event.clientY });
+        setRowID(rowDataID);
+        console.log({ x: event.clientX, y: event.clientY }, rowDataID);
+        
+      }
   return (
  
 
-      <Table  striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
+      <Table   striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
             
             <thead>
                 <tr className={`${Options}  `}>
@@ -53,24 +56,12 @@ function AnimesTable(props: DataProps) {
             {Object.entries(props.data).map(([key, value], index) =>{ 
                 
                 return (
-                    <tr  key={key} onClick={() =>   navigate("/details/"+value['ID'])}>
-                    <td key={index}>{value['ID']}</td>
-                    {props.dataHeaders.map((header, i) => {
-                        
-                        if(header != "ID")
-                        {
-                            if(value[header] && value[header].url != "")
-                            {
-                                
-                                return( <AnimesTableURL key={i} id={i} clickFunc={()=> openExternalUrl(value[header].url)} display={value[header]?.value}/>)
-                            }
-                            return(<td key={i} >{value[header]?.value }</td>)
-                        }
-                    })}
-                </tr>   
-                )})
-            }
+                    <RecordRow handleClick={handleRowClick} ID={value['ID']} data={value} dataHeaders={props.dataHeaders} />
+                    
+                    )
+            })}
             </tbody>
+            {isShown && <ContextMenu ID={rowID} isShown={true} position={position} />}
         </Table>
 
 
