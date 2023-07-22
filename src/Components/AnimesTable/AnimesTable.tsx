@@ -4,7 +4,7 @@ import AnimesTableURL from "./AnimesTableURL";
 import { invoke } from "@tauri-apps/api";
 import { useNavigate } from "react-router-dom";
 import RecordRow from "./RecordRow";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ContextMenu from "./ContextMenu";
 
 type TableOption = {
@@ -24,7 +24,7 @@ interface DataProps {
 
 function AnimesTable(props: DataProps) {
   
-
+    const contextMenu = useRef(null)
     const navigate = useNavigate()
  const Options = 
     props.tableOption.isSticky ? " sticky top-0 bg-black" : ""
@@ -34,16 +34,51 @@ function AnimesTable(props: DataProps) {
     const [rowID, setRowID] = useState<string>('');
     const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>, rowDataID: string) => {
         event.preventDefault();
+        
         setIsShown(true);
         setPosition({ x: event.clientX, y: event.clientY });
         setRowID(rowDataID);
         console.log({ x: event.clientX, y: event.clientY }, rowDataID);
-        
+        event.stopPropagation()
       }
-  return (
- 
+    const eventMouseClickHandle = (event: MouseEvent) => {
 
-      <Table   striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
+        event.preventDefault()
+        if(contextMenu.current )
+        {
+            const ctxDiv = contextMenu.current as HTMLDivElement;
+            console.log("isShown: ", isShown.valueOf() , "NotContains: ", !ctxDiv.contains(event.target as HTMLDivElement)) ;
+            if(!ctxDiv.contains(event.target as HTMLDivElement))
+            {
+                setIsShown(false)
+            }
+        }
+    }
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+        console.log(event.key);
+        
+        switch (event.key)
+        {
+            case 'Escape':
+                setIsShown(false)
+                break;
+        }
+    }
+      useEffect(() => {
+          document.addEventListener('click', eventMouseClickHandle )
+          document.addEventListener('keydown', handleEscapeKey )
+        return () => {
+            document.removeEventListener('click', eventMouseClickHandle)
+            document.removeEventListener('keydown', handleEscapeKey)
+        }
+      }, [])
+      
+  return (
+      
+      
+      <>
+      <Table  striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
             
             <thead>
                 <tr className={`${Options}  `}>
@@ -61,8 +96,10 @@ function AnimesTable(props: DataProps) {
                     )
             })}
             </tbody>
-            {isShown && <ContextMenu ID={rowID} isShown={true} position={position} />}
         </Table>
+            {isShown && <ContextMenu ref={contextMenu} ID={rowID} position={position} />}
+        
+        </>
 
 
   )
