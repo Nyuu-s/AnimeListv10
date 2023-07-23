@@ -51,7 +51,7 @@ function DetailsInfo({details}: DetailsProps) {
     if(inputs){
       currentAnime?.setAnime(inputs)
       setData({...details.data, [animeID]: {...inputs, ID: animeID}, })
-      saveData();
+      saveData(0);
     }
 
     

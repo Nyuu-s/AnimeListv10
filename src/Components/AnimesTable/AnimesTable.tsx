@@ -1,4 +1,4 @@
-import { Table } from "@mantine/core";
+import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea } from "@mantine/core";
 import AnimesTableURL from "./AnimesTableURL";
 
 import { invoke } from "@tauri-apps/api";
@@ -6,6 +6,10 @@ import { useNavigate } from "react-router-dom";
 import RecordRow from "./RecordRow";
 import { useEffect, useRef, useState } from "react";
 import ContextMenu from "./ContextMenu";
+import { Anime, T_AnimeNoID } from "../Helpers/useAnime";
+import { input } from "@material-tailwind/react";
+import { useDataState } from "../../context";
+ 
 
 type TableOption = {
     isSticky: boolean,
@@ -17,18 +21,21 @@ type TableSpacing = {
 }
 interface DataProps {
     dataHeaders: string[],
-    data: object,
+    data: [Anime],
     tableOption: TableOption,
     spacingOptions: TableSpacing
+   
 }
 
 function AnimesTable(props: DataProps) {
-  
+    const {saveData} = useDataState()
     const contextMenu = useRef(null)
     const navigate = useNavigate()
  const Options = 
     props.tableOption.isSticky ? " sticky top-0 bg-black" : ""
+    
 
+    const [EditMode, setEditMode] = useState(false)
     const [isShown, setIsShown] = useState(false);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [rowID, setRowID] = useState<string>('');
@@ -47,7 +54,6 @@ function AnimesTable(props: DataProps) {
         if(contextMenu.current )
         {
             const ctxDiv = contextMenu.current as HTMLDivElement;
-            console.log("isShown: ", isShown.valueOf() , "NotContains: ", !ctxDiv.contains(event.target as HTMLDivElement)) ;
             if(!ctxDiv.contains(event.target as HTMLDivElement))
             {
                 setIsShown(false)
@@ -55,9 +61,10 @@ function AnimesTable(props: DataProps) {
         }
     }
 
-    const handleEscapeKey = (event: KeyboardEvent) => {
-        console.log(event.key);
-        
+
+    
+
+    const handleEscapeKey = (event: KeyboardEvent) => {  
         switch (event.key)
         {
             case 'Escape':
@@ -65,15 +72,37 @@ function AnimesTable(props: DataProps) {
                 break;
         }
     }
+
+
+
+    
       useEffect(() => {
-          document.addEventListener('click', eventMouseClickHandle )
-          document.addEventListener('keydown', handleEscapeKey )
+  
+        document.addEventListener('click', eventMouseClickHandle )
+        document.addEventListener('keydown', handleEscapeKey )
         return () => {
             document.removeEventListener('click', eventMouseClickHandle)
             document.removeEventListener('keydown', handleEscapeKey)
         }
-      }, [])
+    }, [])
+    
+    const save = () => {
+       let inputs = document.querySelectorAll('input');
+       const currentRecord = props.data[Number.parseInt(rowID)-1] as Anime
+       inputs.forEach((inputValue) => {
+       
+        inputValue.id === 'url' ?
+        (currentRecord[inputValue.name] as { url: string, value: string }).url = inputValue.value
+        :
+        (currentRecord[inputValue.name] as { url: string, value: string }).value = inputValue.value
+          
+       })
       
+       
+       saveData(3, currentRecord);
+       setEditMode(false)
+    }
+   
   return (
       
       
@@ -88,17 +117,44 @@ function AnimesTable(props: DataProps) {
                 </tr>
             </thead>
             <tbody>
-            {Object.entries(props.data).map(([key, value], index) =>{ 
+                
+            {Array.isArray(props.data) && props.data.map((value, index) =>{ 
+
+                
+                
                 
                 return (
-                    <RecordRow handleClick={handleRowClick} ID={value['ID']} data={value} dataHeaders={props.dataHeaders} />
+                        <RecordRow  handleClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
                     
                     )
+                    
             })}
             </tbody>
         </Table>
-            {isShown && <ContextMenu ref={contextMenu} ID={rowID} position={position} />}
-        
+            {isShown && !EditMode && <ContextMenu setShown={setIsShown} ref={contextMenu} ID={rowID} position={position} setEdit={(v) => setEditMode(v)} />}
+            
+        <Modal opened={EditMode} onClose={() => setEditMode(false)} title={`Edit Row: ${rowID}`} scrollAreaComponent={ScrollArea.Autosize}>
+            {/* {Object.entries(props.data).find((value) => value. == rowID )} */}
+           {rowID && Object.entries(props.data[Number.parseInt(rowID)-1]).map(([header, data]) => {
+            if(typeof data === 'string' || header === 'ID')
+                return <></>
+                return(
+                    <>
+                    <Text>{header}</Text>
+                    <Group className="mt-3 mb-3">
+                        <TextInput name={header} defaultValue={data.value} placeholder={"Value"}></TextInput>
+                        <TextInput name={header} id="url" defaultValue={data.url} placeholder="URL"></TextInput>
+                    </Group>
+                    <Divider className="mb-3"></Divider>
+                    </>
+                )
+            
+           })} 
+           <Group className="justify-around">
+            <Button variant="outline" color="green" onClick={save}>SAVE</Button>
+            <Button variant="outline" color="red" onClick={() => setEditMode(false)}>Cancel</Button>
+           </Group>
+        </Modal>
         </>
 
 

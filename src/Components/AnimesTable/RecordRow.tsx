@@ -8,7 +8,7 @@ import { useState } from "react";
 interface DataProps {
     dataHeaders: string[],
     data: any,
-    ID: string
+    ID: string,
     handleClick: (event: React.MouseEvent<HTMLTableRowElement>, rowData: any) => void
 }
 

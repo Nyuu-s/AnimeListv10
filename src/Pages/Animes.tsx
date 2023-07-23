@@ -11,18 +11,20 @@ import { useViewportSize } from '@mantine/hooks';
 function Animes() {
     const {vSpacing, itemsPerPages, fontSize, isSticky} = useAppState().tableSettings;
     const { width, height } = useViewportSize();
-    const { getData, getHeaders} = useDataState();
-    const [paginatedData, setPaginatedData] = useState<object>({})
+    const { getData, getHeaders, AnimesContent} = useDataState();
+    const [paginatedData, setPaginatedData] = useState<any>({})
     const [activePage, setPage] = useState(1);
  
     useEffect(() => {
+      console.log("render table");
+      
       const items = (itemsPerPages === '' ? 0 : itemsPerPages)
       const slicedData = Object.values(getData()).slice(
         (activePage - 1) * (itemsPerPages === '' ? 0 : items),
         activePage * items
       );
       setPaginatedData(slicedData);
-    }, [getData(), activePage, itemsPerPages])
+    }, [getData(), activePage, itemsPerPages, AnimesContent])
 
 
 

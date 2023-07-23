@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { AnimeDataSet, Animes, useCastTo } from '../Components/Helpers/useAnime';
+import { Anime, AnimeDataSet, Animes, useCastTo } from '../Components/Helpers/useAnime';
 import { invoke } from "@tauri-apps/api";
 
 type DataContextType = {
@@ -10,8 +10,10 @@ type DataContextType = {
     setHeaders(headers: Array<string>): void,
     setBothDataAndHeaders(obj: object): void,
 
-    saveData(data?: object): Promise<Boolean>,
+    saveData(typeOfData: number, data?: object): Promise<Boolean>,
     removeRecords(IDArray: string[]) : void
+
+    AnimesContent: AnimesData
 }
 
 class AnimesData {
@@ -35,6 +37,7 @@ class AnimesData {
         this.data = animes;
         this.headers = headers;
     }
+
 }
 
 const DataContext = createContext<DataContextType>({
@@ -59,7 +62,9 @@ const DataContext = createContext<DataContextType>({
     },
     removeRecords: function (): void {
         throw new Error("Function not implemented.");
-    }
+    },
+    
+    AnimesContent: new AnimesData({}, [])
 });
 
 function AnimeDataBuilder(obj: object): AnimesData
@@ -67,7 +72,6 @@ function AnimeDataBuilder(obj: object): AnimesData
     const inputObject = obj as AnimeDataSet
     const DataSet = inputObject.data as Animes;
     const DataHeaders = inputObject.headers
-    console.log(typeof inputObject);
     return new AnimesData(DataSet,DataHeaders);
 }
 
@@ -101,7 +105,7 @@ function onRemoveRecords(arr: string[], data: Animes) : Animes
 
 export function DataProvider({children}: {children: React.ReactNode})
 {
-    const [AnimesContent, setAnimesContent] = useState<AnimesData>()
+    const [AnimesContent, setAnimesContent] = useState<AnimesData>(new AnimesData({}, []))
 
     const setBothDataAndHeaders = (obj: object) => setAnimesContent(AnimeDataBuilder(obj));
     const setHeaders = (arr: string[]) => AnimesContent?.set_headers(arr); 
@@ -109,30 +113,51 @@ export function DataProvider({children}: {children: React.ReactNode})
     
     const getHeaders = () => (AnimesContent ? AnimesContent.get_headers() : [])
     const getData = () => (AnimesContent ? AnimesContent.get_data() : {});
-    const saveData = async (data?: object) => {
+    /**
+     * 
+     * @param typeOfData 0 to save current data, 1 if data are headers, 2 if data contains all records, 3 data is one record
+     * @param data 
+     * @returns 
+     * 
+     */
+    const saveData = async (typeOfData: number, data?: object) => {
         if(AnimesContent === undefined)
         {
             return Promise.reject("Context is not yet defined")
         }
         if(data)
         {
-            // modify current state before saving
-            if(Array.isArray(data)){
-                setHeaders(data as string[]);
-            }
-            else{
-                setData(useCastTo<Animes>(data))
+            switch (typeOfData) {
+                case 1: // Modify headers
+                    setHeaders(data as string[]);
+                    break;
+                case 2:// Modify Data, by giving a new data object with all records
+                    setData(useCastTo<Animes>(data))
+                    break;
+                case 3:// Modify Data by giving only 1 record
+                    const temp = data as Anime;
+                    const newData = getData();
+                    
+                    
+                    newData[temp.ID] = temp;
+                    setData(newData);
+                    
+                    break;
+            
+                default:
+                    break;
             }
         }
         return await onSaveData(AnimesContent)
     }
 
     const removeRecords = (idArray: string[]) => {
-        setData(onRemoveRecords(idArray, getData()))
-        saveData();
+       
+        setAnimesContent(new AnimesData(onRemoveRecords(idArray, getData()),getHeaders()));
+        saveData(0);
     };
     return (
-        <DataContext.Provider value={{ setBothDataAndHeaders, removeRecords, getData, setData, setHeaders, getHeaders, saveData }}>
+        <DataContext.Provider value={{ setBothDataAndHeaders, removeRecords, getData, setData, setHeaders, getHeaders, saveData, AnimesContent }}>
             {children}
         </DataContext.Provider>
     )
