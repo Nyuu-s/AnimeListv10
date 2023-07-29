@@ -25,7 +25,7 @@ for row in ws.iter_rows(min_row=2, max_col=header_col_index):
     cell_data = {}
     for cell in row:
        
-        cell_dict = {'value': cell.value, 'url': ""}
+        cell_dict = {'value': cell.value if cell.value != '-' else '', 'url': ""}
         if cell.hyperlink is not None:
             cell_dict['url'] = cell.hyperlink.target
         cell_data[row_data['headers'][cell.column]] = cell_dict

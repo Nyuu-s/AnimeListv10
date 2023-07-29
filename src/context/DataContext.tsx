@@ -1,24 +1,28 @@
 import { createContext, useContext, useState } from "react";
-import { Anime, AnimeDataSet, Animes, useCastTo } from '../Components/Helpers/useAnime';
+import { Anime, AnimeDataSet, Animes, T_AnimeNoID, useCastTo } from '../Components/Helpers/useAnime';
 import { invoke } from "@tauri-apps/api";
 
 type DataContextType = {
     getData(): Animes
-    getHeaders(): Array<string>,
+    getHeaders(): TDataHeaders,
 
     setData(data: object): void,
-    setHeaders(headers: Array<string>): void,
+    setHeaders(headers: TDataHeaders): void,
     setBothDataAndHeaders(obj: object): void,
 
     saveData(typeOfData: number, data?: object): Promise<Boolean>,
     removeRecords(IDArray: string[]) : void
 
+    sortData(direction: boolean, headerName: string) : Anime[]
+
     AnimesContent: AnimesData
 }
 
+type TDataHeaders = {header: string, headerType: string}[]
 class AnimesData {
     private data: Animes;
-    private headers: string[];
+    private headers: TDataHeaders;
+
 
     public get_data(): Animes {
         return this.data;
@@ -26,14 +30,70 @@ class AnimesData {
     public set_data(value: Animes) {
         this.data = value;
     }
-    public get_headers(): string[] {
+    public get_headers(): TDataHeaders {
         return this.headers;
     }
-    public set_headers(value: string[]) {
+    public set_headers(value: TDataHeaders) {
         this.headers = value;
+        this.computeTypes();
+    }
+
+    public sort_data(direction: boolean, header: string): Anime[]
+    {
+        let data2 =  Object.values(this.data);
+        if(header === 'ID'){
+            data2.sort((a, b) => direction ? a.ID.toString().localeCompare(b.ID, "en", {numeric: true}) :  b.ID.toString().localeCompare(a.ID, "en", {numeric: true}))
+        }
+        else
+        {
+           data2.sort((a, b) => 
+           direction ?
+            (a as T_AnimeNoID )[header].value.toString().localeCompare((b as T_AnimeNoID )[header].value, "en", {numeric: this.headers.find((v) => v.header === header)?.headerType === 'numeric'}) 
+            :  
+            (b as T_AnimeNoID )[header].value.localeCompare((a as T_AnimeNoID )[header].value, "en", {numeric: this.headers.find((v) => v.header === header)?.headerType === 'numeric'})) 
+        }
+
+        return data2
+    }
+
+    private RecTypeCheck = (rowID: number, header: string): string =>  {  
+        if(rowID > Object.keys(this.data).length)
+        {
+            return "string";
+        }
+        if(header === 'ID')
+        {
+            const headerValue = this.data[rowID.toString()].ID
+            if(headerValue === '' ||  headerValue === undefined){
+                rowID += 1;
+                return this.RecTypeCheck(rowID, header);
+            }
+            if(!Number.isNaN(Number.parseInt(headerValue))){
+                return 'numeric'
+            }
+        }
+        else
+        {
+            const headerValueAsObj = this.data[rowID][header] as {url: string, value: string}
+            if(headerValueAsObj.value === '' ||  headerValueAsObj.value === undefined){
+               
+                rowID += 1;
+                return this.RecTypeCheck(rowID, header);
+            }
+            if(!Number.isNaN(Number.parseInt(headerValueAsObj.value))){
+                return 'numeric'
+            }
+        }
+
+        return 'string';
+    }
+    public computeTypes = () => {
+        this.headers.forEach((Value, index) => {
+            this.headers[index].headerType = this.RecTypeCheck(1, Value.header);
+        })
     }
     
-    constructor(animes: Animes, headers: string[]){
+    constructor(animes: Animes, headers: TDataHeaders){
         this.data = animes;
         this.headers = headers;
     }
@@ -44,7 +104,7 @@ const DataContext = createContext<DataContextType>({
     getData: function (): Animes {
         throw new Error("Function not implemented.");
     },
-    getHeaders: function (): string[] {
+    getHeaders: function (): TDataHeaders {
         throw new Error("Function not implemented.");
     },
 
@@ -63,16 +123,22 @@ const DataContext = createContext<DataContextType>({
     removeRecords: function (): void {
         throw new Error("Function not implemented.");
     },
+    sortData: function (): Anime[] {
+        throw new Error("Function not implemented.")
+    },
     
-    AnimesContent: new AnimesData({}, [])
+    AnimesContent: new AnimesData({}, [{header:'', headerType: ''}])
 });
 
 function AnimeDataBuilder(obj: object): AnimesData
 {
     const inputObject = obj as AnimeDataSet
     const DataSet = inputObject.data as Animes;
-    const DataHeaders = inputObject.headers
-    return new AnimesData(DataSet,DataHeaders);
+    const DataHeaders: TDataHeaders = [];
+    inputObject.headers.forEach((v) => {
+        DataHeaders.push({header: v, headerType: '' })
+    })
+    return new AnimesData(DataSet, DataHeaders);
 }
 
 async function onSaveData(CurrentDataState: AnimesData): Promise<Boolean>
@@ -97,20 +163,18 @@ function onRemoveRecords(arr: string[], data: Animes) : Animes
         }
     })
  
-    
-
-    
     return data;
 }
+
 
 export function DataProvider({children}: {children: React.ReactNode})
 {
     const [AnimesContent, setAnimesContent] = useState<AnimesData>(new AnimesData({}, []))
 
     const setBothDataAndHeaders = (obj: object) => setAnimesContent(AnimeDataBuilder(obj));
-    const setHeaders = (arr: string[]) => AnimesContent?.set_headers(arr); 
+    const setHeaders = (arr: TDataHeaders) => AnimesContent?.set_headers(arr); 
     const setData = (value: Animes) => AnimesContent?.set_data(value); 
-    
+    const sortData = (dir: boolean, headerName: string) => AnimesContent.sort_data(dir, headerName);
     const getHeaders = () => (AnimesContent ? AnimesContent.get_headers() : [])
     const getData = () => (AnimesContent ? AnimesContent.get_data() : {});
     /**
@@ -129,7 +193,7 @@ export function DataProvider({children}: {children: React.ReactNode})
         {
             switch (typeOfData) {
                 case 1: // Modify headers
-                    setHeaders(data as string[]);
+                    setHeaders(data as TDataHeaders);
                     break;
                 case 2:// Modify Data, by giving a new data object with all records
                     setData(useCastTo<Animes>(data))
@@ -137,11 +201,8 @@ export function DataProvider({children}: {children: React.ReactNode})
                 case 3:// Modify Data by giving only 1 record
                     const temp = data as Anime;
                     const newData = getData();
-                    
-                    
                     newData[temp.ID] = temp;
                     setData(newData);
-                    
                     break;
             
                 default:
@@ -157,7 +218,16 @@ export function DataProvider({children}: {children: React.ReactNode})
         saveData(0);
     };
     return (
-        <DataContext.Provider value={{ setBothDataAndHeaders, removeRecords, getData, setData, setHeaders, getHeaders, saveData, AnimesContent }}>
+        <DataContext.Provider value={{ 
+            sortData, 
+            setBothDataAndHeaders, 
+            removeRecords, 
+            getData, 
+            setData, 
+            setHeaders, 
+            getHeaders, 
+            saveData, 
+            AnimesContent }}>
             {children}
         </DataContext.Provider>
     )

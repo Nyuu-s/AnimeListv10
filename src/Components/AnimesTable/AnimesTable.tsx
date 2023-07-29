@@ -24,7 +24,7 @@ interface DataProps {
     data: [Anime],
     tableOption: TableOption,
     spacingOptions: TableSpacing
-   
+    sortHeader: (value: {direction: boolean, header: string} | undefined) => void
 }
 
 function AnimesTable(props: DataProps) {
@@ -33,21 +33,21 @@ function AnimesTable(props: DataProps) {
     const navigate = useNavigate()
  const Options = 
     props.tableOption.isSticky ? " sticky top-0 bg-black" : ""
-    
-
     const [EditMode, setEditMode] = useState(false)
     const [isShown, setIsShown] = useState(false);
+    const [isSorting, SetisSorting] = useState(0);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [rowID, setRowID] = useState<string>('');
+    const SortingStatus = [true, false, undefined]
+
     const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>, rowDataID: string) => {
-        event.preventDefault();
-        
+        event.preventDefault();    
         setIsShown(true);
         setPosition({ x: event.clientX, y: event.clientY });
         setRowID(rowDataID);
         console.log({ x: event.clientX, y: event.clientY }, rowDataID);
         event.stopPropagation()
-      }
+    }
     const eventMouseClickHandle = (event: MouseEvent) => {
 
         event.preventDefault()
@@ -60,10 +60,6 @@ function AnimesTable(props: DataProps) {
             }
         }
     }
-
-
-    
-
     const handleEscapeKey = (event: KeyboardEvent) => {  
         switch (event.key)
         {
@@ -73,11 +69,7 @@ function AnimesTable(props: DataProps) {
         }
     }
 
-
-
-    
-      useEffect(() => {
-  
+    useEffect(() => {
         document.addEventListener('click', eventMouseClickHandle )
         document.addEventListener('keydown', handleEscapeKey )
         return () => {
@@ -112,7 +104,12 @@ function AnimesTable(props: DataProps) {
             <thead>
                 <tr className={`${Options}  `}>
                     {props.dataHeaders.map((header) => (
-                        <th  key={header}>{header}</th>
+                        <th onClick={() => {
+                         
+                            
+                            props.sortHeader(isSorting === 2 ? SortingStatus[isSorting] as undefined : {direction: SortingStatus[isSorting] as boolean, header} )
+                            SetisSorting((prev) => (prev + 1) % 3 )
+                        }} key={header}> <span className="cursor-pointer">{header} </span> </th>
                         ))}
                 </tr>
             </thead>
