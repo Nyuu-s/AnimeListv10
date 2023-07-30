@@ -95,6 +95,8 @@ class AnimesData {
             this.headers[index].headerType = this.RecTypeCheck(1, Value.header);
         })
     }
+
+
     
     constructor(animes: Animes, headers: TDataHeaders){
         this.data = animes;

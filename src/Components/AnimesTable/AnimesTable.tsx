@@ -9,10 +9,12 @@ import ContextMenu from "./ContextMenu";
 import { Anime, T_AnimeNoID } from "../Helpers/useAnime";
 import { input } from "@material-tailwind/react";
 import { useDataState } from "../../context";
-import { Icon24Hours, IconArrowDown, IconArrowUp } from "@tabler/icons-react";
+import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons-react";
 import { MdFilter } from "react-icons/md";
-import { FaFilter, FaSort } from "react-icons/fa";
- 
+import { FaArrowUp, FaFilter, FaSort } from "react-icons/fa";
+import { HiOutlineBarsArrowUp , HiOutlineBarsArrowDown} from "react-icons/hi2";
+import { LuArrowUpAZ } from "react-icons/lu";
+
 
 type TableOption = {
     isSticky: boolean,
@@ -128,9 +130,9 @@ function AnimesTable(props: DataProps) {
                             <Group className="flex-row min-w-fit min-w-max">
                                 <span className="cursor-pointer">{header}</span>
                                 <span className="mt-1">
-                                    {isSorting === 0 && header === sortingHeader && <FaSort size={18}/>}
-                                    {isSorting === 1 &&  header === sortingHeader && <IconArrowUp size={18}/>}
-                                    {isSorting === 2 && header === sortingHeader && < IconArrowDown size={18}/>}
+                                    {(isSorting === 0 || header !== sortingHeader) && <IconArrowsSort size={20}/>}
+                                    {isSorting === 1 &&  header === sortingHeader && <IconSortAscending size={20}/>}
+                                    {isSorting === 2 && header === sortingHeader && < IconSortDescending size={20}/>}
                                 </span>
                             </Group>  </th>
                         ))}
