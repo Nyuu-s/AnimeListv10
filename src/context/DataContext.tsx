@@ -42,15 +42,18 @@ class AnimesData {
     {
         let data2 =  Object.values(this.data);
         if(header === 'ID'){
-            data2.sort((a, b) => direction ? a.ID.toString().localeCompare(b.ID, "en", {numeric: true}) :  b.ID.toString().localeCompare(a.ID, "en", {numeric: true}))
+            data2.sort((a, b) => {
+                const comp = a.ID.toString().localeCompare(b.ID, "en", {numeric: true})
+                return direction ? comp : -comp
+            })
         }
         else
         {
-           data2.sort((a, b) => 
-           direction ?
-            (a as T_AnimeNoID )[header].value.toString().localeCompare((b as T_AnimeNoID )[header].value, "en", {numeric: this.headers.find((v) => v.header === header)?.headerType === 'numeric'}) 
-            :  
-            (b as T_AnimeNoID )[header].value.localeCompare((a as T_AnimeNoID )[header].value, "en", {numeric: this.headers.find((v) => v.header === header)?.headerType === 'numeric'})) 
+           data2.sort((a, b) => {
+            const comp = (a as T_AnimeNoID )[header].value.toString().localeCompare((b as T_AnimeNoID )[header].value, "en", {numeric: this.headers.find((v) => v.header === header)?.headerType === 'numeric'})
+            return direction ? comp : -comp
+           })
+
         }
 
         return data2

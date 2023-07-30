@@ -9,6 +9,9 @@ import ContextMenu from "./ContextMenu";
 import { Anime, T_AnimeNoID } from "../Helpers/useAnime";
 import { input } from "@material-tailwind/react";
 import { useDataState } from "../../context";
+import { Icon24Hours, IconArrowDown, IconArrowUp } from "@tabler/icons-react";
+import { MdFilter } from "react-icons/md";
+import { FaFilter, FaSort } from "react-icons/fa";
  
 
 type TableOption = {
@@ -36,6 +39,7 @@ function AnimesTable(props: DataProps) {
     const [EditMode, setEditMode] = useState(false)
     const [isShown, setIsShown] = useState(false);
     const [isSorting, SetisSorting] = useState(0);
+    const [sortingHeader, setSortingHeader] = useState<string>('');
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [rowID, setRowID] = useState<string>('');
     const SortingStatus = [true, false, undefined]
@@ -105,11 +109,30 @@ function AnimesTable(props: DataProps) {
                 <tr className={`${Options}  `}>
                     {props.dataHeaders.map((header) => (
                         <th onClick={() => {
-                         
+                            console.log(header, sortingHeader);
                             
-                            props.sortHeader(isSorting === 2 ? SortingStatus[isSorting] as undefined : {direction: SortingStatus[isSorting] as boolean, header} )
-                            SetisSorting((prev) => (prev + 1) % 3 )
-                        }} key={header}> <span className="cursor-pointer">{header} </span> </th>
+                            if(header !== sortingHeader)
+                            {
+                                props.sortHeader( {direction: SortingStatus[0] as boolean, header} )
+                                SetisSorting(1);
+                            }
+                            else{
+                                props.sortHeader(isSorting === 2 ? SortingStatus[isSorting] as undefined : {direction: SortingStatus[isSorting] as boolean, header} )
+                                SetisSorting((prev) => (prev + 1) % 3 )
+                                // setSortingHeader(isSorting === 2 ? '' : header);
+                            }
+                            
+                            setSortingHeader(header);
+                          
+                        }} key={header}> 
+                            <Group className="flex-row min-w-fit min-w-max">
+                                <span className="cursor-pointer">{header}</span>
+                                <span className="mt-1">
+                                    {isSorting === 0 && header === sortingHeader && <FaSort size={18}/>}
+                                    {isSorting === 1 &&  header === sortingHeader && <IconArrowUp size={18}/>}
+                                    {isSorting === 2 && header === sortingHeader && < IconArrowDown size={18}/>}
+                                </span>
+                            </Group>  </th>
                         ))}
                 </tr>
             </thead>
