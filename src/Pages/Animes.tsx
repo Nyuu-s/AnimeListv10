@@ -5,8 +5,9 @@ import { Button, Group, Pagination, ScrollArea, TextInput } from '@mantine/core'
 import AnimesTable from "../Components/AnimesTable/AnimesTable";
 import { useAppState } from "../context/AppContext";
 import { useViewportSize } from '@mantine/hooks';
-import { Anime } from "../Components/Helpers/useAnime";
+import { Anime, computeComp1, computeComp2  } from "../Components/Helpers/useAnime";
 import { IconBraces, IconSearch, IconSql } from "@tabler/icons-react";
+import {ASTKinds, comparison_1, comparison_2, or_1, parse, value} from '../Components/output'
 
 
 
@@ -21,40 +22,57 @@ function Animes() {
    
     const [filteredData, setFilteredData] = useState<Anime[]>()
 
+    //TODO: Fix pagination when searching 
+    //TODO enable sorting while filtering
     const searchData = (value: string) => {
-      
       if(value === '')
       {
         setFilteredData(undefined)
         return;
       }
-      
-    
-    console.log(Object.values(getData()).length);
-    
-      setFilteredData( Object.values(getData()).filter((v) => {
-       
-        
-        for (let [, propValue] of Object.entries(v)) {
-          if (typeof propValue === 'object' && propValue !== null) {
-            if (propValue.value && propValue.value.toString().toLocaleLowerCase().includes(value.toString().toLocaleLowerCase())) {
-              return true;
-            }
-          } else {
-            if ( propValue && propValue.toString().toLocaleLowerCase().includes(value.toString().toLocaleLowerCase())) {
-              return true;
+      if(searchMode)
+      {
+        setFilteredData( Object.values(getData()).filter((v) => {
+          for (let [, propValue] of Object.entries(v)) {
+            if (typeof propValue === 'object' && propValue !== null) {
+              if (propValue.value && propValue.value.toString().toLocaleLowerCase().includes(value.toString().toLocaleLowerCase())) {
+                return true;
+              }
+            } else {
+              if ( propValue && propValue.toString().toLocaleLowerCase().includes(value.toString().toLocaleLowerCase())) {
+                return true;
+              }
             }
           }
-        }
-        return false;
-      }))
-      
-       
-    }
-
-    const queryData = () => {
+          return false;
+        }))
+      }
 
     }
+//TODO Setup query match patterns
+    const queryData = (event: React.KeyboardEvent<HTMLInputElement>, value: string) => {
+      if(event.key === 'Enter')
+      {
+        let ast = parse(value.toString()).ast;
+        if(ast){
+          console.log(ast);
+
+          
+          const comp = (ast.query as comparison_1);
+          const comp2 = (ast.query as comparison_2);
+         let res =  Object.values(getData()).filter((v) => {
+         
+         //anno in [1,2,3]
+            
+            return computeComp2(v, comp2, getHeaders());
+          })
+          
+          console.log(res);
+        } 
+      }
+    }
+    
+
 
     useEffect(() => {
       
@@ -75,7 +93,7 @@ function Animes() {
   
 
       
-    <TextInput onChange={(text) => searchData(text.target.value)} className="w-1/2 mb-2 mx-auto" icon={<div className="pointer-events-auto cursor-pointer" onClick={() => setSearchMode(!searchMode)}>{searchMode ? <IconSearch /> : <IconBraces /> }</div>} /> 
+    <TextInput onKeyDown={(event) => queryData(event, event.currentTarget.value)}  onChange={(text) => searchData(text.target.value)} className="w-1/2 mb-2 mx-auto" icon={<div className="pointer-events-auto cursor-pointer" onClick={() => setSearchMode(!searchMode)}>{searchMode ? <IconSearch /> : <IconBraces /> }</div>} /> 
 
     <ScrollArea offsetScrollbars w={width} h={height-200} className="">
 

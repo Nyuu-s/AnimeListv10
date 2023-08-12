@@ -1,3 +1,6 @@
+import { comparison_1, comparison_2 } from "../output";
+
+
 export type T_AnimeNoID = {
     [key: string]: { url: string; value: string };
 }
@@ -89,4 +92,95 @@ export const useCastToAnimeNoID = (obj: any): T_AnimeNoID => {
         }
     }
     return newObject;
+  }
+
+ export type TDataHeaders = {header: string, headerType: string}[]
+
+  type Operation = {
+    [key: string]: (a: any, b: any) => boolean;
+  };
+  const operations: Operation = {
+    '==': (a:any, b:any): boolean => a === b,
+    '<=': (a:any, b:any): boolean => a <= b,
+    '>=': (a:any, b:any): boolean => a >= b,
+    '>': (a:any, b:any): boolean => a > b,
+    '<': (a:any, b:any): boolean => a < b,
+    '=': (a:string, b:string): boolean => a.includes(b),
+  };
+export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeaders): boolean =>  {
+    let result = false;
+    const compID = comp.id.toLocaleString();
+    const isNumeric = headers.find((v) => v.header === compID)?.headerType === 'numeric';
+    const rowHeader = row[compID] !== undefined ?
+      row[compID] : 
+      row[compID.toLowerCase()] !== undefined ? 
+      row[compID.toLowerCase()] : 
+      row[compID.toUpperCase()] !== undefined ?
+      row[compID.toUpperCase()] :
+      row[compID.charAt(0).toLocaleUpperCase() + compID.toLowerCase().slice(1)]
+    const isID = !(typeof rowHeader === 'object')
+  
+    if(!rowHeader)
+    {
+      return result;
+    }
+ 
+    let a
+    let b
+    if(!isID)
+    {
+      a = isNumeric ? parseInt(rowHeader.value?.toString()) : rowHeader.value?.toString()
+      b = isNumeric ? parseInt(comp.value?.toLocaleString()) : comp.value?.toLocaleString()
+    }
+    else if ( comp.comp_op === '=' ) 
+    {
+     a = row.ID?.toString()
+     b =  comp.value?.toLocaleString();
+    }
+    else
+    {
+     a = parseInt(row.ID);
+     b = parseInt(comp.value.toLocaleString());
+    }
+
+    if (a && b && comp.comp_op in operations )
+    {
+      result = operations[comp.comp_op](a, b);
+    }
+    return result;
+  }
+
+ export const computeComp2 = (row: Anime, comp: comparison_2, headers: TDataHeaders) => {
+    let result = false;
+    const compID = comp.id.toLocaleString();
+    const isNumeric = headers.find((v) => v.header.toLowerCase() === compID.toLowerCase())?.headerType === "numeric";
+    const rowHeader = row[compID] !== undefined ?
+    row[compID] : 
+    row[compID.toLowerCase()] !== undefined ? 
+    row[compID.toLowerCase()] : 
+    row[compID.toUpperCase()] !== undefined ?
+    row[compID.toUpperCase()] :
+    row[compID.charAt(0).toLocaleUpperCase() + compID.toLowerCase().slice(1)]
+
+    if(!rowHeader)
+    {
+      return result;
+    }
+    const isID = !(typeof rowHeader === 'object')
+    const head = comp.values.head;
+    const tail = comp.values.tail;
+
+    if(isID)
+    { 
+      result = parseInt(head.value[0]) === parseInt(rowHeader) ||  tail.some((v) => (parseInt(v.element.value[0]) === parseInt(rowHeader)))
+    }
+    else if (isNumeric)
+    {
+      result = parseInt(head.value[0]) === parseInt(rowHeader.value) ||  tail.some((v) => (parseInt(v.element.value[0]) === parseInt(rowHeader.value)))
+    }
+    else
+    {
+      result = head.value[0].toString().includes(rowHeader.value) ||  tail.some((v) => v.element.value[0].toString().includes(rowHeader.value))
+    }
+    return result;
   }

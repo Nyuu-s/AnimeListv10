@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { Anime, AnimeDataSet, Animes, T_AnimeNoID, useCastTo } from '../Components/Helpers/useAnime';
+import { Anime, AnimeDataSet, Animes, T_AnimeNoID, useCastTo, TDataHeaders } from '../Components/Helpers/useAnime';
 import { invoke } from "@tauri-apps/api";
 
 type DataContextType = {
@@ -18,7 +18,7 @@ type DataContextType = {
     AnimesContent: AnimesData
 }
 
-type TDataHeaders = {header: string, headerType: string}[]
+
 class AnimesData {
     private data: Animes;
     private headers: TDataHeaders;
@@ -101,6 +101,7 @@ class AnimesData {
     constructor(animes: Animes, headers: TDataHeaders){
         this.data = animes;
         this.headers = headers;
+        this.computeTypes(); // TODO find when to call this to avoid calling it on each delete row operation
     }
 
 }
