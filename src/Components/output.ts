@@ -2,7 +2,7 @@
 * INPUT GRAMMAR:
 * query := query=or
 * or := left=or ws* bool_op='\|' ws* right=and ws* | and
-* and := left=and ws* bool_op='&' ws* right=statement ws* | statement
+* and := left=and ws* bool_op='&' ws* right=and ws* | statement
 * statement := not=not_statement ws* | comparison
 * not_statement := '!' value=statement 
 * comparison := id=id ws* comp_op=comp_op ws* value=value | id=id ws* 'in' ws* '\['ws* values=value_list ws*'\]' | '\(' ws* query=or ws*'\)'
@@ -60,7 +60,7 @@ export interface and_1 {
     kind: ASTKinds.and_1;
     left: and;
     bool_op: string;
-    right: statement;
+    right: and;
 }
 export type and_2 = statement;
 export type statement = statement_1 | statement_2;
@@ -235,14 +235,14 @@ export class Parser {
             () => {
                 let $scope$left: Nullable<and>;
                 let $scope$bool_op: Nullable<string>;
-                let $scope$right: Nullable<statement>;
+                let $scope$right: Nullable<and>;
                 let $$res: Nullable<and_1> = null;
                 if (true
                     && ($scope$left = this.matchand($$dpth + 1, $$cr)) !== null
                     && this.loop<ws>(() => this.matchws($$dpth + 1, $$cr), 0, -1) !== null
                     && ($scope$bool_op = this.regexAccept(String.raw`(?:&)`, "", $$dpth + 1, $$cr)) !== null
                     && this.loop<ws>(() => this.matchws($$dpth + 1, $$cr), 0, -1) !== null
-                    && ($scope$right = this.matchstatement($$dpth + 1, $$cr)) !== null
+                    && ($scope$right = this.matchand($$dpth + 1, $$cr)) !== null
                     && this.loop<ws>(() => this.matchws($$dpth + 1, $$cr), 0, -1) !== null
                 ) {
                     $$res = {kind: ASTKinds.and_1, left: $scope$left, bool_op: $scope$bool_op, right: $scope$right};

@@ -1,4 +1,4 @@
-import { ASTKinds, comparison_1, comparison_2, comparison_3, statement_1, statement } from "../output";
+import { ASTKinds, comparison_1, comparison_2, comparison_3, statement_1, statement, and_1, not_statement, or_1 } from "../output";
 
 
 export type T_AnimeNoID = {
@@ -154,6 +154,7 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
  export const computeComp2 = (row: Anime, comp: comparison_2, headers: TDataHeaders) => {
     let result = false;
     const compID = comp.id.toLocaleString();
+    
     const isNumeric = headers.find((v) => v.header.toLowerCase() === compID.toLowerCase())?.headerType === "numeric";
     const rowHeader = row[compID] !== undefined ?
     row[compID] : 
@@ -186,30 +187,41 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
     return result;
   }
 
-  const FSM = {
+  type test = {
+  [key in ASTKinds]?: (...args: any[]) => boolean;
+};
+ export const FSM: test = {
     [ASTKinds.comparison_1]: (row: Anime, statement: comparison_1, headers: TDataHeaders) => computeComp1(row, statement as comparison_1, headers),
     [ASTKinds.comparison_2]: (row: Anime, statement: comparison_2, headers: TDataHeaders) => computeComp2(row, statement as comparison_2, headers),
-    [ASTKinds.comparison_3]: (row: Anime, statement: comparison_3) =>console.log(row, " ", statement as comparison_3),
-    [ASTKinds.not_statement]: (row: Anime, statement: statement, headers: TDataHeaders) => computeNot(row, statement, headers),
+    [ASTKinds.comparison_3]: (row: Anime, statement: comparison_3) => true,
+    [ASTKinds.statement_1]: (row: Anime, statement: statement_1, headers: TDataHeaders) => computeNot(row, statement.not as not_statement, headers),
+    [ASTKinds.and_1]: (row: Anime, statement: and_1, headers: TDataHeaders) => computeAnd(row, statement as and_1, headers),
+    [ASTKinds.or_1]: (row: Anime, statement: or_1, headers: TDataHeaders) => computeOr(row, statement as or_1, headers),
+
   }
-  export const computeNot = (row: Anime, statement: statement,  headers: TDataHeaders): boolean => {
+  export const computeNot = (row: Anime, statement: not_statement,  headers: TDataHeaders): boolean => {
     
-    
-    if(statement.kind === ASTKinds.statement_1)
-    {
-      statement = statement as statement_1
-      return !computeNot(row, statement.not.value, headers);
-    }
-    else
-    {
-      if(statement.kind === ASTKinds.comparison_1)
-      {
-        return FSM[statement.kind](row, statement, headers);
-      }
-      if(statement.kind === ASTKinds.comparison_2)
-      {
-        return FSM[statement.kind](row, statement, headers);
-      }
-    }
-    return false;
+  
+ 
+    return  !(FSM[statement.value.kind]?.(row, statement.value, headers) ?? false);
+
   }
+
+export const computeAnd = (row: Anime, statement: and_1, headers: TDataHeaders ): boolean => {
+
+   let resLeft =  FSM[statement.left.kind]?.(row, statement.left, headers) ?? false;
+   let resRight =  FSM[statement.right.kind]?.(row, statement.right, headers) ?? false;
+   
+   return resLeft && resRight;
+
+}
+
+export const computeOr = (row: Anime, statement: or_1, headers: TDataHeaders ): boolean => {
+
+  let resLeft =  FSM[statement.left.kind]?.(row, statement.left, headers) ?? false;
+  let resRight =  FSM[statement.right.kind]?.(row, statement.right, headers) ?? false;
+  
+  return resLeft || resRight;
+
+}
+

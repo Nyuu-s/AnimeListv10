@@ -1,6 +1,6 @@
 query := query=or
 or := left=or ws* bool_op='\|' ws* right=and ws* | and
-and := left=and ws* bool_op='&' ws* right=statement ws* | statement
+and := left=and ws* bool_op='&' ws* right=and ws* | statement
 statement := not=not_statement ws* | comparison
 not_statement := '!' value=statement 
 comparison := id=id ws* comp_op=comp_op ws* value=value | id=id ws* 'in' ws* '\['ws* values=value_list ws*'\]' | '\(' ws* query=or ws*'\)'
