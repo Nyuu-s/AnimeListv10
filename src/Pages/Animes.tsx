@@ -1,13 +1,13 @@
 
 import { useEffect, useState } from "react";
 import { useDataState } from "../context";
-import { Button, Group, Pagination, ScrollArea, TextInput } from '@mantine/core';
+import { Aside, Button, Group, Pagination, ScrollArea, TextInput } from '@mantine/core';
 import AnimesTable from "../Components/AnimesTable/AnimesTable";
 import { useAppState } from "../context/AppContext";
 import { useViewportSize } from '@mantine/hooks';
-import { Anime, computeComp1, computeComp2  } from "../Components/Helpers/useAnime";
+import { Anime, computeComp1, computeComp2, computeNot  } from "../Components/Helpers/useAnime";
 import { IconBraces, IconSearch, IconSql } from "@tabler/icons-react";
-import {ASTKinds, comparison_1, comparison_2, or_1, parse, value} from '../Components/output'
+import {ASTKinds, comparison, comparison_1, comparison_2, comparison_3, not_statement, or_1, parse, statement, statement_1, statement_2, value} from '../Components/output'
 
 
 
@@ -60,18 +60,19 @@ function Animes() {
           
           const comp = (ast.query as comparison_1);
           const comp2 = (ast.query as comparison_2);
+          const not = (ast.query as statement);
          let res =  Object.values(getData()).filter((v) => {
          
          //anno in [1,2,3]
             
-            return computeComp2(v, comp2, getHeaders());
+            return computeNot(v, not, getHeaders());
           })
           
           console.log(res);
         } 
       }
     }
-    
+
 
 
     useEffect(() => {

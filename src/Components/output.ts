@@ -8,7 +8,7 @@
 * comparison := id=id ws* comp_op=comp_op ws* value=value | id=id ws* 'in' ws* '\['ws* values=value_list ws*'\]' | '\(' ws* query=or ws*'\)'
 * id := alphanumeric*
 * comp_op :=  '<=' | '>=' | '<' | '>' | '==' | '='
-* value := value=alphanumeric*
+* value := alphanumeric*
 * value_list := head=value tail={ws* ',' ws* element=value}* 
 * alphanumeric := '[a-zA-Z0-9]+'
 * ws := ' '
@@ -97,10 +97,7 @@ export type comp_op_3 = string;
 export type comp_op_4 = string;
 export type comp_op_5 = string;
 export type comp_op_6 = string;
-export interface value {
-    kind: ASTKinds.value;
-    value: alphanumeric[];
-}
+export type value = alphanumeric[];
 export interface value_list {
     kind: ASTKinds.value_list;
     head: value;
@@ -390,17 +387,7 @@ export class Parser {
         return this.regexAccept(String.raw`(?:=)`, "", $$dpth + 1, $$cr);
     }
     public matchvalue($$dpth: number, $$cr?: ErrorTracker): Nullable<value> {
-        return this.run<value>($$dpth,
-            () => {
-                let $scope$value: Nullable<alphanumeric[]>;
-                let $$res: Nullable<value> = null;
-                if (true
-                    && ($scope$value = this.loop<alphanumeric>(() => this.matchalphanumeric($$dpth + 1, $$cr), 0, -1)) !== null
-                ) {
-                    $$res = {kind: ASTKinds.value, value: $scope$value};
-                }
-                return $$res;
-            });
+        return this.loop<alphanumeric>(() => this.matchalphanumeric($$dpth + 1, $$cr), 0, -1);
     }
     public matchvalue_list($$dpth: number, $$cr?: ErrorTracker): Nullable<value_list> {
         return this.run<value_list>($$dpth,

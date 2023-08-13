@@ -6,7 +6,7 @@ not_statement := '!' value=statement
 comparison := id=id ws* comp_op=comp_op ws* value=value | id=id ws* 'in' ws* '\['ws* values=value_list ws*'\]' | '\(' ws* query=or ws*'\)'
 id := alphanumeric*
 comp_op :=  '<=' | '>=' | '<' | '>' | '==' | '='
-value := value=alphanumeric*
+value := alphanumeric*
 value_list := head=value tail={ws* ',' ws* element=value}* 
 alphanumeric := '[a-zA-Z0-9]+'
 ws := ' '

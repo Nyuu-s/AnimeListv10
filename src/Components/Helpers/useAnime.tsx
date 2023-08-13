@@ -1,4 +1,4 @@
-import { comparison_1, comparison_2 } from "../output";
+import { ASTKinds, comparison_1, comparison_2, comparison_3, statement_1, statement } from "../output";
 
 
 export type T_AnimeNoID = {
@@ -124,7 +124,8 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
     {
       return result;
     }
- 
+    
+    
     let a
     let b
     if(!isID)
@@ -172,15 +173,43 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
 
     if(isID)
     { 
-      result = parseInt(head.value[0]) === parseInt(rowHeader) ||  tail.some((v) => (parseInt(v.element.value[0]) === parseInt(rowHeader)))
+      result = parseInt(head[0]) === parseInt(rowHeader) ||  tail.some((v) => (parseInt(v.element[0]) === parseInt(rowHeader)))
     }
     else if (isNumeric)
     {
-      result = parseInt(head.value[0]) === parseInt(rowHeader.value) ||  tail.some((v) => (parseInt(v.element.value[0]) === parseInt(rowHeader.value)))
+      result = parseInt(head[0]) === parseInt(rowHeader.value) ||  tail.some((v) => (parseInt(v.element[0]) === parseInt(rowHeader.value)))
     }
     else
     {
-      result = head.value[0].toString().includes(rowHeader.value) ||  tail.some((v) => v.element.value[0].toString().includes(rowHeader.value))
+      result = head[0].toString().includes(rowHeader.value) ||  tail.some((v) => v.element[0].toString().includes(rowHeader.value))
     }
     return result;
+  }
+
+  const FSM = {
+    [ASTKinds.comparison_1]: (row: Anime, statement: comparison_1, headers: TDataHeaders) => computeComp1(row, statement as comparison_1, headers),
+    [ASTKinds.comparison_2]: (row: Anime, statement: comparison_2, headers: TDataHeaders) => computeComp2(row, statement as comparison_2, headers),
+    [ASTKinds.comparison_3]: (row: Anime, statement: comparison_3) =>console.log(row, " ", statement as comparison_3),
+    [ASTKinds.not_statement]: (row: Anime, statement: statement, headers: TDataHeaders) => computeNot(row, statement, headers),
+  }
+  export const computeNot = (row: Anime, statement: statement,  headers: TDataHeaders): boolean => {
+    
+    
+    if(statement.kind === ASTKinds.statement_1)
+    {
+      statement = statement as statement_1
+      return !computeNot(row, statement.not.value, headers);
+    }
+    else
+    {
+      if(statement.kind === ASTKinds.comparison_1)
+      {
+        return FSM[statement.kind](row, statement, headers);
+      }
+      if(statement.kind === ASTKinds.comparison_2)
+      {
+        return FSM[statement.kind](row, statement, headers);
+      }
+    }
+    return false;
   }
