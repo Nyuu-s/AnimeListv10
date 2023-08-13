@@ -8,6 +8,6 @@ id := alphanumeric*
 comp_op :=  '<=' | '>=' | '<' | '>' | '==' | '='
 value := alphanumeric*
 value_list := head=value tail={ws* ',' ws* element=value}* 
-alphanumeric := '[a-zA-Z0-9]+'
+alphanumeric := '[a-zA-Z0-9]+|\'\s*\'|"\s*"' 
 ws := ' '
 

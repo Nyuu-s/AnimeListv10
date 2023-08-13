@@ -144,8 +144,14 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
      b = parseInt(comp.value.toLocaleString());
     }
 
-    if (a && b && comp.comp_op in operations )
+    if(comp.value.toLocaleString() === "''" || comp.value.toLocaleString() === '""')
     {
+      b = ''
+    }
+    
+    if (a !== undefined && b !== undefined && comp.comp_op in operations )
+    {
+      
       result = operations[comp.comp_op](a, b);
     }
     return result;
@@ -171,6 +177,11 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
     const isID = !(typeof rowHeader === 'object')
     const head = comp.values.head;
     const tail = comp.values.tail;
+
+    if(head.length <= 0)
+    {
+      return false;
+    }
 
     if(isID)
     { 
@@ -199,29 +210,19 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
     [ASTKinds.or_1]: (row: Anime, statement: or_1, headers: TDataHeaders) => computeOr(row, statement as or_1, headers),
 
   }
-  export const computeNot = (row: Anime, statement: not_statement,  headers: TDataHeaders): boolean => {
-    
-  
- 
-    return  !(FSM[statement.value.kind]?.(row, statement.value, headers) ?? false);
 
+export const computeNot = (row: Anime, statement: not_statement,  headers: TDataHeaders): boolean => {
+    return  !(FSM[statement.value.kind]?.(row, statement.value, headers) ?? false);
   }
 
 export const computeAnd = (row: Anime, statement: and_1, headers: TDataHeaders ): boolean => {
-
-   let resLeft =  FSM[statement.left.kind]?.(row, statement.left, headers) ?? false;
-   let resRight =  FSM[statement.right.kind]?.(row, statement.right, headers) ?? false;
-   
-   return resLeft && resRight;
-
+   // if left is not true, no need to check right because its AND operand
+   return ((FSM[statement.left.kind]?.(row, statement.left, headers) ?? false) && ( FSM[statement.right.kind]?.(row, statement.right, headers) ?? false));
 }
 
 export const computeOr = (row: Anime, statement: or_1, headers: TDataHeaders ): boolean => {
-
-  let resLeft =  FSM[statement.left.kind]?.(row, statement.left, headers) ?? false;
-  let resRight =  FSM[statement.right.kind]?.(row, statement.right, headers) ?? false;
-  
-  return resLeft || resRight;
+  // if left is true, no need to check right because its OR operand
+  return ( (FSM[statement.left.kind]?.(row, statement.left, headers) ?? false) || (FSM[statement.right.kind]?.(row, statement.right, headers) ?? false))
 
 }
 

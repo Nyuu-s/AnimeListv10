@@ -10,7 +10,7 @@
 * comp_op :=  '<=' | '>=' | '<' | '>' | '==' | '='
 * value := alphanumeric*
 * value_list := head=value tail={ws* ',' ws* element=value}* 
-* alphanumeric := '[a-zA-Z0-9]+'
+* alphanumeric := '[a-zA-Z0-9]+|\'\s*\'|"\s*"' 
 * ws := ' '
 */
 type Nullable<T> = T | null;
@@ -421,7 +421,7 @@ export class Parser {
             });
     }
     public matchalphanumeric($$dpth: number, $$cr?: ErrorTracker): Nullable<alphanumeric> {
-        return this.regexAccept(String.raw`(?:[a-zA-Z0-9]+)`, "", $$dpth + 1, $$cr);
+        return this.regexAccept(String.raw`(?:[a-zA-Z0-9]+|\'\s*\'|"\s*")`, "", $$dpth + 1, $$cr);
     }
     public matchws($$dpth: number, $$cr?: ErrorTracker): Nullable<ws> {
         return this.regexAccept(String.raw`(?: )`, "", $$dpth + 1, $$cr);
