@@ -10,6 +10,7 @@ interface DataProps {
     data: any,
     ID: string,
     handleClick: (event: React.MouseEvent<HTMLTableRowElement>, rowData: any) => void
+
 }
 
 async function openExternalUrl(url: string) {
@@ -33,7 +34,7 @@ function RecordRow(props : DataProps) {
     return (
         
         
-            <tr onDoubleClick={() =>   navigate("/details/"+props.ID)} onClick={(e) => props.handleClick(e, props.ID)}>
+            <tr onDoubleClick={() =>   navigate("/details/"+props.ID)} onContextMenu={(e) => props.handleClick(e, props.ID)}>
             <td >{props.ID}</td>
                 {props.dataHeaders.map((header, i) => {
                     
@@ -44,7 +45,7 @@ function RecordRow(props : DataProps) {
                             
                             return( <AnimesTableURL key={i} id={i} clickFunc={()=> openExternalUrl(props.data[header].url)} display={props.data[header]?.value}/>)
                         }
-                        return(<td key={i} >{props.data[header]?.value }</td>)
+                        return(<td key={i}  >{props.data[header]?.value }</td>)
                     }
                 })}
             </tr>   

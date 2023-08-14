@@ -61,7 +61,7 @@ function Animes() {
             return FSM[ast.query.kind]?.(v, ast.query, getHeaders()) ?? false;
         })
           
-         console.log(res);
+        setFilteredData(res);
          
         
       }

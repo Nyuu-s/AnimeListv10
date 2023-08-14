@@ -35,6 +35,7 @@ interface DataProps {
 function AnimesTable(props: DataProps) {
     const {saveData} = useDataState()
     const contextMenu = useRef(null)
+    const modal = useRef<HTMLDivElement>(null)
     const navigate = useNavigate()
  const Options = 
     props.tableOption.isSticky ? " sticky top-0 bg-black" : ""
@@ -47,7 +48,12 @@ function AnimesTable(props: DataProps) {
     const SortingStatus = [true, false, undefined]
 
     const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>, rowDataID: string) => {
-        event.preventDefault();    
+        event.preventDefault();
+        if(isShown && rowDataID === rowID)
+        {
+            setIsShown(false);
+            return;
+        }  
         setIsShown(true);
         setPosition({ x: event.clientX, y: event.clientY });
         setRowID(rowDataID);
@@ -56,15 +62,17 @@ function AnimesTable(props: DataProps) {
     }
     const eventMouseClickHandle = (event: MouseEvent) => {
 
-        event.preventDefault()
-        if(contextMenu.current )
-        {
-            const ctxDiv = contextMenu.current as HTMLDivElement;
-            if(!ctxDiv.contains(event.target as HTMLDivElement))
-            {
-                setIsShown(false)
-            }
-        }
+        // event.preventDefault()
+        // console.log(event);
+        
+        // if(contextMenu.current )
+        // {
+        //     const ctxDiv = contextMenu.current as HTMLDivElement;
+        //     if(!ctxDiv.contains(event.target as HTMLDivElement))
+        //     {
+        //         setIsShown(false)
+        //     }
+        // }
     }
     const handleEscapeKey = (event: KeyboardEvent) => {  
         switch (event.key)
@@ -76,23 +84,24 @@ function AnimesTable(props: DataProps) {
     }
 
     useEffect(() => {
-        document.addEventListener('click', eventMouseClickHandle )
+        document.addEventListener('contextmenu', eventMouseClickHandle )
         document.addEventListener('keydown', handleEscapeKey )
         return () => {
-            document.removeEventListener('click', eventMouseClickHandle)
+            document.removeEventListener('contextmenu', eventMouseClickHandle)
             document.removeEventListener('keydown', handleEscapeKey)
         }
     }, [])
     
     const save = () => {
-       let inputs = document.querySelectorAll('input');
-       const currentRecord = props.data[Number.parseInt(rowID)-1] as Anime
-       inputs.forEach((inputValue) => {
-       
+  
+       let inputs = modal.current?.querySelectorAll('.mantine-Modal-body input');
+       const currentRecord = props.data.find((v) => parseInt(v.ID) === parseInt(rowID)) as Anime
+       inputs && inputs.forEach((inputValue) => {
+        const inputElement = inputValue as HTMLInputElement
         inputValue.id === 'url' ?
-        (currentRecord[inputValue.name] as { url: string, value: string }).url = inputValue.value
+        (currentRecord[inputElement.name] as { url: string, value: string }).url = inputElement.value
         :
-        (currentRecord[inputValue.name] as { url: string, value: string }).value = inputValue.value
+        (currentRecord[inputElement.name] as { url: string, value: string }).value = inputElement.value
           
        })
       
@@ -146,7 +155,7 @@ function AnimesTable(props: DataProps) {
                 
                 
                 return (
-                        <RecordRow  handleClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
+                        <RecordRow   handleClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
                     
                     )
                     
@@ -157,21 +166,25 @@ function AnimesTable(props: DataProps) {
             
         <Modal opened={EditMode} onClose={() => setEditMode(false)} title={`Edit Row: ${rowID}`} scrollAreaComponent={ScrollArea.Autosize}>
             {/* {Object.entries(props.data).find((value) => value. == rowID )} */}
-           {rowID && Object.entries(props.data[Number.parseInt(rowID)-1]).map(([header, data]) => {
+            {/* Object.entries(props.data[Number.parseInt(rowID)-1]).map(([header, data]) */}
+            <div ref={modal}>
+           {rowID && Object.entries(props.data.find((value) => parseInt(value.ID) === parseInt(rowID) )?? {})?.map(([header, data]) => {
+
             if(typeof data === 'string' || header === 'ID')
                 return <></>
-                return(
-                    <>
-                    <Text>{header}</Text>
-                    <Group className="mt-3 mb-3">
-                        <TextInput name={header} defaultValue={data.value} placeholder={"Value"}></TextInput>
-                        <TextInput name={header} id="url" defaultValue={data.url} placeholder="URL"></TextInput>
-                    </Group>
-                    <Divider className="mb-3"></Divider>
-                    </>
-                )
+            return(
+                <>
+                <Text>{header}</Text>
+                <Group className="mt-3 mb-3">
+                    <TextInput name={header} defaultValue={data.value} placeholder={"Value"}></TextInput>
+                    <TextInput name={header} id="url" defaultValue={data.url} placeholder="URL"></TextInput>
+                </Group>
+                <Divider className="mb-3"></Divider>
+                </>
+            )
             
-           })} 
+        })} 
+        </div>
            <Group className="justify-around">
             <Button variant="outline" color="green" onClick={save}>SAVE</Button>
             <Button variant="outline" color="red" onClick={() => setEditMode(false)}>Cancel</Button>
