@@ -1,4 +1,4 @@
-import { ASTKinds, comparison_1, comparison_2, comparison_3, statement_1, statement, and_1, not_statement, or_1 } from "../output";
+import { ASTKinds, comparison_1, comparison_2, comparison_3, statement_1, statement, and_1, not_statement, or_1, or } from "../output";
 
 
 export type T_AnimeNoID = {
@@ -183,12 +183,22 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
       return false;
     }
 
+    if((head[0] === '""' || head[0] === "''")) 
+    {
+      head[0] = '';
+    }
+
+    
+
     if(isID)
     { 
       result = parseInt(head[0]) === parseInt(rowHeader) ||  tail.some((v) => (parseInt(v.element[0]) === parseInt(rowHeader)))
     }
     else if (isNumeric)
     {
+      head[0] === '' ? 
+      result = result = head[0].toString().includes(rowHeader.value) ||  tail.some((v) => v.element[0].toString().includes(rowHeader.value)) 
+      :
       result = parseInt(head[0]) === parseInt(rowHeader.value) ||  tail.some((v) => (parseInt(v.element[0]) === parseInt(rowHeader.value)))
     }
     else
@@ -204,7 +214,7 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
  export const FSM: test = {
     [ASTKinds.comparison_1]: (row: Anime, statement: comparison_1, headers: TDataHeaders) => computeComp1(row, statement as comparison_1, headers),
     [ASTKinds.comparison_2]: (row: Anime, statement: comparison_2, headers: TDataHeaders) => computeComp2(row, statement as comparison_2, headers),
-    [ASTKinds.comparison_3]: (row: Anime, statement: comparison_3) => true,
+    [ASTKinds.comparison_3]: (row: Anime, statement: comparison_3,  headers: TDataHeaders) => (FSM[statement.query.kind]?.(row, statement.query, headers) ?? false),
     [ASTKinds.statement_1]: (row: Anime, statement: statement_1, headers: TDataHeaders) => computeNot(row, statement.not as not_statement, headers),
     [ASTKinds.and_1]: (row: Anime, statement: and_1, headers: TDataHeaders) => computeAnd(row, statement as and_1, headers),
     [ASTKinds.or_1]: (row: Anime, statement: or_1, headers: TDataHeaders) => computeOr(row, statement as or_1, headers),
