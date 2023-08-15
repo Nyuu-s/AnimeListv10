@@ -11,6 +11,7 @@
     "version": "0.1.0"
   },
   "tauri": {
+    
     "allowlist": {
       "all": false,
       "app": {
@@ -34,8 +35,21 @@
         "all": false,
         "execute": false,
         "open": false,
-        "scope": [],
-        "sidecar": false
+        "sidecar": true,
+        "scope": [
+
+          { 
+            "name": "./python/script", 
+            "sidecar": true,
+            "args": [
+              "arg1",
+              {
+                "validator": "\\S+"
+              }
+            ] 
+          }
+
+        ]
       },
       "dialog": {
         "all": false, 
@@ -50,17 +64,17 @@
 
     },
     
-    "bundle": {
+    "bundle": {    
+      "externalBin": [
+        "./python/script"
+      ],
+    
       "active": true,
       "category": "DeveloperTool",
       "copyright": "",
       "deb": {
         "depends": []
       },
-      
-      "externalBin": [
-         
-      ],
       
       "icon": [
         "icons/32x32.png",

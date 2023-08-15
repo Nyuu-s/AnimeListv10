@@ -68,7 +68,7 @@ pub fn save_window_config(
 #[tauri::command]
 pub fn import_file(data_file_path: String,  ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles> ) -> Result<serde_json::Value, String> {
   
-  let script_path = "python/script.py";
+  let script_path = "python/script-x86_64-pc-windows-msvc.exe";
 
   let cache_path = get_app_dir_string(DirName::Cache, &ctx, filenames.clone()).ok_or("Invalid cache path".to_string())?;
   
@@ -149,9 +149,9 @@ pub async fn safe_to_quit(data_state: State<'_, SessionDataState>, ctx: State<'_
 
 
 fn execute_python_script(script_path: &str, file_path: &str) -> Result<String, Box<dyn std::error::Error>> {
- 
-  let output = Command::new("python")
-      .arg(script_path)
+
+  let output = Command::new(script_path)
+      // .arg(script_path)
       .arg(file_path)
       .output()?;
   if output.status.success() {

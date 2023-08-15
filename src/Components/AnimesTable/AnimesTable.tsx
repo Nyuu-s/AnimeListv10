@@ -1,19 +1,12 @@
 import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea } from "@mantine/core";
-import AnimesTableURL from "./AnimesTableURL";
 
-import { invoke } from "@tauri-apps/api";
 import { useNavigate } from "react-router-dom";
 import RecordRow from "./RecordRow";
 import { useEffect, useRef, useState } from "react";
 import ContextMenu from "./ContextMenu";
-import { Anime, T_AnimeNoID } from "../Helpers/useAnime";
-import { input } from "@material-tailwind/react";
+import { Anime } from "../Helpers/useAnime";
 import { useDataState } from "../../context";
 import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons-react";
-import { MdFilter } from "react-icons/md";
-import { FaArrowUp, FaFilter, FaSort } from "react-icons/fa";
-import { HiOutlineBarsArrowUp , HiOutlineBarsArrowDown} from "react-icons/hi2";
-import { LuArrowUpAZ } from "react-icons/lu";
 
 
 type TableOption = {
@@ -84,10 +77,9 @@ function AnimesTable(props: DataProps) {
     }
 
     useEffect(() => {
-        document.addEventListener('contextmenu', eventMouseClickHandle )
+   
         document.addEventListener('keydown', handleEscapeKey )
         return () => {
-            document.removeEventListener('contextmenu', eventMouseClickHandle)
             document.removeEventListener('keydown', handleEscapeKey)
         }
     }, [])
