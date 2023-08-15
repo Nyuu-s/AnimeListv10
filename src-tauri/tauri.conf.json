@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "AnimesList10",
-    "version": "0.1.0"
+    "version": "0.1.2"
   },
   "tauri": {
     
@@ -39,7 +39,7 @@
         "scope": [
 
           { 
-            "name": "./python/script", 
+            "name": "./python/script/script", 
             "sidecar": true,
             "args": [
               "arg1",
@@ -66,7 +66,10 @@
     
     "bundle": {    
       "externalBin": [
-        "./python/script"
+        "./python/script/script"
+      ],
+      "resources": [
+        "./python/script/"
       ],
     
       "active": true,
@@ -92,7 +95,6 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
       "shortDescription": "",
       "targets": "all",
       "windows": {

@@ -5,6 +5,7 @@ use crate::se_app_infos::{DataFiles, TauriConfig, SessionDataState, CustomRespon
 use crate::path_helper::{get_app_dir_path, get_app_dir_string};
 use crate::file_manager::{calculate_file_hash, write_json_file, compress_json_file, helper_write_file , get_file_metadata, write_config};
 
+use std::env;
 use std::fs::remove_file;
 use std::process::Command;
 use std::str::FromStr;
@@ -66,9 +67,10 @@ pub fn save_window_config(
 }
 
 #[tauri::command]
-pub fn import_file(data_file_path: String,  ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles> ) -> Result<serde_json::Value, String> {
+pub fn import_file(app_handle: tauri::AppHandle, data_file_path: String,  ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles> ) -> Result<serde_json::Value, String> {
   
-  let script_path = "python/script-x86_64-pc-windows-msvc.exe";
+  let script_path = "python/script/script-x86_64-pc-windows-msvc.exe";
+  let resolved_path = app_handle.path_resolver().resolve_resource("./python/script/script-x86_64-pc-windows-msvc.exe");
 
   let cache_path = get_app_dir_string(DirName::Cache, &ctx, filenames.clone()).ok_or("Invalid cache path".to_string())?;
   
@@ -78,7 +80,7 @@ pub fn import_file(data_file_path: String,  ctx: State<'_, TauriConfig>, filenam
     //FILE TO RECOVER 
     let backup_compressed_json_file_path = get_app_dir_string(DirName::Backup, &ctx, filenames.clone()).ok_or("Invalid local data path".to_string())?;
 
-  match execute_python_script(script_path, &data_file_path) {
+  match execute_python_script(resolved_path.unwrap().to_str().unwrap(), &data_file_path) {
       Ok(json_str ) => {
         
         //Write json file in cache directory, to be edited, modified etc
