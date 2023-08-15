@@ -1,16 +1,16 @@
-import { ScrollArea, TextInput, Button, Affix, rem } from "@mantine/core"
+import { Affix, Button, ScrollArea, TextInput, rem } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"
-import { SpeedDial, SpeedDialHandler, IconButton, SpeedDialContent, SpeedDialAction, Typography } from "@material-tailwind/react"
+import { IconButton, SpeedDial, SpeedDialAction, SpeedDialContent, SpeedDialHandler, Typography } from "@material-tailwind/react"
 import { IconPlus, IconTrash } from "@tabler/icons-react"
+import { dialog } from "@tauri-apps/api"
 import { useEffect, useState } from "react"
 import { FaSave } from "react-icons/fa"
 import { MdCancel, MdEdit } from "react-icons/md"
-import { AnimeNoID, Animes, T_AnimeNoID, useCastTo } from "./Helpers/useAnime"
-import { useAppState } from "../context/AppContext"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
-import { dialog } from "@tauri-apps/api"
 import { useDataState } from "../context"
+import { useAppState } from "../context/AppContext"
+import { AnimeNoID, Animes, T_AnimeNoID, useCastTo } from "./Helpers/useAnime"
 
 type DetailsType = {
     id: string,
@@ -28,7 +28,7 @@ function DetailsInfo({details}: DetailsProps) {
  const {opened} = useAppState().navState;
  const navigate = useNavigate()
 
- const {getData, removeRecords,setData, saveData} = useDataState();
+ const {removeRecords,setData, saveData} = useDataState();
 
  useEffect(() => {
     const allData = details.data;

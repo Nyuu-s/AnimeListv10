@@ -1,5 +1,5 @@
 
-import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
+import { Badge, Button, Card, Group, Image, Text } from '@mantine/core';
 import { toast } from 'react-toastify';
 
 

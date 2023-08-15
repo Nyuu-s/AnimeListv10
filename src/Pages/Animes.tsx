@@ -1,13 +1,13 @@
 
-import { useEffect, useState } from "react";
-import { useDataState } from "../context";
-import { Aside, Button, Group, Pagination, ScrollArea, TextInput } from '@mantine/core';
-import AnimesTable from "../Components/AnimesTable/AnimesTable";
-import { useAppState } from "../context/AppContext";
+import { Pagination, ScrollArea, TextInput } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
-import { Anime, FSM, computeComp1, computeComp2, computeNot  } from "../Components/Helpers/useAnime";
-import { IconBraces, IconSearch, IconSql } from "@tabler/icons-react";
-import {ASTKinds, and, and_1, comparison, comparison_1, comparison_2, comparison_3, not_statement, or_1, parse, statement, statement_1, statement_2, value} from '../Components/output'
+import { IconBraces, IconSearch } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import AnimesTable from "../Components/AnimesTable/AnimesTable";
+import { Anime, FSM } from "../Components/Helpers/useAnime";
+import { parse } from '../Components/output';
+import { useDataState } from "../context";
+import { useAppState } from "../context/AppContext";
 
 
 

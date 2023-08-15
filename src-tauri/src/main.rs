@@ -20,7 +20,7 @@ use data_commands::{
 };
 use commands::{
   open_external_url,
-  init_app_on_ready,
+  // init_app_on_ready,
   import_file,
   safe_to_quit,
   clean_on_quit,
@@ -55,7 +55,7 @@ tauri::Builder::default()
     loading_data_status, 
     safe_to_quit,
     clean_on_quit, 
-    init_app_on_ready, 
+    // init_app_on_ready, 
     save_data,
     get_data,
     open_external_url,

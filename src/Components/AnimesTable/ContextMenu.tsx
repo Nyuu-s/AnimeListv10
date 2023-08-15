@@ -1,6 +1,6 @@
-import { Menu, Button, Text, ScrollArea } from "@mantine/core";
+import { Menu, ScrollArea } from "@mantine/core";
 import { useViewportSize } from "@mantine/hooks";
-import { IconSettings, IconMessageCircle, IconPhoto, IconSearch, IconArrowsLeftRight, IconTrash } from "@tabler/icons-react";
+import { IconSettings, IconTrash } from "@tabler/icons-react";
 import { ForwardedRef, forwardRef } from "react";
 import { useDataState } from "../../context";
 

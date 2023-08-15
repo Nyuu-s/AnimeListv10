@@ -1,15 +1,15 @@
 
-import { Routes, Route } from 'react-router-dom'
-import Home from './Pages/Home'
-import Animes from './Pages/Animes'
-import Custom404 from './Pages/404'
 import { useEffect } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import Custom404 from './Pages/404'
+import Animes from './Pages/Animes'
+import Home from './Pages/Home'
 
 import { invoke } from '@tauri-apps/api'
-import { useAppState } from './context/AppContext'
 import { toast } from 'react-toastify'
 import Details from './Pages/Details'
 import { useDataState } from './context'
+import { useAppState } from './context/AppContext'
 
 
 type UProperties = {

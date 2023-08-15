@@ -1,9 +1,9 @@
 
+import { Button, Menu, Modal, Text, TextInput } from '@mantine/core';
 import { useCallback, useState } from 'react';
-import { TextInput, Modal, Menu, Button, Text } from '@mantine/core';
 
-import { IconSettings, IconArrowRight, IconUserCircle, IconLogout, IconArrowsLeftRight } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
+import { IconArrowRight, IconArrowsLeftRight, IconLogout, IconSettings, IconUserCircle } from '@tabler/icons-react';
 import { open as openDialog } from '@tauri-apps/api/dialog';
 import { toast } from 'react-toastify';
 import { useDataState } from '../context';

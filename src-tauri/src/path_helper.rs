@@ -10,7 +10,7 @@ pub fn get_app_dir_string(directory: DirName, ctx: &State<'_, TauriConfig>, file
 
  
   match directory {
-    DirName::AppLocalData =>  get_app_dir_path(DirName::AppLocalData, ctx.config.clone(), &filenames)
+    DirName::_AppLocalData =>  get_app_dir_path(DirName::_AppLocalData, ctx.config.clone(), &filenames)
                                 .to_str().map(|s| s.to_string()),
     DirName::AppCache =>      get_app_dir_path(DirName::AppCache, ctx.config.clone(), &filenames)
                                 .to_str().map(|s| s.to_string()),
@@ -43,7 +43,7 @@ pub fn get_app_dir_path(directory: DirName, config: tauri::Config, filenames: &D
 {
  
   match directory {
-    DirName::AppLocalData => path::app_local_data_dir(&config).unwrap().join(filenames.saved_data_dir),
+    DirName::_AppLocalData => path::app_local_data_dir(&config).unwrap().join(filenames.saved_data_dir),
     DirName::AppCache => path::app_cache_dir(&config).unwrap().join(filenames.cached_data_dir),
     DirName::AppBackup => path::app_local_data_dir(&config).unwrap().join(filenames.saved_data_dir).join(filenames.backup_data_dir),
     DirName::LocalData => path::app_local_data_dir(&config).unwrap().join(filenames.saved_data_dir).join(filenames.saved_data),

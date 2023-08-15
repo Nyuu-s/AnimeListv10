@@ -3,8 +3,8 @@
 import { Divider } from "@mantine/core";
 
 import { useMediaQuery } from '@mantine/hooks';
-import { useAppState } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
+import { useAppState } from "../../context/AppContext";
 
 
 interface CustomNavLinkProps {

@@ -1,5 +1,5 @@
 
-use std::{sync::Mutex};
+use std::sync::Mutex;
 use serde::Serialize;
 pub struct TauriConfig {
   pub config: tauri::Config
@@ -106,7 +106,7 @@ impl Default for UserConfig {
 
 pub enum Configurations {
     Window(WindowConfig),
-    User(UserConfig)
+    _User(UserConfig)
 }
 
 pub enum DirName {
@@ -114,7 +114,7 @@ pub enum DirName {
   Cache,
   Backup,
   AppBackup,
-  AppLocalData,
+  _AppLocalData,
   AppCache,
   Config,
   UserConfig,

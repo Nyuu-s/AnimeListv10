@@ -1,10 +1,10 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { useMantineTheme, Image } from '@mantine/core';
-import { FaWindowMinimize, FaRegWindowMaximize, FaRegWindowRestore } from 'react-icons/fa';
+import { Image, useMantineTheme } from '@mantine/core';
+import { listen } from "@tauri-apps/api/event";
+import { useCallback, useEffect, useState } from 'react';
+import { FaRegWindowMaximize, FaRegWindowRestore, FaWindowMinimize } from 'react-icons/fa';
 import { MdClose } from 'react-icons/md';
 import FileMenu from './FileMenu';
-import { listen } from "@tauri-apps/api/event";
 import CustomDialog from './ThreeButtonDialog';
 
 

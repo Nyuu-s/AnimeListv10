@@ -1,6 +1,5 @@
 import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea } from "@mantine/core";
 
-import { useNavigate } from "react-router-dom";
 import RecordRow from "./RecordRow";
 import { useEffect, useRef, useState } from "react";
 import ContextMenu from "./ContextMenu";
@@ -29,7 +28,6 @@ function AnimesTable(props: DataProps) {
     const {saveData} = useDataState()
     const contextMenu = useRef(null)
     const modal = useRef<HTMLDivElement>(null)
-    const navigate = useNavigate()
  const Options = 
     props.tableOption.isSticky ? " sticky top-0 bg-black" : ""
     const [EditMode, setEditMode] = useState(false)
@@ -52,20 +50,6 @@ function AnimesTable(props: DataProps) {
         setRowID(rowDataID);
         console.log({ x: event.clientX, y: event.clientY }, rowDataID);
         event.stopPropagation()
-    }
-    const eventMouseClickHandle = (event: MouseEvent) => {
-
-        // event.preventDefault()
-        // console.log(event);
-        
-        // if(contextMenu.current )
-        // {
-        //     const ctxDiv = contextMenu.current as HTMLDivElement;
-        //     if(!ctxDiv.contains(event.target as HTMLDivElement))
-        //     {
-        //         setIsShown(false)
-        //     }
-        // }
     }
     const handleEscapeKey = (event: KeyboardEvent) => {  
         switch (event.key)
@@ -141,7 +125,7 @@ function AnimesTable(props: DataProps) {
             </thead>
             <tbody>
                 
-            {Array.isArray(props.data) && props.data.map((value, index) =>{ 
+            {Array.isArray(props.data) && props.data.map((value) =>{ 
 
                 
                 

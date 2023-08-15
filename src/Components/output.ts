@@ -469,7 +469,7 @@ export class Parser {
         this.reset(mrk);
         return null;
     }
-    private run<T>($$dpth: number, fn: $$RuleType<T>): Nullable<T> {
+    private run<T>(_$$dpth: number, fn: $$RuleType<T>): Nullable<T> {
         const mrk = this.mark();
         const res = fn()
         if (res !== null)

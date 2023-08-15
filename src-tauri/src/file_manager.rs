@@ -44,12 +44,12 @@ pub fn helper_write_file<T: AsRef<[u8]>>(content: &T, output_path: &str) -> Resu
     Ok(())
 }
 
-pub fn compress_json_str(json_str: &str, output_path: &str) -> Result<Vec<u8>, String>
-{
-  //COMPRESS DATA
-  let compressed = helper_compress(json_str)?;
-  Ok(compressed)
-}
+// pub fn compress_json_str(json_str: &str, output_path: &str) -> Result<Vec<u8>, String>
+// {
+//   //COMPRESS DATA
+//   let compressed = helper_compress(json_str)?;
+//   Ok(compressed)
+// }
 
 pub fn compress_json_file(file_path: &str) -> Result<Vec<u8>, String>
 {
@@ -93,7 +93,7 @@ pub fn write_config(filepath: &PathBuf, cfg: Configurations) -> Result<(), Strin
       Configurations::Window(window_cfg) => {
         fs::write(filepath, window_cfg.to_byte_array()).expect("ooopsie");
       },
-      Configurations::User(user_cfg) => {}
+      Configurations::_User(_user_cfg) => {}
   }
   Ok(())
 }

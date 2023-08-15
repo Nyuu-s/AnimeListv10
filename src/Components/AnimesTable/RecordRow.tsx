@@ -1,9 +1,6 @@
 import { invoke } from "@tauri-apps/api";
-import AnimesTableURL from "./AnimesTableURL"
-import { useNavigate } from "react-router-dom"
-import { Menu, Button, Text } from "@mantine/core";
-import { IconSettings, IconMessageCircle, IconPhoto, IconSearch, IconArrowsLeftRight, IconTrash } from "@tabler/icons-react";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AnimesTableURL from "./AnimesTableURL";
 
 interface DataProps {
     dataHeaders: string[],

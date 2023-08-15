@@ -26,16 +26,16 @@ pub fn open_external_url(url: &str) -> Result<(), String> {
     Ok(())
 }
 
-#[tauri::command]
-pub async fn init_app_on_ready(data_state: State<'_, SessionDataState>, filenames: State<'_, DataFiles<'_>>, ctx: State<'_, TauriConfig>) -> Result<(), String> {
+// #[tauri::command]
+// pub async fn init_app_on_ready(data_state: State<'_, SessionDataState>, filenames: State<'_, DataFiles<'_>>, ctx: State<'_, TauriConfig>) -> Result<(), String> {
 
-  // let json_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames);
-  // let hashcode = calculate_file_hash(json_path.to_str().unwrap()).await.map_err(|err| format!("{}", err))?;
-  // let mut data_guard = data_state.hashcode.lock().unwrap();
-  // *data_guard = hashcode;
+//   // let json_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames);
+//   // let hashcode = calculate_file_hash(json_path.to_str().unwrap()).await.map_err(|err| format!("{}", err))?;
+//   // let mut data_guard = data_state.hashcode.lock().unwrap();
+//   // *data_guard = hashcode;
   
-    Ok(())
-}
+//     Ok(())
+// }
 
 
 

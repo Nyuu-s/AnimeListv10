@@ -1,4 +1,4 @@
-import { ASTKinds, comparison_1, comparison_2, comparison_3, statement_1, statement, and_1, not_statement, or_1, or } from "../output";
+import { ASTKinds, and_1, comparison_1, comparison_2, comparison_3, not_statement, or_1, statement_1 } from "../output";
 
 
 export type T_AnimeNoID = {
