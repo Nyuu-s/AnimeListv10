@@ -7,7 +7,12 @@ module.exports = {
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
+
     extend: {
+      cursor: {
+        'col-resize': 'col-resize',
+        'ew-resize': 'ew-resize'
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

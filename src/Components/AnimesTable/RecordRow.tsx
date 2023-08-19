@@ -6,8 +6,8 @@ interface DataProps {
     dataHeaders: string[],
     data: any,
     ID: string,
-    handleClick: (event: React.MouseEvent<HTMLTableRowElement>, rowData: any) => void
-
+    handleRightClick: (event: React.MouseEvent<HTMLTableRowElement>, rowData: any) => void
+    handleLeftClick: () => void
 }
 
 async function openExternalUrl(url: string) {
@@ -31,7 +31,7 @@ function RecordRow(props : DataProps) {
     return (
         
         
-            <tr onDoubleClick={() =>   navigate("/details/"+props.ID)} onContextMenu={(e) => props.handleClick(e, props.ID)}>
+            <tr onDoubleClick={() =>   navigate("/details/"+props.ID)} onClick={() => props.handleLeftClick()} onContextMenu={(e) => props.handleRightClick(e, props.ID)}>
             <td >{props.ID}</td>
                 {props.dataHeaders.map((header, i) => {
                     

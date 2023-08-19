@@ -21,6 +21,8 @@ import { createContext, useContext, useState } from "react";
     fontSize: string| undefined,
     itemsPerPages: number | '',
     isSticky: boolean,
+    isResize: boolean,
+    changeResizeable(value: boolean): void
     changeVSpacing(str: string | undefined): void
     changefontSize(str: string | undefined): void
     changeItemsPP(nb: number | ''): void
@@ -49,6 +51,8 @@ const AppContext = createContext<AppContextType>({
       fontSize: "",
       itemsPerPages: '',
       isSticky: false,
+      isResize: true,
+      changeResizeable: () => {},
       changeStickness: () => {},
       changeVSpacing: () => {},
       changefontSize: () => {},
@@ -69,6 +73,7 @@ export function AppProvider({children}: {children: React.ReactNode})
   const [vSpacing, setVSpacing] = useState<string | undefined>("");
   const [fontSize, setfontSize] = useState<string | undefined>("");
   const [isSticky, setIsSticky] = useState<boolean>(false);
+  const [isResize, setIsResize] = useState<boolean>(true);
   const [itemsPerPages, setItemsPerPages] = useState<number | ''>(10);
   const changefontSize = (value: string | undefined) => setfontSize(value);
   const changeItemsPP = (value: number | '') => {
@@ -77,6 +82,9 @@ export function AppProvider({children}: {children: React.ReactNode})
   const changeVSpacing = (value: string | undefined) => setVSpacing(value);
   const changeStickness = (value?: boolean ) => {
     value !== undefined ?  setIsSticky(value) : setIsSticky(() => (!isSticky));
+  }
+  const changeResizeable = (value: boolean) => {
+    setIsResize(value);
   }
   
   const [opened, setOpened] = useState<boolean>(false);
@@ -92,6 +100,8 @@ export function AppProvider({children}: {children: React.ReactNode})
     fontSize,
     itemsPerPages,
     isSticky,
+    isResize,
+    changeResizeable,
     changeStickness,
     changeItemsPP,
     changeVSpacing,

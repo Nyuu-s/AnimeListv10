@@ -12,7 +12,7 @@ import { useAppState } from "../context/AppContext";
 
 
 function Animes() {
-    const {vSpacing, itemsPerPages, fontSize, isSticky} = useAppState().tableSettings;
+    const {vSpacing, itemsPerPages, fontSize, isSticky, isResize} = useAppState().tableSettings;
     const { width, height } = useViewportSize();
     const { sortData, getData, getHeaders, AnimesContent} = useDataState();
     const [paginatedData, setPaginatedData] = useState<any>({})
@@ -98,7 +98,7 @@ function Animes() {
         <AnimesTable 
           spacingOptions={{verticalSpacing: vSpacing !== undefined ? vSpacing : "", fontSize: fontSize !== undefined ? fontSize: "" }}
           dataHeaders={getHeaders().map((value) => value.header)} data={paginatedData} 
-          tableOption={{isSticky}}
+          tableOption={{isSticky, isResize}}
           sortHeader={setSortAsc} 
         />
 

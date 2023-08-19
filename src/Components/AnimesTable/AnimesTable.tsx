@@ -5,11 +5,14 @@ import { useEffect, useRef, useState } from "react";
 import ContextMenu from "./ContextMenu";
 import { Anime } from "../Helpers/useAnime";
 import { useDataState } from "../../context";
-import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons-react";
+import { IconArrowsSort, IconMinusVertical, IconSeparator, IconSeparatorVertical, IconSortAscending, IconSortDescending } from "@tabler/icons-react";
+import { FaGripLinesVertical, FaGripVertical } from "react-icons/fa";
+import { MdVerticalSplit } from "react-icons/md";
 
 
 type TableOption = {
     isSticky: boolean,
+    isResize: boolean
 }
 
 type TableSpacing = {
@@ -36,8 +39,33 @@ function AnimesTable(props: DataProps) {
     const [sortingHeader, setSortingHeader] = useState<string>('');
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [rowID, setRowID] = useState<string>('');
+   
     const SortingStatus = [true, false, undefined]
+    let dragging = false;
+    let dragStartX: number;
+    let dragStartWidth: number;
+    function handleMouseDown(event: any) {
+        dragging = true;
+        dragStartX = event.clientX;
+        dragStartWidth = event.target.closest('th').children[0].offsetWidth;
+        console.log(dragStartWidth);
+        
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+      }
 
+      function handleMouseMove(event: any) {
+        if (dragging) {
+          const distance = event.clientX - dragStartX;
+          event.target.closest('th').children[0].style.width = `${dragStartWidth + distance}px`;
+          console.log(event.target.closest('th').style.width);
+        }
+      }
+      function handleMouseUp() {
+        dragging = false;
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      }
     const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>, rowDataID: string) => {
         event.preventDefault();
         if(isShown && rowDataID === rowID)
@@ -90,36 +118,41 @@ function AnimesTable(props: DataProps) {
       
       
       <>
-      <Table  striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
+      <Table striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
             
             <thead>
                 <tr className={`${Options}  `}>
                     {props.dataHeaders.map((header) => (
-                        <th onClick={() => {
-                            console.log(header, sortingHeader);
-                            
-                            if(header !== sortingHeader)
-                            {
-                                props.sortHeader( {direction: SortingStatus[0] as boolean, header} )
-                                SetisSorting(1);
-                            }
-                            else{
-                                props.sortHeader(isSorting === 2 ? SortingStatus[isSorting] as undefined : {direction: SortingStatus[isSorting] as boolean, header} )
-                                SetisSorting((prev) => (prev + 1) % 3 )
-                                // setSortingHeader(isSorting === 2 ? '' : header);
-                            }
-                            
-                            setSortingHeader(header);
-                          
-                        }} key={header}> 
-                            <Group className="flex-row min-w-fit min-w-max">
-                                <span className="cursor-pointer">{header}</span>
-                                <span className="mt-1">
-                                    {(isSorting === 0 || header !== sortingHeader) && <IconArrowsSort size={20}/>}
-                                    {isSorting === 1 &&  header === sortingHeader && <IconSortAscending size={20}/>}
-                                    {isSorting === 2 && header === sortingHeader && < IconSortDescending size={20}/>}
-                                </span>
-                            </Group>  </th>
+                        <th   key={header}> 
+                            <div className="flex">
+                                <div className="flex" onClick={() => {
+                                        
+                                        
+                                        if(header !== sortingHeader)
+                                        {
+                                            props.sortHeader( {direction: SortingStatus[0] as boolean, header} )
+                                            SetisSorting(1);
+                                        }
+                                        else{
+                                            props.sortHeader(isSorting === 2 ? SortingStatus[isSorting] as undefined : {direction: SortingStatus[isSorting] as boolean, header} )
+                                            SetisSorting((prev) => (prev + 1) % 3 )
+                                            // setSortingHeader(isSorting === 2 ? '' : header);
+                                        }
+                                        
+                                        setSortingHeader(header);
+                                    
+                                    }}>
+                                    <div className="cursor-pointer">{header}</div>
+                                    <div className="mt-1 ml-2">
+                                        {(isSorting === 0 || header !== sortingHeader) && <IconArrowsSort size={20}/>}
+                                        {isSorting === 1 &&  header === sortingHeader && <IconSortAscending size={20}/>}
+                                        {isSorting === 2 && header === sortingHeader && < IconSortDescending size={20}/>}
+                                    </div>
+                                </div>
+                                
+                                {props.tableOption.isResize && <div onMouseDown={handleMouseDown} className="ml-auto cursor-ew-resize"><IconMinusVertical /></div>}
+                            </div> 
+                             </th>
                         ))}
                 </tr>
             </thead>
@@ -131,7 +164,7 @@ function AnimesTable(props: DataProps) {
                 
                 
                 return (
-                        <RecordRow   handleClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
+                        <RecordRow  handleLeftClick={() => setIsShown(false)} handleRightClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
                     
                     )
                     
