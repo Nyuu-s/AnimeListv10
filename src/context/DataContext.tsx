@@ -60,6 +60,11 @@ class AnimesData {
     }
 
     private RecTypeCheck = (rowID: number, header: string): string =>  {  
+        let headerName:string;
+        typeof header === 'object' ?
+            headerName = header['header']
+        :
+            headerName = header;
         if(rowID > Object.keys(this.data).length)
         {
             return "string";
@@ -77,6 +82,8 @@ class AnimesData {
         }
         else
         {
+   
+
             const headerValueAsObj = this.data[rowID][header] as {url: string, value: string}
             if(headerValueAsObj.value === '' ||  headerValueAsObj.value === undefined){
                
@@ -141,9 +148,19 @@ function AnimeDataBuilder(obj: object): AnimesData
     const inputObject = obj as AnimeDataSet
     const DataSet = inputObject.data as Animes;
     const DataHeaders: TDataHeaders = [];
-    inputObject.headers.forEach((v) => {
-        DataHeaders.push({header: v, headerType: '' })
-    })
+    if(typeof inputObject.headers[0] === 'object')
+    {
+        inputObject.headers.forEach((v) => {
+            const value = v as {header: string, headerType: string}
+            DataHeaders.push(value)
+         })
+    }
+    else
+    {
+        inputObject.headers.forEach((v) => {
+           DataHeaders.push({header: v as string, headerType: '' })
+        })
+    }
     return new AnimesData(DataSet, DataHeaders);
 }
 

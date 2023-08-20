@@ -3,6 +3,7 @@
 interface UrlProps {
     id: any,
     clickFunc: () => void,
+    navigateFunc: () => void,
     display: string,
 
 }
@@ -14,7 +15,7 @@ const AnimesTableURL = (props: UrlProps) => {
         key={props.id}
         className="cursor-text"
         //onClick={}  on click cell edit cell value
-        
+        onDoubleClick={props.navigateFunc}
     >
           <span
           onClick={props.clickFunc}

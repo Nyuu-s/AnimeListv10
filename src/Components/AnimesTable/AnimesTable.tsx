@@ -39,6 +39,7 @@ function AnimesTable(props: DataProps) {
     const [sortingHeader, setSortingHeader] = useState<string>('');
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [rowID, setRowID] = useState<string>('');
+    const [multiSelect, setMultiSelect] = useState<{ [key: string]: any}>({});
    
     const SortingStatus = [true, false, undefined]
     let dragging = false;
@@ -95,6 +96,33 @@ function AnimesTable(props: DataProps) {
             document.removeEventListener('keydown', handleEscapeKey)
         }
     }, [])
+
+    function addOrDeleteToMultiSelect(add:boolean, ID: string) {
+        if(add)
+        {
+            setMultiSelect((prev) => ({...prev, [ID]: true}))
+        }
+        else
+        {
+           
+           setMultiSelect((prev) => {
+            const { [ID]: _, ...rest } = prev;
+            return rest
+           })
+        }
+    }
+    useEffect(() => {
+        console.log(multiSelect);
+    
+
+    }, [multiSelect])
+    useEffect(() => {
+        window.addEventListener('DeleteRows', () => setMultiSelect([]) );
+     
+       return () => {
+         window.addEventListener('DeleteRows', () => setMultiSelect([]) );
+       }
+     }, [])
     
     const save = () => {
   
@@ -118,10 +146,11 @@ function AnimesTable(props: DataProps) {
       
       
       <>
-      <Table striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
+      <Table  striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
             
             <thead>
                 <tr className={`${Options}  `}>
+                    <th></th>
                     {props.dataHeaders.map((header) => (
                         <th   key={header}> 
                             <div className="flex">
@@ -164,14 +193,14 @@ function AnimesTable(props: DataProps) {
                 
                 
                 return (
-                        <RecordRow  handleLeftClick={() => setIsShown(false)} handleRightClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
+                        <RecordRow AddorDeleteMulti={addOrDeleteToMultiSelect}  handleLeftClick={() => setIsShown(false)} handleRightClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
                     
                     )
                     
             })}
             </tbody>
         </Table>
-            {isShown && !EditMode && <ContextMenu setShown={setIsShown} ref={contextMenu} ID={rowID} position={position} setEdit={(v) => setEditMode(v)} />}
+            {isShown && !EditMode && <ContextMenu SingleID={rowID} setShown={setIsShown} ref={contextMenu} IDs={Object.keys(multiSelect)} position={position} setEdit={(v) => setEditMode(v)} />}
             
         <Modal opened={EditMode} onClose={() => setEditMode(false)} title={`Edit Row: ${rowID}`} scrollAreaComponent={ScrollArea.Autosize}>
             {/* {Object.entries(props.data).find((value) => value. == rowID )} */}

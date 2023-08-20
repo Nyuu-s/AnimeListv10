@@ -10,12 +10,17 @@ interface ctx {
     position: { x: number, y: number},
     setEdit: (value: boolean) => void
     setShown: (value: boolean) => void,
-    ID: string
+    IDs: string[],
+    SingleID: string
 }
 
 const ContextMenu = forwardRef((props: ctx, ref: ForwardedRef<HTMLDivElement>) => {
   const { height } = useViewportSize();
   const {removeRecords} = useDataState()
+  // const IDList = [ ...(new Set([props.SingleID.toString(), ...props.IDs ]))]
+  const IDList = props.IDs.length > 0 ? props.IDs : [props.SingleID]
+  console.log(IDList, props.SingleID, props.IDs);
+  
   return (
     <>
         {  <div
@@ -27,11 +32,12 @@ const ContextMenu = forwardRef((props: ctx, ref: ForwardedRef<HTMLDivElement>) =
     <Menu shadow="md" opened  closeOnClickOutside closeOnItemClick  width={200}>
       <Menu.Dropdown >
         <ScrollArea >
-            <Menu.Label>Row: {props.ID}</Menu.Label>
+            <Menu.Label>Row: {IDList.join(', ')}</Menu.Label>
             <Menu.Item icon={<IconSettings size={14} />} onClick={() => props.setEdit(true)}>Edit</Menu.Item>
             <Menu.Divider />
             <Menu.Item color="red" icon={<IconTrash size={14} />} onClick={() => {
-              removeRecords([props.ID])
+              removeRecords(IDList)
+              window.dispatchEvent(new CustomEvent('DeleteRows', {}))
               props.setShown(false)
             }} >Delete</Menu.Item>
         </ScrollArea>

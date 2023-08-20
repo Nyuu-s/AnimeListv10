@@ -16,7 +16,7 @@ export type Animes  = {
 
 export type AnimeDataSet  = {
     data:  Animes;
-    headers: string[],   
+    headers: string[] | Array<{header: string, headerType: string}>,   
 }
 
 
