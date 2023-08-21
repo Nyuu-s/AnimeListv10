@@ -8,7 +8,7 @@ interface UrlProps {
 
 }
 
-const AnimesTableURL = (props: UrlProps) => {
+const RecordsTableURL = (props: UrlProps) => {
   return (
     <td 
 
@@ -28,4 +28,4 @@ const AnimesTableURL = (props: UrlProps) => {
   )
 }
 
-export default  AnimesTableURL;
+export default  RecordsTableURL;

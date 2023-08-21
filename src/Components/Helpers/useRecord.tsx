@@ -1,39 +1,39 @@
 import { ASTKinds, and_1, comparison_1, comparison_2, comparison_3, not_statement, or_1, statement_1 } from "../output";
 
 
-export type T_AnimeNoID = {
+export type T_RecordNoID = {
     [key: string]: { url: string; value: string };
 }
 
-export type Anime  = {
+export type Record  = {
     [key: string]: string | { url: string; value: string };
     ID: string
 }
 
-export type Animes  = {
-  [key: string]: Anime;
+export type Records  = {
+  [key: string]: Record;
 }
 
-export type AnimeDataSet  = {
-    data:  Animes;
+export type RecordDataSet  = {
+    data:  Records;
     headers: string[] | Array<{header: string, headerType: string}>,   
 }
 
 
 
-export class AnimeNoID {
-    private data: T_AnimeNoID;
+export class RecordNoID {
+    private data: T_RecordNoID;
 
-    constructor(animeNoID: T_AnimeNoID) {
-        this.data = {...animeNoID}
+    constructor(recordNoID: T_RecordNoID) {
+        this.data = {...recordNoID}
       }
 
-    getAnime(): T_AnimeNoID {
+    getRecord(): T_RecordNoID {
         return this.data;
     }
-    setAnime(anime: T_AnimeNoID)
+    setRecord(record: T_RecordNoID)
     {
-        this.data = anime;
+        this.data = record;
     }
 
   // Implement the [Symbol.iterator]() method
@@ -63,8 +63,8 @@ export class AnimeNoID {
       }
 
 }
-type ConditionalType<T> = T extends Animes ? Animes : T_AnimeNoID;
-export function  useCastTo<T extends T_AnimeNoID | Animes> (obj: any) : ConditionalType<T>{
+type ConditionalType<T> = T extends Records ? Records : T_RecordNoID;
+export function  useCastTo<T extends T_RecordNoID | Records> (obj: any) : ConditionalType<T>{
   
   // Initialize the new object
   const newObject: ConditionalType<T> = {};
@@ -79,10 +79,10 @@ export function  useCastTo<T extends T_AnimeNoID | Animes> (obj: any) : Conditio
   return newObject;
 }
 
-export const useCastToAnimeNoID = (obj: any): T_AnimeNoID => {
+export const useCastToRecordNoID = (obj: any): T_RecordNoID => {
   
     // Initialize the new object
-    const newObject: T_AnimeNoID = {};
+    const newObject: T_RecordNoID = {};
 
     for (const key in obj) {
       // Check if the property is of the desired format
@@ -107,7 +107,7 @@ export const useCastToAnimeNoID = (obj: any): T_AnimeNoID => {
     '<': (a:any, b:any): boolean => a < b,
     '=': (a:string, b:string): boolean => a.includes(b),
   };
-export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeaders): boolean =>  {
+export const computeComp1 = (row: Record, comp: comparison_1, headers: TDataHeaders): boolean =>  {
     let result = false;
     const compID = comp.id.toLocaleString();
     const isNumeric = headers.find((v) => v.header === compID)?.headerType === 'numeric';
@@ -157,7 +157,7 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
     return result;
   }
 
- export const computeComp2 = (row: Anime, comp: comparison_2, headers: TDataHeaders) => {
+ export const computeComp2 = (row: Record, comp: comparison_2, headers: TDataHeaders) => {
     let result = false;
     const compID = comp.id.toLocaleString();
     
@@ -212,25 +212,25 @@ export const computeComp1 = (row: Anime, comp: comparison_1, headers: TDataHeade
   [key in ASTKinds]?: (...args: any[]) => boolean;
 };
  export const FSM: test = {
-    [ASTKinds.comparison_1]: (row: Anime, statement: comparison_1, headers: TDataHeaders) => computeComp1(row, statement as comparison_1, headers),
-    [ASTKinds.comparison_2]: (row: Anime, statement: comparison_2, headers: TDataHeaders) => computeComp2(row, statement as comparison_2, headers),
-    [ASTKinds.comparison_3]: (row: Anime, statement: comparison_3,  headers: TDataHeaders) => (FSM[statement.query.kind]?.(row, statement.query, headers) ?? false),
-    [ASTKinds.statement_1]: (row: Anime, statement: statement_1, headers: TDataHeaders) => computeNot(row, statement.not as not_statement, headers),
-    [ASTKinds.and_1]: (row: Anime, statement: and_1, headers: TDataHeaders) => computeAnd(row, statement as and_1, headers),
-    [ASTKinds.or_1]: (row: Anime, statement: or_1, headers: TDataHeaders) => computeOr(row, statement as or_1, headers),
+    [ASTKinds.comparison_1]: (row: Record, statement: comparison_1, headers: TDataHeaders) => computeComp1(row, statement as comparison_1, headers),
+    [ASTKinds.comparison_2]: (row: Record, statement: comparison_2, headers: TDataHeaders) => computeComp2(row, statement as comparison_2, headers),
+    [ASTKinds.comparison_3]: (row: Record, statement: comparison_3,  headers: TDataHeaders) => (FSM[statement.query.kind]?.(row, statement.query, headers) ?? false),
+    [ASTKinds.statement_1]: (row: Record, statement: statement_1, headers: TDataHeaders) => computeNot(row, statement.not as not_statement, headers),
+    [ASTKinds.and_1]: (row: Record, statement: and_1, headers: TDataHeaders) => computeAnd(row, statement as and_1, headers),
+    [ASTKinds.or_1]: (row: Record, statement: or_1, headers: TDataHeaders) => computeOr(row, statement as or_1, headers),
 
   }
 
-export const computeNot = (row: Anime, statement: not_statement,  headers: TDataHeaders): boolean => {
+export const computeNot = (row: Record, statement: not_statement,  headers: TDataHeaders): boolean => {
     return  !(FSM[statement.value.kind]?.(row, statement.value, headers) ?? false);
   }
 
-export const computeAnd = (row: Anime, statement: and_1, headers: TDataHeaders ): boolean => {
+export const computeAnd = (row: Record, statement: and_1, headers: TDataHeaders ): boolean => {
    // if left is not true, no need to check right because its AND operand
    return ((FSM[statement.left.kind]?.(row, statement.left, headers) ?? false) && ( FSM[statement.right.kind]?.(row, statement.right, headers) ?? false));
 }
 
-export const computeOr = (row: Anime, statement: or_1, headers: TDataHeaders ): boolean => {
+export const computeOr = (row: Record, statement: or_1, headers: TDataHeaders ): boolean => {
   // if left is true, no need to check right because its OR operand
   return ( (FSM[statement.left.kind]?.(row, statement.left, headers) ?? false) || (FSM[statement.right.kind]?.(row, statement.right, headers) ?? false))
 

@@ -10,11 +10,11 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 import { useDataState } from "../context"
 import { useAppState } from "../context/AppContext"
-import { AnimeNoID, Animes, T_AnimeNoID, useCastTo } from "./Helpers/useAnime"
+import { RecordNoID, Records, T_RecordNoID, useCastTo } from "./Helpers/useRecord"
 
 type DetailsType = {
     id: string,
-    data: Animes
+    data: Records
 }
 interface DetailsProps {
     details: DetailsType
@@ -22,8 +22,8 @@ interface DetailsProps {
 
 function DetailsInfo({details}: DetailsProps) {
  const [EditMode, setEditMode] = useState<boolean>(false)
- const [currentAnime, setCurrentAnime] = useState<AnimeNoID | undefined>(undefined)
- const [inputs, setInputs] = useState<T_AnimeNoID | undefined>(undefined)
+ const [currentRecord, setCurrentRecord] = useState<RecordNoID | undefined>(undefined)
+ const [inputs, setInputs] = useState<T_RecordNoID | undefined>(undefined)
 
  const {opened} = useAppState().navState;
  const navigate = useNavigate()
@@ -34,23 +34,23 @@ function DetailsInfo({details}: DetailsProps) {
     const allData = details.data;
     if(allData != undefined)
     {
-      const anime = new AnimeNoID(useCastTo<T_AnimeNoID>(allData[details.id]))
-      setCurrentAnime(anime);
-      setInputs({...anime.getAnime()})
+      const record = new RecordNoID(useCastTo<T_RecordNoID>(allData[details.id]))
+      setCurrentRecord(record);
+      setInputs({...record.getRecord()})
     }
     else
     {
-      setCurrentAnime(undefined)
+      setCurrentRecord(undefined)
     }
 }, [details.data])
 
  const handleSubmit = (event: any) => {
     event.preventDefault()
-    const animeID = details.id
+    const recordID = details.id
     console.log(inputs);
     if(inputs){
-      currentAnime?.setAnime(inputs)
-      setData({...details.data, [animeID]: {...inputs, ID: animeID}, })
+      currentRecord?.setRecord(inputs)
+      setData({...details.data, [recordID]: {...inputs, ID: recordID}, })
       saveData(0);
     }
 
@@ -61,7 +61,7 @@ function DetailsInfo({details}: DetailsProps) {
   const handleChange = (event:any) => {
     const name = event.target.name;
     const value = event.target.value;
-    const defaults = inputs as T_AnimeNoID
+    const defaults = inputs as T_RecordNoID
 
     
     if(event.target.id == 'url')
@@ -106,7 +106,7 @@ function DetailsInfo({details}: DetailsProps) {
 
     
   const handleCancel = () => {
-    setInputs({...currentAnime?.getAnime()})
+    setInputs({...currentRecord?.getRecord()})
     setEditMode(false)
   }
 
@@ -133,7 +133,7 @@ const matches = useMediaQuery('(min-width: 768px)');
       <section id="fields" className="col-span-5 col-start-2 md:col-span-3  " style={{height: 'calc(100vh - (var(--mantine-header-height, 0px) + 3rem))'}}>
           <ScrollArea className="h-full" >
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-2  gap-y-10 select-none ">
-                {currentAnime && currentAnime.map((data, header) => (
+                {currentRecord && currentRecord.map((data, header) => (
                   <li key={header} className="mt-1"><span className="font-bold"> {header}:</span> {data.value} </li>
                   ))}
             </ul>
@@ -145,7 +145,7 @@ const matches = useMediaQuery('(min-width: 768px)');
             <form id="editform" >
                 <label htmlFor="fun">
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-2  gap-y-16 select-none pr-10 ">
-                {currentAnime && currentAnime.map((data, header) => (
+                {currentRecord && currentRecord.map((data, header) => (
                   <li key={header} className=" pb-5"><span className="font-bold"> {header}:</span> 
                     <TextInput id="value" name={header} onChange={handleChange} placeholder="Value" defaultValue={data.value} /> 
                     <TextInput id="url" name={header}  className="mt-2" onChange={handleChange} placeholder="URL" defaultValue={data.url} /> 

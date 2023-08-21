@@ -3,24 +3,24 @@ import { Pagination, ScrollArea, TextInput } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { IconBraces, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import AnimesTable from "../Components/AnimesTable/AnimesTable";
-import { Anime, FSM } from "../Components/Helpers/useAnime";
+import RecordsTable from "../Components/RecordsTable/RecordTable";
+import { Record, FSM } from "../Components/Helpers/useRecord";
 import { parse } from '../Components/output';
 import { useDataState } from "../context";
 import { useAppState } from "../context/AppContext";
 
 
 
-function Animes() {
+function Records() {
     const {vSpacing, itemsPerPages, fontSize, isSticky, isResize} = useAppState().tableSettings;
     const { width, height } = useViewportSize();
-    const { sortData, getData, getHeaders, AnimesContent} = useDataState();
+    const { sortData, getData, getHeaders, RecordsContent} = useDataState();
     const [paginatedData, setPaginatedData] = useState<any>({})
     const [activePage, setPage] = useState(1);
     const [searchMode, setSearchMode] = useState(true);
     const [sortAsc, setSortAsc] = useState<{direction: boolean, header: string}| undefined>(undefined)
    
-    const [filteredData, setFilteredData] = useState<Anime[]>()
+    const [filteredData, setFilteredData] = useState<Record[]>()
 
     //TODO: Fix pagination when searching 
     //TODO enable sorting while filtering
@@ -81,7 +81,7 @@ function Animes() {
         activePage * items
       );
       setPaginatedData(slicedData);
-    }, [filteredData, sortAsc, activePage, itemsPerPages, AnimesContent])
+    }, [filteredData, sortAsc, activePage, itemsPerPages, RecordsContent])
 
 
 
@@ -95,7 +95,7 @@ function Animes() {
 
     <ScrollArea offsetScrollbars w={width} h={height-200} className="">
 
-        <AnimesTable 
+        <RecordsTable 
           spacingOptions={{verticalSpacing: vSpacing !== undefined ? vSpacing : "", fontSize: fontSize !== undefined ? fontSize: "" }}
           dataHeaders={getHeaders().map((value) => value.header)} data={paginatedData} 
           tableOption={{isSticky, isResize}}
@@ -114,4 +114,4 @@ function Animes() {
   )
 }
 
-export default Animes
+export default Records

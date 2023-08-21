@@ -3,7 +3,7 @@ import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea } fro
 import RecordRow from "./RecordRow";
 import { useEffect, useRef, useState } from "react";
 import ContextMenu from "./ContextMenu";
-import { Anime } from "../Helpers/useAnime";
+import { Record } from "../Helpers/useRecord";
 import { useDataState } from "../../context";
 import { IconArrowsSort, IconMinusVertical, IconSeparator, IconSeparatorVertical, IconSortAscending, IconSortDescending } from "@tabler/icons-react";
 import { FaGripLinesVertical, FaGripVertical } from "react-icons/fa";
@@ -21,13 +21,13 @@ type TableSpacing = {
 }
 interface DataProps {
     dataHeaders: string[],
-    data: [Anime],
+    data: [Record],
     tableOption: TableOption,
     spacingOptions: TableSpacing
     sortHeader: (value: {direction: boolean, header: string} | undefined) => void
 }
 
-function AnimesTable(props: DataProps) {
+function RecordsTable(props: DataProps) {
     const {saveData} = useDataState()
     const contextMenu = useRef(null)
     const modal = useRef<HTMLDivElement>(null)
@@ -127,7 +127,7 @@ function AnimesTable(props: DataProps) {
     const save = () => {
   
        let inputs = modal.current?.querySelectorAll('.mantine-Modal-body input');
-       const currentRecord = props.data.find((v) => parseInt(v.ID) === parseInt(rowID)) as Anime
+       const currentRecord = props.data.find((v) => parseInt(v.ID) === parseInt(rowID)) as Record
        inputs && inputs.forEach((inputValue) => {
         const inputElement = inputValue as HTMLInputElement
         inputValue.id === 'url' ?
@@ -234,4 +234,4 @@ function AnimesTable(props: DataProps) {
   )
 }
 
-export default AnimesTable
+export default RecordsTable

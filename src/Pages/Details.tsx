@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DetailsInfo from "../Components/DetailsInfo";
-import { Animes } from "../Components/Helpers/useAnime";
+import { Records } from "../Components/Helpers/useRecord";
 import { useDataState } from "../context";
 
 function Details() {
-  const [currentData, setCurrentData] = useState<undefined | Animes>(undefined)
+  const [currentData, setCurrentData] = useState<undefined | Records>(undefined)
   const {id} = useParams<{id: string}>()
   const {getData} = useDataState();
 

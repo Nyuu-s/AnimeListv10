@@ -2,7 +2,7 @@
 import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Custom404 from './Pages/404'
-import Animes from './Pages/Animes'
+import Records from './Pages/Records'
 import Home from './Pages/Home'
 
 import { invoke } from '@tauri-apps/api'
@@ -105,7 +105,7 @@ useEffect(() => {
     <> 
       <Routes> 
         <Route path='/' element={<Home />}/>
-        <Route path='/list' element={<Animes />}/>
+        <Route path='/list' element={<Records />}/>
         <Route path='/details/:id' element={<Details />}/>
         <Route path="*" element={<Custom404 />} />
       </Routes>

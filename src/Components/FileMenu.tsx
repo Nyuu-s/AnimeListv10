@@ -11,14 +11,14 @@ import { useDataState } from '../context';
 
 
 
-type AnimeFile = {
+type RecordFile = {
     file: string,
     path: string
 }
 
 
 
-async function handleDialog() : Promise<AnimeFile>
+async function handleDialog() : Promise<RecordFile>
 {
 
     try {
@@ -50,7 +50,7 @@ function FileMenu() {
     const [opened, { open, close }] = useDisclosure(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [dataAlreadyImportedMessage, setDataAlreadyImportedMessage] = useState<string | undefined>(undefined);
-    const [value, setValue] = useState<AnimeFile | undefined>(undefined);
+    const [value, setValue] = useState<RecordFile | undefined>(undefined);
     const onWindowClose = useCallback(async () => {
         const { appWindow } = await import("@tauri-apps/api/window");
         appWindow.close();
@@ -107,8 +107,9 @@ function FileMenu() {
                 <TextInput className='w-4/6'  placeholder={`${value != undefined ? value.file : '.xlsx'}`} label="Select File" disabled  withAsterisk />
                 <Button className='mt-6 sm:w-1/4 w-full' compact variant="outline" color="indigo" onClick={() => {
                     handleDialog().then((v) => {
+                        
                         setValue(v)
-                        if(dataAlreadyImportedMessage !== undefined)
+                        if(dataAlreadyImportedMessage !== undefined && v.file !== '' || v.path !== '')
                         {
                             setIsButtonDisabled(true);
                             toast.warn(

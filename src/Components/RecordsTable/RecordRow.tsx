@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api";
 import { useNavigate } from "react-router-dom";
-import AnimesTableURL from "./AnimesTableURL";
+import RecordsTableURL from "./RecordsTableURL";
 import { Checkbox } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 
@@ -65,7 +65,7 @@ function RecordRow(props : DataProps) {
                         if(props.data[header] && props.data[header].url != "")
                         {
                             
-                            return( <AnimesTableURL key={i} id={i} navigateFunc={handleDoubleClick} clickFunc={()=> openExternalUrl(props.data[header].url)} display={props.data[header]?.value}/>)
+                            return( <RecordsTableURL key={i} id={i} navigateFunc={handleDoubleClick} clickFunc={()=> openExternalUrl(props.data[header].url)} display={props.data[header]?.value}/>)
                         }
                         return(<td onDoubleClick={handleDoubleClick} key={i}  >{props.data[header]?.value }</td>)
                     }
