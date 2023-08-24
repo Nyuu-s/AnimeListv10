@@ -1,0 +1,25 @@
+# This is a basic workflow that is manually triggered
+
+name: Update workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Update Gist
+        env:
+          GIST_ID: 'your-gist-id'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APP_NAME: 'AnimesList10'
+        run: |
+          python update_gist.py "${{ github.event.release.body }}" "${{ github.event.release.name }}"
