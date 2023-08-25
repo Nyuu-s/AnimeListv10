@@ -18,7 +18,7 @@ jobs:
 
       - name: Update Gist
         env:
-          GIST_ID: 'your-gist-id'
+          GIST_ID: ${{ secrets.GIST_UPDATE_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APP_NAME: 'AnimesList10'
         run: |
