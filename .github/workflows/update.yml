@@ -39,5 +39,5 @@ jobs:
           if [ -z "${{ steps.latest_tag.outputs.latest_tag }}" ]; then
             echo "Input value is empty"
           else
-            python update.py "${steps.latest_tag.outputs.latest_tag}" 
+            python update.py "${{steps.latest_tag.outputs.latest_tag}}" 
           fi
