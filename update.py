@@ -32,7 +32,7 @@ data = {
                 'version': version,
                 'platforms': {
                     'darwin-x86_64': {
-                        'signature':  requests.get(f'{ur1}.sig').text,
+                        'signature':  requests.get(f'{url1}.sig').text,
                         'url': url1
                     },
                     'darwin-aarch64': {
