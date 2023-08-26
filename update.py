@@ -14,7 +14,7 @@ headers = {
     'Accept': 'application/vnd.github.v3+json',
 }
 
-version = subprocess.check_output(['git', 'fetch', '-all', '-tags']).decode('utf-8').strip()
+version = subprocess.check_output(['git', 'fetch', '--all', '--tags']).decode('utf-8').strip()
 version = subprocess.check_output(['git', 'describe', '--tags', '--abbrev=0']).decode('utf-8').strip()
 # Function to generate the signature for a platform
 
