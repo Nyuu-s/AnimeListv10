@@ -36,4 +36,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GIST_TOKEN }}
           APP_NAME: 'AnimesList10'
         run: |
-          python update.py "${{ $GITHUB_OUTPUT.latest_tag }}" 
+          python update.py "${GITHUB_OUTPUT.latest_tag}" 
