@@ -18,7 +18,7 @@ headers = {
 version_no_v = version[1:]
 
 def generate_urls(target):
-    url = f"https://github.com/Nyuu-s/AnimeListv10/releases/download/{version}/AnimesList10_{version}_{target}"
+    url = f"https://github.com/Nyuu-s/AnimeListv10/releases/download/{version_no_v}/AnimesList10_{version}_{target}"
     return url
 url1 = generate_urls('x86_64.app.tar.gz')
 url2 = generate_urls('aarch64.app.tar.gz')
