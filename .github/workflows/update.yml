@@ -9,7 +9,7 @@ on:
     inputs:
       version:
       description: 'Version'
-      required: true
+      required: false
       default: '1.0.0'
   release:
     types: [published]
@@ -24,8 +24,11 @@ jobs:
       - name: Get Latest Tag
         id: latest_tag
         run: |
-          latest_tag=$(curl -s "https://api.github.com/repos/${GITHUB_REPOSITORY}/tags" | jq -r '.[0].name')
-          echo "::set-output name=latest_tag::${latest_tag}"
+          latest_tag=${{ github.event.inputs.version }}
+          if [ -z "$latest_tag" ]
+          then
+            latest_tag=$(curl -s "https://api.github.com/repos/${GITHUB_REPOSITORY}/tags" | jq -r '.[0].name')
+          fi
           echo "{latest_tag}={latest_tag}" >> $GITHUB_OUTPUT
       - name: Update Gist
         env:
