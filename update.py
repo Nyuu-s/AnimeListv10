@@ -15,6 +15,7 @@ headers = {
 }
 
 notes = sys.argv[1]
+subprocess.check_call(['git', 'fetch', '--tags'])
 tags = subprocess.check_output(['git', 'tag']).decode('utf-8').strip()
 print('Tags:', tags)
 version = subprocess.check_output(['git', 'describe', '--tags', '--abbrev=0']).decode('utf-8').strip()
