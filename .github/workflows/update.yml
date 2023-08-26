@@ -15,11 +15,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+      - name: Get Latest Tag
+        id: latest_tag
+        run: |
+          latest_tag=$(curl -s "https://api.github.com/repos/${GITHUB_REPOSITORY}/tags" | jq -r '.[0].name')
+          echo "::set-output name=latest_tag::${latest_tag}"
       - name: Update Gist
         env:
           GIST_ID: ${{ secrets.GIST_UPDATE_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APP_NAME: 'AnimesList10'
         run: |
-          python update.py "${{ github.event.release.body }}" 
+          python update.py "${{ steps.latest_tag.outputs.latest_tag }}" 
