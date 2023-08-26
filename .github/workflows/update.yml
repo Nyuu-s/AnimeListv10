@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
+      type: string
       description: 'Version'
       required: false
-      default: '1.0.0'
   release:
     types: [published]
 
