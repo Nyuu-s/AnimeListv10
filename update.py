@@ -8,7 +8,7 @@ import sys
 gist_id = os.environ['GIST_ID']
 token = os.environ['GITHUB_TOKEN']
 filename = 'update.json'
-version = sys.argsv[1]
+version = sys.argv[1]
 
 
 headers = {
