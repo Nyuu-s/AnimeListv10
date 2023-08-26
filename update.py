@@ -15,7 +15,7 @@ headers = {
     'Accept': 'application/vnd.github.v3+json',
 }
 
-
+version_no_v = version[1:]
 
 def generate_urls(target):
     url = f"https://github.com/Nyuu-s/AnimeListv10/releases/download/{version}/AnimesList10_{version}_{target}"
@@ -24,7 +24,7 @@ url1 = generate_urls('x86_64.app.tar.gz')
 url2 = generate_urls('aarch64.app.tar.gz')
 url3 = generate_urls('amd64.AppImage.tar.gz')
 url4 = generate_urls('x64-setup.nsis.zip')
-print(f'{url4}.sig')
+
 data = {
     'files': {
         'update.json': {
