@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-      type: string
-      description: 'Version'
-      required: false
+        type: string
+        description: 'Version'
+        required: false
   release:
     types: [published]
 
