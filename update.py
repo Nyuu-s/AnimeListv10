@@ -20,6 +20,10 @@ headers = {
 def generate_urls(target):
     url = f"https://github.com/Nyuu-s/AnimeListv10/releases/download/{version}/AnimesList10_{version}_{target}"
     return url
+url1 = generate_urls('x86_64.app.tar.gz')
+url2 = generate_urls('aarch64.app.tar.gz')
+url3 = generate_urls('amd64.AppImage.tar.gz')
+url4 = generate_urls('x64-setup.nsis.zip')
 
 data = {
     'files': {
@@ -28,20 +32,20 @@ data = {
                 'version': version,
                 'platforms': {
                     'darwin-x86_64': {
-                        'signature': requests.get(f'{generate_urls('x86_64.app.tar.gz')}.sig').text,
-                        'url': generate_urls('x86_64.app.tar.gz')
+                        'signature':  requests.get(f'{ur1}.sig').text,
+                        'url': url1
                     },
                     'darwin-aarch64': {
-                        'signature': requests.get(f'{generate_urls('aarch64.app.tar.gz')}.sig').text,
-                        'url': generate_urls('aarch64.app.tar.gz')
+                        'signature': requests.get(f'{url2}.sig').text,
+                        'url': url2
                     },
                     'linux-x86_64': {
-                        'signature': requests.get(f'{generate_urls('amd64.AppImage.tar.gz')}.sig').text,
-                        'url': generate_urls('amd64.AppImage.tar.gz')
+                        'signature': requests.get(f'{url3}.sig').text,
+                        'url': url3
                     },
                     'windows-x86_64': {
-                        'signature': requests.get(f'{generate_urls('x64-setup.nsis.zip')}.sig').text,
-                        'url': generate_urls('x64-setup.nsis.zip')
+                        'signature': requests.get(f'{url4}.sig').text,
+                        'url': url4
         
                     }
                 }
