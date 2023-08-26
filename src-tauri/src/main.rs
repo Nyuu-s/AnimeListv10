@@ -66,7 +66,10 @@ tauri::Builder::default()
       let main_window = app.get_window("main").unwrap();
       main_window.set_size(tauri::Size::Physical(tauri::PhysicalSize { width: *window_config.window_sizex.lock().unwrap() as u32, height: *window_config.window_sizey.lock().unwrap() as u32 })).expect("failed to set window size");
       main_window.set_position(Position::Physical(tauri::PhysicalPosition { x: *window_config.window_posx.lock().unwrap() as i32, y: *window_config.window_posy.lock().unwrap() as i32 })).expect("failed to set window position");
-
+      let handle = app.handle();
+      tauri::async_runtime::spawn(async move {
+        let _response = handle.updater().check().await;
+      });
       Ok(())
     })
   .on_window_event( |event| match event.event() {
