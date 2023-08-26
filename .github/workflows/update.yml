@@ -25,7 +25,7 @@ jobs:
         id: latest_tag
         run: |
           tag=${{ github.event.inputs.version }}
-          if [ -z "$latest_tag" ]
+          if [ -z "$tag" ]
           then
             tag=$(curl -s "https://api.github.com/repos/${GITHUB_REPOSITORY}/tags" | jq -r '.[0].name')
           fi
