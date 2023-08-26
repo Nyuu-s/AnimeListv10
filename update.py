@@ -28,19 +28,19 @@ data = {
                 'version': version,
                 'platforms': {
                     'darwin-x86_64': {
-                        'signature': "",
+                        'signature': requests.get(f'{generate_urls('x86_64.app.tar.gz')}.sig').text,
                         'url': generate_urls('x86_64.app.tar.gz')
                     },
                     'darwin-aarch64': {
-                        'signature': "",
+                        'signature': requests.get(f'{generate_urls('aarch64.app.tar.gz')}.sig').text,
                         'url': generate_urls('aarch64.app.tar.gz')
                     },
                     'linux-x86_64': {
-                        'signature': "",
+                        'signature': requests.get(f'{generate_urls('amd64.AppImage.tar.gz')}.sig').text,
                         'url': generate_urls('amd64.AppImage.tar.gz')
                     },
                     'windows-x86_64': {
-                        'signature': "",
+                        'signature': requests.get(f'{generate_urls('x64-setup.nsis.zip')}.sig').text,
                         'url': generate_urls('x64-setup.nsis.zip')
         
                     }
