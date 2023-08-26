@@ -30,29 +30,12 @@ useEffect(() => {
         //set data + headers object in context
     }
 
-    const checkAndUpdate = async () => {
-      try {
-        const { shouldUpdate } = await checkUpdate();
-        if (shouldUpdate) {
-          // Display dialog or take appropriate action
-          
-          await installUpdate(); 
-          // Installation complete, ask to restart
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-  
-    checkAndUpdate();
     fetchData();
   
 
 }, [])
 
-useEffect(() => {
 
-}, []);
 
 useEffect(() => {
   const readUserCfg = async () => {

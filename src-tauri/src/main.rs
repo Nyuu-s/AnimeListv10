@@ -30,6 +30,7 @@ use se_app_infos::{TauriConfig, DataFiles, InitialDataState};
 use tauri::{Manager, Position};
 use std::sync::Mutex;
 
+
 fn main() {
 
   let context = tauri::generate_context!();
@@ -66,9 +67,20 @@ tauri::Builder::default()
       let main_window = app.get_window("main").unwrap();
       main_window.set_size(tauri::Size::Physical(tauri::PhysicalSize { width: *window_config.window_sizex.lock().unwrap() as u32, height: *window_config.window_sizey.lock().unwrap() as u32 })).expect("failed to set window size");
       main_window.set_position(Position::Physical(tauri::PhysicalPosition { x: *window_config.window_posx.lock().unwrap() as i32, y: *window_config.window_posy.lock().unwrap() as i32 })).expect("failed to set window position");
+      
+      // tauri::updater::builder(app.handle()).should_install(|_current, _latest| true);
       let handle = app.handle();
       tauri::async_runtime::spawn(async move {
-        let _response = handle.updater().check().await;
+        match tauri::updater::builder(handle).check().await {
+          Ok(update) => {
+            if update.is_update_available() {
+              update.download_and_install().await.unwrap();
+            }
+          }
+          Err(e) => {
+            println!("failed to get update: {}", e);
+          }
+        }
       });
       Ok(())
     })
