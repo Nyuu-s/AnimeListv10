@@ -18,7 +18,7 @@ headers = {
 
 
 def generate_urls(target):
-    url = f"https://github.com/Nyuu-s/AnimeListv10/releases/download/v{version}/AnimesList10_{version}_{target}"
+    url = f"https://github.com/Nyuu-s/AnimeListv10/releases/download/{version}/AnimesList10_{version}_{target}"
     return url
 
 data = {
