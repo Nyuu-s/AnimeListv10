@@ -5,9 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import ContextMenu from "./ContextMenu";
 import { Record } from "../Helpers/useRecord";
 import { useDataState } from "../../context";
-import { IconArrowsSort, IconMinusVertical, IconSeparator, IconSeparatorVertical, IconSortAscending, IconSortDescending } from "@tabler/icons-react";
-import { FaGripLinesVertical, FaGripVertical } from "react-icons/fa";
-import { MdVerticalSplit } from "react-icons/md";
+import { IconArrowsSort, IconMinusVertical, IconSortAscending, IconSortDescending } from "@tabler/icons-react";
 
 
 type TableOption = {

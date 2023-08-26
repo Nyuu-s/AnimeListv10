@@ -60,11 +60,11 @@ class RecordsData {
     }
 
     private RecTypeCheck = (rowID: number, header: string): string =>  {  
-        let headerName:string;
-        typeof header === 'object' ?
-            headerName = header['header']
-        :
-            headerName = header;
+        // // let headerName:string;
+        // typeof header === 'object' ?
+        //     headerName = header['header']
+        // :
+        //     headerName = header;
         if(rowID > Object.keys(this.data).length)
         {
             return "string";
