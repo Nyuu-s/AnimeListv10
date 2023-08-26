@@ -1,8 +1,7 @@
 
 import { Badge, Button, Card, Group, Image, Text } from '@mantine/core';
 import { toast } from 'react-toastify';
-import { checkUpdate, installUpdate} from "@tauri-apps/api/updater";
-import { useEffect } from 'react';
+
 
 
 
@@ -10,24 +9,7 @@ import { useEffect } from 'react';
 function transformhHours(hours: number) : {Total_minutes: number, Total_days: number, Total_years: number,Total_Hours: number, sentence: string }
 {
 
-  useEffect(() => {
-    const checkAndUpdate = async () => {
-      try {
-        const { shouldUpdate, manifest } = await checkUpdate();
-        if (shouldUpdate) {
-          // Display dialog or take appropriate action
-          console.log(manifest); 
-          
-          await installUpdate(); 
-          // Installation complete, ask to restart
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
-    checkAndUpdate();
-  }, []);
   
 
   const HOURS_IN_DAY = 24;

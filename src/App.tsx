@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'
 import Details from './Pages/Details'
 import { useDataState } from './context'
 import { useAppState } from './context/AppContext'
+import { checkUpdate, installUpdate} from "@tauri-apps/api/updater";
 
 
 type UProperties = {
@@ -29,10 +30,30 @@ useEffect(() => {
         //set data + headers object in context
 
     }
+    const checkAndUpdate = async () => {
+      try {
+        const { shouldUpdate, manifest } = await checkUpdate();
+        if (shouldUpdate) {
+          // Display dialog or take appropriate action
+          console.log(manifest); 
+          
+          await installUpdate(); 
+          // Installation complete, ask to restart
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    checkAndUpdate();
     fetchData();
   
 
 }, [])
+
+useEffect(() => {
+
+}, []);
 
 useEffect(() => {
   const readUserCfg = async () => {
