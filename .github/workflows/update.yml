@@ -22,4 +22,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APP_NAME: 'AnimesList10'
         run: |
-          python update_gist.py "${{ github.event.release.body }}" "${{ github.event.release.name }}"
+          python update.py "${{ github.event.release.body }}" 
