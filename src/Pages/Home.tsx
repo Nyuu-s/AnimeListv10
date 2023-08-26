@@ -16,7 +16,7 @@ function transformhHours(hours: number) : {Total_minutes: number, Total_days: nu
         const { shouldUpdate, manifest } = await checkUpdate();
         if (shouldUpdate) {
           // Display dialog or take appropriate action
-          console.log(manifest);
+          console.log(manifest); 
           
           await installUpdate(); 
           // Installation complete, ask to restart
