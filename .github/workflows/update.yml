@@ -1,0 +1,29 @@
+# This is a basic workflow that is manually triggered
+
+name: Update workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Get Latest Tag
+        id: latest_tag
+        run: |
+          latest_tag=$(curl -s "https://api.github.com/repos/${GITHUB_REPOSITORY}/tags" | jq -r '.[0].name')
+          echo "::set-output name=latest_tag::${latest_tag}"
+      - name: Update Gist
+        env:
+          GIST_ID: ${{ secrets.GIST_UPDATE_ID }}
+          GITHUB_TOKEN: ${{ secrets.GIST_TOKEN }}
+          APP_NAME: 'AnimesList10'
+        run: |
+          python update.py "${{ steps.latest_tag.outputs.latest_tag }}" 
