@@ -24,7 +24,7 @@ url1 = generate_urls('x86_64.app.tar.gz')
 url2 = generate_urls('aarch64.app.tar.gz')
 url3 = generate_urls('amd64.AppImage.tar.gz')
 url4 = generate_urls('x64-setup.nsis.zip')
-
+print(f'{url4}.sig')
 data = {
     'files': {
         'update.json': {
