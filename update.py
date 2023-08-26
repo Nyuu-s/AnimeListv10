@@ -1,7 +1,6 @@
 import requests
 import json
 import os
-import subprocess
 import sys
 
 
@@ -51,9 +50,6 @@ data = {
     }
 }
 
-response = requests.patch(f'https://api.github.com/gists/{gist_id}', headers=headers, data=json.dumps(data))
-
-response.raise_for_status()
 
 response = requests.patch(f'https://api.github.com/gists/{gist_id}', headers=headers, data=json.dumps(data))
 
