@@ -6,8 +6,14 @@ name: Manual Update
 # or API.
 on:
   workflow_dispatch:
+    inputs:
+      version:
+      description: 'Version'
+      required: true
+      default: '1.0.0'
   release:
     types: [published]
+
 
 jobs:
   update-json:
@@ -20,6 +26,7 @@ jobs:
         run: |
           latest_tag=$(curl -s "https://api.github.com/repos/${GITHUB_REPOSITORY}/tags" | jq -r '.[0].name')
           echo "::set-output name=latest_tag::${latest_tag}"
+          echo "{latest_tag}={latest_tag}" >> $GITHUB_OUTPUT
       - name: Update Gist
         env:
           GIST_ID: ${{ secrets.GIST_UPDATE_ID }}
