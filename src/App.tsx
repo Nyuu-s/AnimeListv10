@@ -28,14 +28,13 @@ useEffect(() => {
         const data: object = await invoke("get_data", {});
         setBothDataAndHeaders(data)
         //set data + headers object in context
-
     }
+
     const checkAndUpdate = async () => {
       try {
-        const { shouldUpdate, manifest } = await checkUpdate();
+        const { shouldUpdate } = await checkUpdate();
         if (shouldUpdate) {
           // Display dialog or take appropriate action
-          console.log(manifest); 
           
           await installUpdate(); 
           // Installation complete, ask to restart
