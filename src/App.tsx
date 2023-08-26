@@ -10,7 +10,6 @@ import { toast } from 'react-toastify'
 import Details from './Pages/Details'
 import { useDataState } from './context'
 import { useAppState } from './context/AppContext'
-import { checkUpdate, installUpdate} from "@tauri-apps/api/updater";
 
 
 type UProperties = {
