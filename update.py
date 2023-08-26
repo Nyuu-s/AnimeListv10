@@ -2,11 +2,13 @@ import requests
 import json
 import os
 import subprocess
+import sys
 
 
 gist_id = os.environ['GIST_ID']
 token = os.environ['GITHUB_TOKEN']
 filename = 'update.json'
+version = sys.argsv[1]
 
 
 headers = {
@@ -14,13 +16,9 @@ headers = {
     'Accept': 'application/vnd.github.v3+json',
 }
 
-version = subprocess.check_output(['git', 'fetch', '--all', '--tags']).decode('utf-8').strip()
-version = subprocess.check_output(['git', 'describe', '--tags', '--abbrev=0']).decode('utf-8').strip()
-# Function to generate the signature for a platform
 
 
 def generate_urls(target):
-    # Execute the Tauri Sign CLI command for the platform
     url = f"https://github.com/Nyuu-s/AnimeListv10/releases/download/v{version}/AnimesList10_{version}_{target}"
     return url
 
