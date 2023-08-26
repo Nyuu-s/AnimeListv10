@@ -15,7 +15,10 @@ headers = {
 }
 
 notes = sys.argv[1]
+tags = subprocess.check_output(['git', 'tag']).decode('utf-8').strip()
+print('Tags:', tags)
 version = subprocess.check_output(['git', 'describe', '--tags', '--abbrev=0']).decode('utf-8').strip()
+
 # Function to generate the signature for a platform
 def generate_signature(platform):
     # Execute the Tauri Sign CLI command for the platform
