@@ -1,6 +1,6 @@
 # This is a basic workflow that is manually triggered
 
-name: Update workflow
+name: Manual Update 
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
