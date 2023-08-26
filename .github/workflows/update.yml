@@ -24,12 +24,12 @@ jobs:
       - name: Get Latest Tag
         id: latest_tag
         run: |
-          latest_tag=${{ github.event.inputs.version }}
+          tag=${{ github.event.inputs.version }}
           if [ -z "$latest_tag" ]
           then
-            latest_tag=$(curl -s "https://api.github.com/repos/${GITHUB_REPOSITORY}/tags" | jq -r '.[0].name')
+            tag=$(curl -s "https://api.github.com/repos/${GITHUB_REPOSITORY}/tags" | jq -r '.[0].name')
           fi
-          echo "{latest_tag}={latest_tag}" >> $GITHUB_OUTPUT
+          echo "{latest_tag}={tag}" >> $GITHUB_OUTPUT
       - name: Update Gist
         env:
           GIST_ID: ${{ secrets.GIST_UPDATE_ID }}
