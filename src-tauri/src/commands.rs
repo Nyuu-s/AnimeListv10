@@ -1,12 +1,14 @@
 
 
 use tauri::State;
+use tauri::api::dialog;
 use crate::se_app_infos::{DataFiles, TauriConfig, SessionDataState, CustomResponse ,DirName, WindowConfig, Configurations};
 use crate::path_helper::{get_app_dir_path, get_app_dir_string};
 use crate::file_manager::{calculate_file_hash, write_json_file, compress_json_file, helper_write_file , get_file_metadata, write_config};
 
-use std::env;
+
 use std::fs::remove_file;
+
 use std::process::Command;
 use std::str::FromStr;
 
@@ -148,6 +150,33 @@ pub async fn safe_to_quit(data_state: State<'_, SessionDataState>, ctx: State<'_
 }
 
 
+#[tauri::command]
+pub async fn export_csv(ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles<'_>>) -> Result<String, String> {
+  println!("launch");
+  let folder_path = dialog::blocking::FileDialogBuilder::new().set_title("Select out.csv folder location").pick_folder();
+
+  match folder_path {
+    Some(out) => {
+        let script_path = "python/export/ExportCSV-x86_64-pc-windows-msvc.exe";
+        let output = Command::new(script_path)
+        // .arg(script_path)
+        .arg(out.join("out.csv"))
+        .output().map_err(|err| format!("{}", err));
+       
+      }
+    None => ()
+  }
+  // if output.status.success() {
+  //     println!("Sucess");
+
+      
+  // } else {
+  //   println!("Failure");
+  
+  // }
+  
+  Ok("Sucess".to_string())
+}
 
 
 fn execute_python_script(script_path: &str, file_path: &str) -> Result<String, Box<dyn std::error::Error>> {

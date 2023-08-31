@@ -95,7 +95,14 @@ function FileMenu() {
                open()
                 
                 }} icon={<IconArrowRight size={14} />}>Import</Menu.Item>
-            <Menu.Item rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconArrowsLeftRight size={14} />}>Export to CSV</Menu.Item>
+            <Menu.Item onClick={async () => {
+                try {
+                    await onInvoke('export_csv', {})
+                } catch (error) {
+                    toast.warn("FUCK");
+                }
+              
+            }} rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconArrowsLeftRight size={14} />}>Export to CSV</Menu.Item>
             <Menu.Item color="red" onClick={() => onWindowClose()} icon={<IconLogout size={14} />}>Exit</Menu.Item>
         </Menu.Dropdown>
             

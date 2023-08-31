@@ -16,19 +16,24 @@ use data_commands::{
   load_data, 
   init_session_state,
   get_data, read_window_config,
-  read_user_config
+  read_user_config,
+
 };
 use commands::{
   open_external_url,
   // init_app_on_ready,
   import_file,
+  export_csv,
   safe_to_quit,
   clean_on_quit,
   save_window_config
 };
+use path_helper::get_app_dir_path;
 use se_app_infos::{TauriConfig, DataFiles, InitialDataState};
 use tauri::{Manager, Position};
 use std::sync::Mutex;
+
+
 
 
 fn main() {
@@ -55,7 +60,8 @@ tauri::Builder::default()
     import_file, 
     loading_data_status, 
     safe_to_quit,
-    clean_on_quit, 
+    clean_on_quit,
+    export_csv,
     // init_app_on_ready, 
     save_data,
     get_data,

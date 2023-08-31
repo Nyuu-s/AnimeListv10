@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "AnimesList10",
-    "version": "0.1.9"
+    "version": "0.1.10"
   },
   "tauri": {
     
@@ -52,7 +52,7 @@
         ]
       },
       "dialog": {
-        "all": false, 
+        "all": true, 
         "ask": true, 
         "confirm": true, 
         "message": true, 
@@ -66,10 +66,12 @@
     
     "bundle": {    
       "externalBin": [
-        "./python/script/script"
+        "./python/script/script",
+        "./python/export/ExportCSV"
       ],
       "resources": [
-        "./python/script/"
+        "./python/script/",
+        "./python/export/"
       ],
     
       "active": true,
