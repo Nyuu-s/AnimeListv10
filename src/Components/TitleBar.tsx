@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAppState } from '../context/AppContext';
 import TableSettings from './Tabs/TableSettings';
-import UserSettings from './Tabs/UserSettings';
+import UserPreferences from './Tabs/UserPreferences';
 
 
 function TitleBar() {
@@ -40,7 +40,7 @@ const [test, { open, close }] = useDisclosure(false);
                 onClick={() => {open()}}
                 className={`${activeTab === USER_SETTINGS_ID ? "border-blue-500 hover:border-blue-500": ""}`} 
                 icon={<IconUserShield size="0.8rem" />}>
-                  Users Settings
+                  Users Preferences
             </Tabs.Tab> 
           
             <Tabs.Tab value={NOTIFICATIONS_ID} disabled className={`${activeTab === NOTIFICATIONS_ID ? "border-blue-500 hover:border-blue-500": ""}`} icon={<IconMessageCircle size="0.8rem" />}>Notifications</Tabs.Tab>
@@ -68,7 +68,7 @@ const [test, { open, close }] = useDisclosure(false);
                 <Drawer.CloseButton size={30} className='absolute right-10' />
               </Drawer.Header>
               <Drawer.Body >
-                <UserSettings />
+                <UserPreferences />
               </Drawer.Body >
            
           </Drawer>

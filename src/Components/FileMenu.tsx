@@ -3,10 +3,11 @@ import { Button, Menu, Modal, Text, TextInput } from '@mantine/core';
 import { useCallback, useState } from 'react';
 
 import { useDisclosure } from '@mantine/hooks';
-import { IconArrowRight, IconArrowsLeftRight, IconLogout, IconSettings, IconUserCircle } from '@tabler/icons-react';
+import { IconArrowLeft, IconArrowRight, IconArrowsLeftRight, IconLogout, IconSettings, IconUserCircle } from '@tabler/icons-react';
 import { open as openDialog } from '@tauri-apps/api/dialog';
 import { toast } from 'react-toastify';
 import { useDataState } from '../context';
+import { error } from 'console';
 
 
 
@@ -69,10 +70,10 @@ function FileMenu() {
         </Menu.Target>
 
         <Menu.Dropdown>
-            <Menu.Label>Application</Menu.Label>
-            <Menu.Item rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconSettings size={14} />}>Settings</Menu.Item>
+            <Menu.Label>Configuration</Menu.Label>
+            <Menu.Item disabled rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconSettings size={14} />}>Settings</Menu.Item>
 
-            <Menu.Item rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconUserCircle size={14} />}>Profiles</Menu.Item>
+            <Menu.Item disabled rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconUserCircle size={14} />}>Profiles</Menu.Item>
             {/* <Menu.Item
             icon={<IconSearch size={14} />}
             rightSection={<Text size="xs" color="dimmed">⌘K</Text>}
@@ -82,7 +83,7 @@ function FileMenu() {
 
             <Menu.Divider />
 
-            <Menu.Label>Danger zone</Menu.Label>
+            <Menu.Label>Data</Menu.Label>
             <Menu.Item onClick={async () => {
                 try {
                     await onInvoke('check_current_data', {});
@@ -95,14 +96,46 @@ function FileMenu() {
                open()
                 
                 }} icon={<IconArrowRight size={14} />}>Import</Menu.Item>
-            <Menu.Item onClick={async () => {
-                try {
-                    await onInvoke('export_csv', {})
-                } catch (error) {
-                    toast.warn("FUCK");
-                }
+            <Menu.Item rightSection={<Text size="xs" color="dimmed">CSV</Text>} icon={<IconArrowLeft size={14} />}  onClick={async () => {
+                            toast.promise(
+                                onInvoke('export_csv', {}),
+                                {
+                                  pending: 'Preparing export',
+                                  success: 'CSV Export was successful👌',
+                                  error: 'Something went wrong durng export'
+                                },
+                                {
+                                    theme: 'dark',
+                                    position: 'top-center'
+                                }
+                            )
+   
               
-            }} rightSection={<Text size="xs" color="dimmed">Not yet</Text>} icon={<IconArrowsLeftRight size={14} />}>Export to CSV</Menu.Item>
+                        }}>
+                Export 
+            </Menu.Item>
+            <Menu.Item rightSection={<Text size="xs" color="dimmed">XLSX</Text>} icon={<IconArrowLeft size={14} />}  onClick={async () => {
+                            toast.promise(
+                                onInvoke('export_xlsx', {}),
+                                {
+                                  pending: 'Preparing export',
+                                  success: 'CSV Export was successful👌',
+                                  error: 'Something went wrong durng export'
+                                },
+                                {
+                                    theme: 'dark',
+                                    position: 'top-center'
+                                }
+                            )
+   
+              
+                        }}>
+                Export
+            </Menu.Item>
+            
+            <Menu.Divider />
+
+            <Menu.Label>Danger zone</Menu.Label>
             <Menu.Item color="red" onClick={() => onWindowClose()} icon={<IconLogout size={14} />}>Exit</Menu.Item>
         </Menu.Dropdown>
             

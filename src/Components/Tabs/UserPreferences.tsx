@@ -2,8 +2,8 @@ import { Checkbox, Group } from "@mantine/core"
 import { useAppState } from "../../context/AppContext";
 
 
-function UserSettings() {
-    const {userSettings} = useAppState()
+function UserPreferences() {
+    const {userPreferences} = useAppState()
     const BetaTag = <span className="text-red-600 text-opacity-70 ">*Beta* </span>;
   return (
     <div className='flex flex-col mt-10 w-full'>
@@ -13,7 +13,7 @@ function UserSettings() {
                 </div>
            
 
-                <Checkbox disabled w={150} mb={7} checked={userSettings.isAutoWindowCfgSave} size="md" onChange={() => {userSettings.changeIsAutoWindowCfgSave()}}/>
+                <Checkbox disabled w={150} mb={7} checked={userPreferences.isAutoWindowCfgSave} size="md" onChange={() => {userPreferences.changeIsAutoWindowCfgSave()}}/>
         
             </Group>
 
@@ -21,4 +21,4 @@ function UserSettings() {
   )
 }
 
-export default UserSettings
+export default UserPreferences

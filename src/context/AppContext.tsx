@@ -11,7 +11,7 @@ import { createContext, useContext, useState } from "react";
     close: () => void, 
   }
 
-  type UserSetting= {
+  type UserPreferences= {
     isAutoWindowCfgSave: boolean | undefined,
     changeIsAutoWindowCfgSave(value?: boolean): void
   }
@@ -32,7 +32,7 @@ import { createContext, useContext, useState } from "react";
 type AppContextType = {
     navState: NavState
     tableSettings: TableSettings
-    userSettings: UserSetting
+    userPreferences: UserPreferences
 }
 
 
@@ -58,7 +58,7 @@ const AppContext = createContext<AppContextType>({
       changefontSize: () => {},
       changeItemsPP: () => {}
     },
-    userSettings: {
+    userPreferences: {
       isAutoWindowCfgSave: false,
       changeIsAutoWindowCfgSave: () => {},
     }
@@ -119,13 +119,13 @@ export function AppProvider({children}: {children: React.ReactNode})
   const changeIsAutoWindowCfgSave = (value: boolean | undefined) => {
     value !== undefined ? setIsAutoWindowCfgSave(value) : setIsAutoWindowCfgSave(() => (!isAutoWindowCfgSave));
   }
-  const userSettings = {
+  const userPreferences = {
     isAutoWindowCfgSave,
     changeIsAutoWindowCfgSave
   }
 
     return (
-        <AppContext.Provider value={{ navState, tableSettings, userSettings }}>
+        <AppContext.Provider value={{ navState, tableSettings, userPreferences }}>
             {children}
         </AppContext.Provider>
     )

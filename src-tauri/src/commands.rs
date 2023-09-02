@@ -1,6 +1,6 @@
 
 
-use tauri::State;
+use tauri::{State, AppHandle};
 use tauri::api::dialog;
 use crate::se_app_infos::{DataFiles, TauriConfig, SessionDataState, CustomResponse ,DirName, WindowConfig, Configurations};
 use crate::path_helper::{get_app_dir_path, get_app_dir_string};
@@ -71,7 +71,7 @@ pub fn save_window_config(
 #[tauri::command]
 pub fn import_file(app_handle: tauri::AppHandle, data_file_path: String,  ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles> ) -> Result<serde_json::Value, String> {
   
-  let script_path = "python/script/script-x86_64-pc-windows-msvc.exe";
+  
   let resolved_path = app_handle.path_resolver().resolve_resource("./python/script/script-x86_64-pc-windows-msvc.exe");
 
   let cache_path = get_app_dir_string(DirName::Cache, &ctx, filenames.clone()).ok_or("Invalid cache path".to_string())?;
@@ -151,38 +151,38 @@ pub async fn safe_to_quit(data_state: State<'_, SessionDataState>, ctx: State<'_
 
 
 #[tauri::command]
-pub async fn export_csv(ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles<'_>>) -> Result<String, String> {
-  println!("launch");
-  let folder_path = dialog::blocking::FileDialogBuilder::new().set_title("Select out.csv folder location").pick_folder();
+pub async fn export_csv(app_handle: AppHandle, ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles<'_>>) -> Result<String, String> {
+  let out_file_path = dialog::blocking::FileDialogBuilder::new()
+  .set_title("Select output location")
+  .add_filter("CSV", &["csv"])
+  .save_file();
 
-  match folder_path {
+  let data_file_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames.clone());
+  match out_file_path {
     Some(out) => {
-        let script_path = "python/export/ExportCSV-x86_64-pc-windows-msvc.exe";
-        let output = Command::new(script_path)
-        // .arg(script_path)
-        .arg(out.join("out.csv"))
-        .output().map_err(|err| format!("{}", err));
+        let script_path = app_handle.path_resolver().resolve_resource("./python/export/ExportCSV-x86_64-pc-windows-msvc.exe");
+        Command::new(script_path.unwrap())
+        .arg(out)
+        .arg(data_file_path)
+        .output().map_err(|err| format!("{}", err))?;
        
       }
     None => ()
-  }
-  // if output.status.success() {
-  //     println!("Sucess");
-
-      
-  // } else {
-  //   println!("Failure");
-  
-  // }
-  
+  }  
   Ok("Sucess".to_string())
+}
+
+
+#[tauri::command]
+pub async fn export_xlsx(app_handle: AppHandle, ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles<'_>>) -> Result<(), String> {
+
+  Ok(())
 }
 
 
 fn execute_python_script(script_path: &str, file_path: &str) -> Result<String, Box<dyn std::error::Error>> {
 
   let output = Command::new(script_path)
-      // .arg(script_path)
       .arg(file_path)
       .output()?;
   if output.status.success() {

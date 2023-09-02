@@ -10,38 +10,11 @@ use crate::se_app_infos::WindowConfig;
 use tauri::api::path;
 use crate::path_helper::{get_app_dir_path, get_app_dir_string};
 use crate::file_manager::{decompress_file_json, helper_write_file, get_file_metadata,calculate_file_hash};
-use std::fs::File;
 use std::io::{BufReader, BufRead};
 
-use std::path::Path;
 use std::sync::Mutex;
 use std::fs;
 
-#[tauri::command]
-async fn export_xlsx(cfg: &TauriConfig, filenames: State<'_, DataFiles<'_>>) -> Result<(), String> {
-
-
-  // let workbook = Workbook::new("simple1.xlsx")?;
-
-  // let mut sheet1 = workbook.add_worksheet(None)?;
-  // sheet1.write_string(0, 0, "Red text", Some(&Format::new().set_font_color(FormatColor::Red)))?;
-  // sheet1.write_number(0, 1, 20., None)?;
-  // sheet1.write_formula_num(1, 0, "=10+B1", None, 30.)?;
-  // sheet1.write_url(
-  //     1,
-  //     1,
-  //     "https://github.com/informationsea/xlsxwriter-rs",
-  //     Some(&Format::new().set_font_color(FormatColor::Blue).set_underline(FormatUnderline::Single)),
-  // )?;
-  // sheet1.merge_range(2, 0, 3, 2, "Hello, world", Some(
-  //     &Format::new().set_font_color(FormatColor::Green).set_align(FormatAlignment::CenterAcross)
-  //                   .set_vertical_align(FormatVerticalAlignment::VerticalCenter)))?;
-  
-  // sheet1.set_selection(1, 0, 1, 2);
-  // sheet1.set_tab_color(FormatColor::Cyan);
-  // workbook.close()?;
-  Ok(())
-}
 
 #[derive(serde::Serialize, serde::Deserialize)]
 struct Records {

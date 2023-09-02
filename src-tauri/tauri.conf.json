@@ -57,7 +57,7 @@
         "confirm": true, 
         "message": true, 
         "open": true, 
-        "save": false 
+        "save": true 
       }
      
       

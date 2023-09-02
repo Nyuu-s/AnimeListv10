@@ -5,7 +5,7 @@ import { Record, RecordDataSet, Records, TDataHeaders, T_RecordNoID, useCastTo }
 type DataContextType = {
     getData(): Records
     getHeaders(): TDataHeaders,
-
+    
     setData(data: object): void,
     setHeaders(headers: TDataHeaders): void,
     setBothDataAndHeaders(obj: object): void,
@@ -36,6 +36,21 @@ class RecordsData {
     public set_headers(value: TDataHeaders) {
         this.headers = value;
         this.computeTypes();
+    }
+
+    public get_headers_list() {
+        if (this.headers.length > 0)
+        {
+            if( typeof this.headers[0] !== 'object')
+            {
+                return this.headers
+            }
+            else
+            {
+               return this.headers.map((value) => (value.header))
+            }
+            
+        }
     }
 
     public sort_data(direction: boolean, header: string): Record[]
@@ -199,6 +214,7 @@ export function DataProvider({children}: {children: React.ReactNode})
     const setData = (value: Records) => RecordsContent?.set_data(value); 
     const sortData = (dir: boolean, headerName: string) => RecordsContent.sort_data(dir, headerName);
     const getHeaders = () => (RecordsContent ? RecordsContent.get_headers() : [])
+
     const getData = () => (RecordsContent ? RecordsContent.get_data() : {});
     /**
      * 
