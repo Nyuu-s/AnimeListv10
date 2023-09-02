@@ -44,7 +44,21 @@ jobs:
       - name: Install frontend dependencies
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
         run: npm install # Change this to npm, yarn or pnpm.
-
+      - name: Check for Secret availability
+        id: secret-check
+        # perform secret check & put boolean result as an output
+        shell: bash
+        run: |
+          if [ "${{ secrets.TAURI_PRIVATE_KEY }}" != '' ]; then
+            echo "available=true" >> $GITHUB_OUTPUT;
+          else
+            echo "available=false" >> $GITHUB_OUTPUT;
+          fi
+          if [ "${{ secrets.TAURI_KEY_PASSWORD }}" != '' ]; then
+            echo "available=true" >> $GITHUB_OUTPUT;
+          else
+            echo "available=false" >> $GITHUB_OUTPUT;
+          fi
       - name: Build the app
         uses: tauri-apps/tauri-action@v0
 
