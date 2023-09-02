@@ -3,11 +3,11 @@ import { Button, Menu, Modal, Text, TextInput } from '@mantine/core';
 import { useCallback, useState } from 'react';
 
 import { useDisclosure } from '@mantine/hooks';
-import { IconArrowLeft, IconArrowRight, IconArrowsLeftRight, IconLogout, IconSettings, IconUserCircle } from '@tabler/icons-react';
+import { IconArrowLeft, IconArrowRight, IconLogout, IconSettings, IconUserCircle } from '@tabler/icons-react';
 import { open as openDialog } from '@tauri-apps/api/dialog';
 import { toast } from 'react-toastify';
 import { useDataState } from '../context';
-import { error } from 'console';
+
 
 
 
