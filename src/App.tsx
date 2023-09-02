@@ -19,7 +19,7 @@ type UProperties = {
 
 function App() {
 
-const {userSettings} = useAppState()
+const {userPreferences} = useAppState()
 
 const {setBothDataAndHeaders} = useDataState()
 useEffect(() => {
@@ -40,7 +40,7 @@ useEffect(() => {
   const readUserCfg = async () => {
     try {
       let userCfg: UProperties = await invoke("read_user_config", {});
-      userSettings.changeIsAutoWindowCfgSave(userCfg.is_auto_window_save)
+      userPreferences.changeIsAutoWindowCfgSave(userCfg.is_auto_window_save)
     } catch (error) {
       toast.warn("Invalid user config", {toastId: "warn:usercfg", progress: "false"})
     }
