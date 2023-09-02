@@ -39,10 +39,38 @@
         "scope": [
 
           { 
-            "name": "./python/script/script", 
+            "name": "./python/import/import", 
             "sidecar": true,
             "args": [
               "arg1",
+              {
+                "validator": "\\S+"
+              }
+            ] 
+          },
+          { 
+            "name": "./python/export/ExportCSV", 
+            "sidecar": true,
+            "args": [
+              "arg1",
+              {
+                "validator": "\\S+"
+              },
+              "arg2",
+              {
+                "validator": "\\S+"
+              }
+            ] 
+          },
+          { 
+            "name": "./python/export/ExportXLSX", 
+            "sidecar": true,
+            "args": [
+              "arg1",
+              {
+                "validator": "\\S+"
+              },
+              "arg2",
               {
                 "validator": "\\S+"
               }
@@ -66,11 +94,12 @@
     
     "bundle": {    
       "externalBin": [
-        "./python/script/script",
-        "./python/export/ExportCSV"
+        "./python/import/import",
+        "./python/export/ExportCSV",
+        "./python/export/ExportXLSX"
       ],
       "resources": [
-        "./python/script/",
+        "./python/import/",
         "./python/export/"
       ],
     

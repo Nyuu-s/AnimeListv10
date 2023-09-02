@@ -72,7 +72,7 @@ pub fn save_window_config(
 pub fn import_file(app_handle: tauri::AppHandle, data_file_path: String,  ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles> ) -> Result<serde_json::Value, String> {
   
   
-  let resolved_path = app_handle.path_resolver().resolve_resource("./python/script/script-x86_64-pc-windows-msvc.exe");
+  let resolved_path = app_handle.path_resolver().resolve_resource("./python/import/improt-x86_64-pc-windows-msvc.exe");
 
   let cache_path = get_app_dir_string(DirName::Cache, &ctx, filenames.clone()).ok_or("Invalid cache path".to_string())?;
   
@@ -175,7 +175,22 @@ pub async fn export_csv(app_handle: AppHandle, ctx: State<'_, TauriConfig>, file
 
 #[tauri::command]
 pub async fn export_xlsx(app_handle: AppHandle, ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles<'_>>) -> Result<(), String> {
-
+  let out_file_path = dialog::blocking::FileDialogBuilder::new()
+  .set_title("Select output location")
+  .add_filter("Excel", &["xlsx"])
+  .save_file();
+  let data_file_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames.clone());
+  match out_file_path {
+    Some(out) => {
+        let script_path = app_handle.path_resolver().resolve_resource("./python/export/ExportXLSX-x86_64-pc-windows-msvc.exe");
+        Command::new(script_path.unwrap())
+        .arg(out)
+        .arg(data_file_path)
+        .output().map_err(|err| format!("{}", err))?;
+      
+      }
+    None => ()
+  } 
   Ok(())
 }
 

@@ -24,6 +24,7 @@ use commands::{
   // init_app_on_ready,
   import_file,
   export_csv,
+  export_xlsx,
   safe_to_quit,
   clean_on_quit,
   save_window_config
@@ -62,6 +63,7 @@ tauri::Builder::default()
     safe_to_quit,
     clean_on_quit,
     export_csv,
+    export_xlsx,
     // init_app_on_ready, 
     save_data,
     get_data,

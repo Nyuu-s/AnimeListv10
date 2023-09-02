@@ -119,7 +119,7 @@ function FileMenu() {
                                 onInvoke('export_xlsx', {}),
                                 {
                                   pending: 'Preparing export',
-                                  success: 'CSV Export was successful👌',
+                                  success: 'XLSX Export was successful👌',
                                   error: 'Something went wrong durng export'
                                 },
                                 {
