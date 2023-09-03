@@ -3,10 +3,11 @@ import { Button, Menu, Modal, Text, TextInput } from '@mantine/core';
 import { useCallback, useState } from 'react';
 
 import { useDisclosure } from '@mantine/hooks';
-import { IconArrowLeft, IconArrowRight, IconLogout, IconSettings, IconUserCircle } from '@tabler/icons-react';
+import { IconArrowLeft, IconArrowRight, IconLogout, IconSettings, IconTrash, IconUserCircle } from '@tabler/icons-react';
 import { open as openDialog } from '@tauri-apps/api/dialog';
 import { toast } from 'react-toastify';
 import { useDataState } from '../context';
+import { dialog } from '@tauri-apps/api';
 
 
 
@@ -56,6 +57,34 @@ function FileMenu() {
         const { appWindow } = await import("@tauri-apps/api/window");
         appWindow.close();
       }, []);
+      const onDeleteAllData = useCallback(async () => {
+
+        try {
+            let res = await dialog.ask("This will remove everything. \n Are you sure ? ", {type: "warning"})
+            if(!res)
+                return;
+        } catch (error) {
+            toast.error("Something went wrong")
+        }
+        toast.promise(onInvoke("delete_all", {}), 
+        {
+            pending: 'Removing All Data...',
+            success: 'Successfuly removed all data !',
+            error: {
+                render({data}) {
+                  return `${data}`
+                }
+            }
+        },
+        {
+            theme: 'colored',
+            position: "top-center"
+        })
+        setBothDataAndHeaders({})
+      }, []);
+
+
+      
 
     const onInvoke = useCallback(async (func: string, args: object) => {
         const { invoke } = await import('@tauri-apps/api');
@@ -136,6 +165,7 @@ function FileMenu() {
             <Menu.Divider />
 
             <Menu.Label>Danger zone</Menu.Label>
+            <Menu.Item color="red" onClick={()=> onDeleteAllData()} icon={<IconTrash size={14} />}>Delete Current Data</Menu.Item>
             <Menu.Item color="red" onClick={() => onWindowClose()} icon={<IconLogout size={14} />}>Exit</Menu.Item>
         </Menu.Dropdown>
             

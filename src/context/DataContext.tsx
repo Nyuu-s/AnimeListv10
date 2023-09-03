@@ -160,6 +160,10 @@ const DataContext = createContext<DataContextType>({
 
 function RecordDataBuilder(obj: object): RecordsData
 {
+    if(Object.keys(obj).length <= 0)
+    {
+        return new RecordsData({}, []);
+    }
     const inputObject = obj as RecordDataSet
     const DataSet = inputObject.data as Records;
     const DataHeaders: TDataHeaders = [];

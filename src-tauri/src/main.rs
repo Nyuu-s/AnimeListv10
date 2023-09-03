@@ -17,7 +17,7 @@ use data_commands::{
   init_session_state,
   get_data, read_window_config,
   read_user_config,
-
+  delete_all
 };
 use commands::{
   open_external_url,
@@ -29,7 +29,7 @@ use commands::{
   clean_on_quit,
   save_window_config
 };
-use path_helper::get_app_dir_path;
+
 use se_app_infos::{TauriConfig, DataFiles, InitialDataState};
 use tauri::{Manager, Position};
 use std::sync::Mutex;
@@ -64,6 +64,7 @@ tauri::Builder::default()
     clean_on_quit,
     export_csv,
     export_xlsx,
+    delete_all,
     // init_app_on_ready, 
     save_data,
     get_data,
@@ -76,29 +77,6 @@ tauri::Builder::default()
       main_window.set_size(tauri::Size::Physical(tauri::PhysicalSize { width: *window_config.window_sizex.lock().unwrap() as u32, height: *window_config.window_sizey.lock().unwrap() as u32 })).expect("failed to set window size");
       main_window.set_position(Position::Physical(tauri::PhysicalPosition { x: *window_config.window_posx.lock().unwrap() as i32, y: *window_config.window_posy.lock().unwrap() as i32 })).expect("failed to set window position");
       
-      // tauri::updater::builder(app.handle()).should_install(|_current, _latest| true);
-      let handle = app.handle();
-
-      
-
-      // tauri::async_runtime::spawn(async move {
-      //   match tauri::updater::builder(handle).check().await {
-      //     Ok(update) => {
-      //       if update.is_update_available() {
-      //         let r = update.download_and_install().await.map_err(|err| format!("{}", err));
-      //         match r{
-      //           Ok(())  => println!("All good"),
-      //           Err(err) => println!("{}", err)
-
-      //         } 
-              
-      //       }
-      //     }
-      //     Err(e) => {
-      //       println!("failed to get update: {}", e);
-      //     }
-      //   }
-      // });
       Ok(())
     })
   .on_window_event( |event| match event.event() {

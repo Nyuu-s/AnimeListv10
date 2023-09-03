@@ -34,7 +34,7 @@ export default function Demo() {
          
             <CustomNavLink  path={"/"} display={"Home"} />
             <CustomNavLink  path={"/list"} display={"List"} />
-            <CustomNavLink  path={"/Details"} display={"Details"} />
+          
 
 
           

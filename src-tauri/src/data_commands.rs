@@ -32,7 +32,16 @@ struct JsonData {
     data: Vec<JsonDataSection>
 }
 
-use std::io;
+
+
+#[tauri::command]
+pub async fn delete_all(ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>) -> Result<(), String> {
+  let cache_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames);
+  let local_data_path = get_app_dir_path(DirName::LocalData, ctx.config.clone(), &filenames);
+  fs::write(cache_path,"").map_err(|err| format!("{}", err))?;
+  fs::remove_file(local_data_path).map_err(|_| format!("No data currently loaded."))?;
+  Ok(())
+}
 
 #[tauri::command]
 pub async fn save_data(data_state: State<'_, SessionDataState>, ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>, data: serde_json::Value) -> Result<bool, String> {

@@ -72,7 +72,7 @@ pub fn save_window_config(
 pub fn import_file(app_handle: tauri::AppHandle, data_file_path: String,  ctx: State<'_, TauriConfig>, filenames: State<'_, DataFiles> ) -> Result<serde_json::Value, String> {
   
   
-  let resolved_path = app_handle.path_resolver().resolve_resource("./python/import/improt-x86_64-pc-windows-msvc.exe");
+  let resolved_path = app_handle.path_resolver().resolve_resource("./python/import/import-x86_64-pc-windows-msvc.exe");
 
   let cache_path = get_app_dir_string(DirName::Cache, &ctx, filenames.clone()).ok_or("Invalid cache path".to_string())?;
   
@@ -82,7 +82,7 @@ pub fn import_file(app_handle: tauri::AppHandle, data_file_path: String,  ctx: S
     //FILE TO RECOVER 
     let backup_compressed_json_file_path = get_app_dir_string(DirName::Backup, &ctx, filenames.clone()).ok_or("Invalid local data path".to_string())?;
 
-  match execute_python_script(resolved_path.unwrap().to_str().unwrap(), &data_file_path) {
+  match execute_python_script(&resolved_path.unwrap().to_str().unwrap(), &data_file_path) {
       Ok(json_str ) => {
         
         //Write json file in cache directory, to be edited, modified etc
@@ -94,7 +94,7 @@ pub fn import_file(app_handle: tauri::AppHandle, data_file_path: String,  ctx: S
         helper_write_file(&data, &backup_compressed_json_file_path)?;
         Ok(result_value)
       },
-      Err(e) => Err(e.to_string()),
+      Err(e) => Err(format!("{} ", e.to_string())),
   }
   
 }
