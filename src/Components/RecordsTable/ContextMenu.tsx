@@ -32,7 +32,7 @@ const ContextMenu = forwardRef((props: ctx, ref: ForwardedRef<HTMLDivElement>) =
     <Menu shadow="md" opened  closeOnClickOutside closeOnItemClick  width={200}>
       <Menu.Dropdown >
         <ScrollArea >
-            <Menu.Label>Row: {IDList.join(', ')}</Menu.Label>
+            <Menu.Label>Row: {IDList.length > 5 ? "More than 5 selected" : IDList.join(', ')}</Menu.Label>
             <Menu.Item icon={<IconSettings size={14} />} onClick={() => props.setEdit(true)}>Edit</Menu.Item>
             <Menu.Divider />
             <Menu.Item color="red" icon={<IconTrash size={14} />} onClick={() => {

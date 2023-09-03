@@ -1,4 +1,4 @@
-import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea } from "@mantine/core";
+import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea, Checkbox } from "@mantine/core";
 
 import RecordRow from "./RecordRow";
 import { useEffect, useRef, useState } from "react";
@@ -21,7 +21,8 @@ interface DataProps {
     dataHeaders: string[],
     data: [Record],
     tableOption: TableOption,
-    spacingOptions: TableSpacing
+    spacingOptions: TableSpacing,
+    totalRecords: number,
     sortHeader: (value: {direction: boolean, header: string} | undefined) => void
 }
 
@@ -38,6 +39,7 @@ function RecordsTable(props: DataProps) {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [rowID, setRowID] = useState<string>('');
     const [multiSelect, setMultiSelect] = useState<{ [key: string]: any}>({});
+    const [selectAll, setSelectAll] = useState(false)
    
     const SortingStatus = [true, false, undefined]
     let dragging = false;
@@ -95,6 +97,16 @@ function RecordsTable(props: DataProps) {
         }
     }, [])
 
+    useEffect(() => {
+      //loop all data and add them to multi select
+        for (let index = 0; index < props.totalRecords; index++) {
+            addOrDeleteToMultiSelect(selectAll, `${index+1}` )
+            
+        }
+      
+    }, [selectAll])
+    
+
     function addOrDeleteToMultiSelect(add:boolean, ID: string) {
         if(add)
         {
@@ -148,7 +160,7 @@ function RecordsTable(props: DataProps) {
             
             <thead>
                 <tr className={`${Options}  `}>
-                    <th></th>
+                    <th id="checkAll"><Checkbox onChange={(event) => setSelectAll(event.target.checked)}/></th>
                     {props.dataHeaders.map((header) => (
                         <th   key={header}> 
                             <div className="flex">
@@ -191,7 +203,7 @@ function RecordsTable(props: DataProps) {
                 
                 
                 return (
-                        <RecordRow AddorDeleteMulti={addOrDeleteToMultiSelect}  handleLeftClick={() => setIsShown(false)} handleRightClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
+                        <RecordRow defaultCheckboxesValue={selectAll} AddorDeleteMulti={addOrDeleteToMultiSelect}  handleLeftClick={() => setIsShown(false)} handleRightClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
                     
                     )
                     

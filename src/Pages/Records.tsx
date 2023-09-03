@@ -1,7 +1,7 @@
 
-import { Pagination, ScrollArea, TextInput } from '@mantine/core';
+import { Button, Group, Pagination, ScrollArea, TextInput } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
-import { IconBraces, IconSearch } from "@tabler/icons-react";
+import { IconBraces, IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import RecordsTable from "../Components/RecordsTable/RecordTable";
 import { Record, FSM } from "../Components/Helpers/useRecord";
@@ -88,14 +88,17 @@ function Records() {
   return (
     <>
    
-  
-
+  <Group className="mb-2">
       
     <TextInput onKeyDown={(event) => queryData(event, event.currentTarget.value)}  onChange={(text) => searchData(text.target.value)} className="w-1/2 mb-2 mx-auto" icon={<div className="pointer-events-auto cursor-pointer" onClick={() => setSearchMode(!searchMode)}>{searchMode ? <IconSearch /> : <IconBraces /> }</div>} /> 
+    <Button className='' variant='outline' color='green' > <IconPlus /></Button>
+
+  </Group>
 
     <ScrollArea offsetScrollbars w={width} h={height-200} className="">
 
-        <RecordsTable 
+        <RecordsTable
+          totalRecords={filteredData ? filteredData.length : Object.values(getData()).length} 
           spacingOptions={{verticalSpacing: vSpacing !== undefined ? vSpacing : "", fontSize: fontSize !== undefined ? fontSize: "" }}
           dataHeaders={getHeaders().map((value) => value.header)} data={paginatedData} 
           tableOption={{isSticky, isResize}}

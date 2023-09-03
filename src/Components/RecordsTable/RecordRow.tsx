@@ -8,6 +8,7 @@ interface DataProps {
     dataHeaders: string[],
     data: any,
     ID: string,
+    defaultCheckboxesValue: boolean,
     AddorDeleteMulti: (isAdd: boolean, ID: string) => void,
     handleRightClick: (event: React.MouseEvent<HTMLTableRowElement>, rowData: any) => void
     handleLeftClick: () => void
@@ -46,13 +47,17 @@ function RecordRow(props : DataProps) {
       }
     }, [])
     
+    useEffect(() => {
+      setcheckBox((prev) => props.defaultCheckboxesValue ? false : prev)
+    }, [props.defaultCheckboxesValue])
+    
 
 ;
     return (
         
         
             <tr  onClick={() => props.handleLeftClick()} onContextMenu={(e) => props.handleRightClick(e, props.ID)}>
-            <td><Checkbox checked={checkBox} onChange={(event) => {
+            <td className="checkbox" id={props.ID}><Checkbox  checked={props.defaultCheckboxesValue || checkBox} onChange={(event) => {
                 setcheckBox((prev) => !prev)
                 props.AddorDeleteMulti(event.target.checked , props.ID) 
 
