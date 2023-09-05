@@ -1,11 +1,12 @@
-import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea, Checkbox } from "@mantine/core";
+import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea, Checkbox, Menu } from "@mantine/core";
 
 import RecordRow from "./RecordRow";
 import { useEffect, useRef, useState } from "react";
-import ContextMenu from "./ContextMenu";
+import RecordContextMenu from "./RecordContextMenu";
 import { Record } from "../Helpers/useRecord";
 import { useDataState } from "../../context";
-import { IconArrowsSort, IconMinusVertical, IconSortAscending, IconSortDescending } from "@tabler/icons-react";
+import { IconArrowsSort, IconMinusVertical, IconSortAscending, IconSortDescending, IconTrash } from "@tabler/icons-react";
+import { useClickOutside, useViewportSize } from "@mantine/hooks";
 
 
 type TableOption = {
@@ -28,19 +29,23 @@ interface DataProps {
 
 function RecordsTable(props: DataProps) {
     const {saveData} = useDataState()
-    const contextMenu = useRef(null)
     const modal = useRef<HTMLDivElement>(null)
  const Options = 
     props.tableOption.isSticky ? " sticky top-0 bg-black" : ""
     const [EditMode, setEditMode] = useState(false)
     const [isShown, setIsShown] = useState(false);
+    const [isHeaderMenuShown, setIsHeaderMenuShown] = useState(false);
     const [isSorting, SetisSorting] = useState(0);
     const [sortingHeader, setSortingHeader] = useState<string>('');
     const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [hPosition, setHPosition] = useState({ x: 0, y: 0 });
+    const [selectedHeader, setselectedHeader] = useState("")
     const [rowID, setRowID] = useState<string>('');
     const [multiSelect, setMultiSelect] = useState<{ [key: string]: any}>({});
     const [selectAll, setSelectAll] = useState(false)
-   
+    const headerMenuRef = useClickOutside(() => setIsHeaderMenuShown(false));
+    const rowMenuRef = useClickOutside(() => setIsShown(false));
+    const { height } = useViewportSize();
     const SortingStatus = [true, false, undefined]
     let dragging = false;
     let dragStartX: number;
@@ -49,7 +54,7 @@ function RecordsTable(props: DataProps) {
         dragging = true;
         dragStartX = event.clientX;
         dragStartWidth = event.target.closest('th').children[0].offsetWidth;
-        console.log(dragStartWidth);
+        
         
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
@@ -59,7 +64,7 @@ function RecordsTable(props: DataProps) {
         if (dragging) {
           const distance = event.clientX - dragStartX;
           event.target.closest('th').children[0].style.width = `${dragStartWidth + distance}px`;
-          console.log(event.target.closest('th').style.width);
+         
         }
       }
       function handleMouseUp() {
@@ -77,7 +82,6 @@ function RecordsTable(props: DataProps) {
         setIsShown(true);
         setPosition({ x: event.clientX, y: event.clientY });
         setRowID(rowDataID);
-        console.log({ x: event.clientX, y: event.clientY }, rowDataID);
         event.stopPropagation()
     }
     const handleEscapeKey = (event: KeyboardEvent) => {  
@@ -85,6 +89,7 @@ function RecordsTable(props: DataProps) {
         {
             case 'Escape':
                 setIsShown(false)
+                setIsHeaderMenuShown(false)
                 break;
         }
     }
@@ -121,13 +126,10 @@ function RecordsTable(props: DataProps) {
            })
         }
     }
-    useEffect(() => {
-        console.log(multiSelect);
-    
 
-    }, [multiSelect])
     useEffect(() => {
         window.addEventListener('DeleteRows', () => setMultiSelect([]) );
+
      
        return () => {
          window.addEventListener('DeleteRows', () => setMultiSelect([]) );
@@ -156,15 +158,36 @@ function RecordsTable(props: DataProps) {
       
       
       <>
+      <div
+      ref={headerMenuRef}
+        style={{ top: Math.abs(height - hPosition.y ) < 100 ? hPosition.y -100: hPosition.y - 30  , left: hPosition.x + 10 }}
+        className="fixed z-50 h-40">
+
+          <Menu shadow="md" opened={isHeaderMenuShown}  closeOnClickOutside closeOnItemClick  width={200}>
+            <Menu.Dropdown  >
+                <ScrollArea >
+                    <Menu.Label>Header: {selectedHeader} </Menu.Label>
+                    <Menu.Item color="red" icon={<IconTrash size={14} />}>Delete</Menu.Item>
+                   
+                  
+                </ScrollArea>
+            </Menu.Dropdown>
+            </Menu>
+        </div>
       <Table  striped highlightOnHover verticalSpacing={props.spacingOptions.verticalSpacing} fontSize={props.spacingOptions.fontSize}>
             
             <thead>
-                <tr className={`${Options}  `}>
+                <tr className={`${Options}  `} >
                     <th id="checkAll"><Checkbox onChange={(event) => setSelectAll(event.target.checked)}/></th>
                     {props.dataHeaders.map((header) => (
                         <th   key={header}> 
                             <div className="flex">
-                                <div className="flex" onClick={() => {
+                                <div onContextMenu={(e) => {
+                                        e.preventDefault()
+                                        setHPosition({x: e.clientX, y: e.clientY})
+                                        setselectedHeader(header)
+                                        setIsHeaderMenuShown(true)
+                                    }} className="flex" onClick={() => {
                                         
                                         
                                         if(header !== sortingHeader)
@@ -181,7 +204,7 @@ function RecordsTable(props: DataProps) {
                                         setSortingHeader(header);
                                     
                                     }}>
-                                    <div className="cursor-pointer">{header}</div>
+                                    <div  className="cursor-pointer">{header}</div>
                                     <div className="mt-1 ml-2">
                                         {(isSorting === 0 || header !== sortingHeader) && <IconArrowsSort size={20}/>}
                                         {isSorting === 1 &&  header === sortingHeader && <IconSortAscending size={20}/>}
@@ -203,31 +226,33 @@ function RecordsTable(props: DataProps) {
                 
                 
                 return (
-                        <RecordRow defaultCheckboxesValue={selectAll} AddorDeleteMulti={addOrDeleteToMultiSelect}  handleLeftClick={() => setIsShown(false)} handleRightClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
+                        <RecordRow key={value.ID} defaultCheckboxesValue={selectAll} AddorDeleteMulti={addOrDeleteToMultiSelect}  handleLeftClick={() => setIsShown(false)} handleRightClick={handleRowClick} ID={value.ID} data={value} dataHeaders={props.dataHeaders} />
                     
                     )
                     
             })}
             </tbody>
         </Table>
-            {isShown && !EditMode && <ContextMenu SingleID={rowID} setShown={setIsShown} ref={contextMenu} IDs={Object.keys(multiSelect)} position={position} setEdit={(v) => setEditMode(v)} />}
+            {isShown && !EditMode && <RecordContextMenu  SingleID={rowID} setShown={setIsShown} ref={rowMenuRef} IDs={Object.keys(multiSelect)} position={position} setEdit={(v) => setEditMode(v)} />}
             
         <Modal opened={EditMode} onClose={() => setEditMode(false)} title={`Edit Row: ${rowID}`} scrollAreaComponent={ScrollArea.Autosize}>
             {/* {Object.entries(props.data).find((value) => value. == rowID )} */}
             {/* Object.entries(props.data[Number.parseInt(rowID)-1]).map(([header, data]) */}
             <div ref={modal}>
-           {rowID && Object.entries(props.data.find((value) => parseInt(value.ID) === parseInt(rowID) )?? {})?.map(([header, data]) => {
+           {rowID && Object.entries(props.data.find((value) => parseInt(value.ID) === parseInt(rowID) )?? {})?.map(([header, data], i) => {
 
             if(typeof data === 'string' || header === 'ID')
                 return <></>
             return(
                 <>
-                <Text>{header}</Text>
-                <Group className="mt-3 mb-3">
-                    <TextInput name={header} defaultValue={data.value} placeholder={"Value"}></TextInput>
-                    <TextInput name={header} id="url" defaultValue={data.url} placeholder="URL"></TextInput>
-                </Group>
-                <Divider className="mb-3"></Divider>
+                <div key={i}>
+                    <Text>{header}</Text>
+                    <Group className="mt-3 mb-3">
+                        <TextInput name={header} defaultValue={data.value} placeholder={"Value"}></TextInput>
+                        <TextInput name={header} id="url" defaultValue={data.url} placeholder="URL"></TextInput>
+                    </Group>
+                    <Divider className="mb-3"></Divider>
+                </div>
                 </>
             )
             

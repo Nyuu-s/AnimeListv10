@@ -100,13 +100,15 @@ class RecordsData {
    
 
             const headerValueAsObj = this.data[rowID][header] as {url: string, value: string}
-            if(headerValueAsObj.value === '' ||  headerValueAsObj.value === undefined){
-               
-                rowID += 1;
-                return this.RecTypeCheck(rowID, header);
-            }
-            if(!Number.isNaN(Number.parseInt(headerValueAsObj.value))){
-                return 'numeric'
+            if(headerValueAsObj){
+                if(headerValueAsObj.value === '' ||  headerValueAsObj.value === undefined){
+                   
+                    rowID += 1;
+                    return this.RecTypeCheck(rowID, header);
+                }
+                if(!Number.isNaN(Number.parseInt(headerValueAsObj.value))){
+                    return 'numeric'
+                }
             }
         }
 

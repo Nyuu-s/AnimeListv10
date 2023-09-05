@@ -56,7 +56,7 @@ function RecordRow(props : DataProps) {
     return (
         
         
-            <tr  onClick={() => props.handleLeftClick()} onContextMenu={(e) => props.handleRightClick(e, props.ID)}>
+            <tr key={props.ID} onClick={() => props.handleLeftClick()} onContextMenu={(e) => props.handleRightClick(e, props.ID)}>
             <td className="checkbox" id={props.ID}><Checkbox  checked={props.defaultCheckboxesValue || checkBox} onChange={(event) => {
                 setcheckBox((prev) => !prev)
                 props.AddorDeleteMulti(event.target.checked , props.ID) 

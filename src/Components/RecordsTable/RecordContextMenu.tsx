@@ -14,7 +14,7 @@ interface ctx {
     SingleID: string
 }
 
-const ContextMenu = forwardRef((props: ctx, ref: ForwardedRef<HTMLDivElement>) => {
+const RecordContextMenu = forwardRef((props: ctx, ref: ForwardedRef<HTMLDivElement>) => {
   const { height } = useViewportSize();
   const {removeRecords} = useDataState()
   // const IDList = [ ...(new Set([props.SingleID.toString(), ...props.IDs ]))]
@@ -49,4 +49,4 @@ const ContextMenu = forwardRef((props: ctx, ref: ForwardedRef<HTMLDivElement>) =
 });
 
 
-export default ContextMenu;
+export default RecordContextMenu;
