@@ -3,7 +3,7 @@ import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea, Chec
 import RecordRow from "./RecordRow";
 import { useEffect, useRef, useState } from "react";
 import RecordContextMenu from "./RecordContextMenu";
-import { Record } from "../Helpers/useRecord";
+import { Record, TDataHeaders } from "../Helpers/useRecord";
 import { useDataState } from "../../context";
 import { IconArrowsSort, IconMinusVertical, IconSortAscending, IconSortDescending, IconTrash } from "@tabler/icons-react";
 import { useClickOutside, useViewportSize } from "@mantine/hooks";
@@ -28,7 +28,7 @@ interface DataProps {
 }
 
 function RecordsTable(props: DataProps) {
-    const {saveData} = useDataState()
+    const {saveData, getHeaders, setHeaders} = useDataState()
     const modal = useRef<HTMLDivElement>(null)
  const Options = 
     props.tableOption.isSticky ? " sticky top-0 bg-black" : ""
@@ -167,7 +167,14 @@ function RecordsTable(props: DataProps) {
             <Menu.Dropdown  >
                 <ScrollArea >
                     <Menu.Label>Header: {selectedHeader} </Menu.Label>
-                    <Menu.Item color="red" icon={<IconTrash size={14} />}>Delete</Menu.Item>
+                    <Menu.Item color="red" icon={<IconTrash size={14} />} onClick={()=>{
+                        let arr: TDataHeaders = getHeaders().filter((v) => v.header !== selectedHeader);
+                      
+                        setHeaders(arr)
+                        setIsHeaderMenuShown(false)
+                       
+                    //    saveData(1, test) 
+                    }}>Delete</Menu.Item>
                    
                   
                 </ScrollArea>

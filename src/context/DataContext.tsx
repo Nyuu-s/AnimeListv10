@@ -216,8 +216,12 @@ export function DataProvider({children}: {children: React.ReactNode})
     const [RecordsContent, setRecordsContent] = useState<RecordsData>(new RecordsData({}, []))
 
     const setBothDataAndHeaders = (obj: object) => setRecordsContent(RecordDataBuilder(obj));
-    const setHeaders = (arr: TDataHeaders) => RecordsContent?.set_headers(arr); 
-    const setData = (value: Records) => RecordsContent?.set_data(value); 
+    const setHeaders = (arr: TDataHeaders) =>  setRecordsContent((prev) => {
+       return  new RecordsData({...prev.get_data()}, arr)
+    })
+    const setData = (value: Records) => setRecordsContent((prev) => {
+        return  new RecordsData(value, [...prev.get_headers()])
+     })
     const sortData = (dir: boolean, headerName: string) => RecordsContent.sort_data(dir, headerName);
     const getHeaders = () => (RecordsContent ? RecordsContent.get_headers() : [])
 

@@ -4,10 +4,11 @@ import { useViewportSize } from '@mantine/hooks';
 import { IconBraces, IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import RecordsTable from "../Components/RecordsTable/RecordTable";
-import { Record, FSM, TDataHeaders } from "../Components/Helpers/useRecord";
+import { Record, FSM, TDataHeaders, T_RecordNoID } from "../Components/Helpers/useRecord";
 import { parse } from '../Components/output';
 import { useDataState } from "../context";
 import { useAppState } from "../context/AppContext";
+import { toast } from 'react-toastify';
 
 
 
@@ -20,6 +21,7 @@ function Records() {
     const [searchMode, setSearchMode] = useState(true);
     const [isAddRowOpened, setisAddRowOpened] = useState(false);
     const [isAddHeaderOpened, setisAddHeaderOpened] = useState(false);
+    const [newRow, setnewRow] = useState<T_RecordNoID>({})
     const [sortAsc, setSortAsc] = useState<{direction: boolean, header: string}| undefined>(undefined)
     const [headerInput, setheaderInput] = useState({header: '', headerType: 'string'})
     const [filteredData, setFilteredData] = useState<Record[]>()
@@ -69,7 +71,18 @@ function Records() {
       }
     }
 
+    useEffect(() => {
 
+        let obj: T_RecordNoID = {}
+        getHeaders().map((value) => {
+          if(value.header !== 'ID'){
+            obj[value.header] = {url: '', value: ''}
+          }
+        } )
+        setnewRow(obj)
+      
+    }, [])
+    
     
 
 
@@ -101,13 +114,27 @@ function Records() {
   <Modal title={"Add Record"} opened={isAddRowOpened} onClose={() => setisAddRowOpened(false)}>
     <div>
       {getHeaders().map((value, i) => {
+       
         if(value.header !== 'ID')
         {
-          return <div key={i} className='mt-2'> <TextInput label={value.header}  ></TextInput></div>
+          
+          return <div key={i} className='mt-2'> 
+          <TextInput onChange={(e) => {  setnewRow((v) => ({...v, [value.header]: {url:"", value: e.target.value}} )) }} label={value.header}  />
+          <TextInput onChange={(e) => { setnewRow((v) => ({...v, [value.header]: {url:e.target.value, value: v[value.header].value}} )) }} placeholder='URL' className='mt-2'  />
+          </div>
+
         }
       } )}
       <div className='flex justify-center w-full'>
-        <Button className='mx-auto  mt-3 ' variant='gradient'>Add</Button>
+        <Button className='mx-auto  mt-3 ' variant='gradient' onClick={() => {
+          let entries = Object.entries(getData())
+          let newID = entries.length+1
+         
+          
+          let record = {...newRow, ID: `${newID}`}
+          saveData(2, {...getData(), [newID]: {...record}})
+          toast.info("Row added ", {theme: "colored"})
+        }}>Add</Button>
       </div>
     </div>
   </Modal>
