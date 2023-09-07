@@ -3,10 +3,11 @@ import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea, Chec
 import RecordRow from "./RecordRow";
 import { useEffect, useRef, useState } from "react";
 import RecordContextMenu from "./RecordContextMenu";
-import { Record, TDataHeaders } from "../Helpers/useRecord";
+import { Record } from "../Helpers/useRecord";
 import { useDataState } from "../../context";
 import { IconArrowsSort, IconMinusVertical, IconSortAscending, IconSortDescending, IconTrash } from "@tabler/icons-react";
 import { useClickOutside, useViewportSize } from "@mantine/hooks";
+import { toast } from "react-toastify";
 
 
 type TableOption = {
@@ -28,7 +29,7 @@ interface DataProps {
 }
 
 function RecordsTable(props: DataProps) {
-    const {saveData, getHeaders, setHeaders} = useDataState()
+    const {saveData, deleteHeader} = useDataState()
     const modal = useRef<HTMLDivElement>(null)
  const Options = 
     props.tableOption.isSticky ? " sticky top-0 bg-black" : ""
@@ -168,9 +169,14 @@ function RecordsTable(props: DataProps) {
                 <ScrollArea >
                     <Menu.Label>Header: {selectedHeader} </Menu.Label>
                     <Menu.Item color="red" icon={<IconTrash size={14} />} onClick={()=>{
-                        let arr: TDataHeaders = getHeaders().filter((v) => v.header !== selectedHeader);
-                      
-                        setHeaders(arr)
+                        if(selectedHeader !== 'ID')
+                        {
+                            deleteHeader(selectedHeader)
+                        }
+                        else
+                        {
+                            toast.error('Do not remove this header', {theme: 'colored'})
+                        }
                         setIsHeaderMenuShown(false)
                        
                     //    saveData(1, test) 

@@ -1,10 +1,10 @@
 
-import { Button, Select, Group, Modal, Pagination, ScrollArea, TextInput } from '@mantine/core';
+import { Button, Select, Modal, Pagination, ScrollArea, TextInput } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { IconBraces, IconPlus, IconSearch } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import RecordsTable from "../Components/RecordsTable/RecordTable";
-import { Record, FSM, TDataHeaders, T_RecordNoID } from "../Components/Helpers/useRecord";
+import { Record, FSM, T_RecordNoID } from "../Components/Helpers/useRecord";
 import { parse } from '../Components/output';
 import { useDataState } from "../context";
 import { useAppState } from "../context/AppContext";
@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 function Records() {
     const {vSpacing, itemsPerPages, fontSize, isSticky, isResize} = useAppState().tableSettings;
     const { width, height } = useViewportSize();
-    const { sortData, getData, getHeaders, saveData, RecordsContent} = useDataState();
+    const { sortData, getData, getHeaders, addRecord,addHeader, RecordsContent} = useDataState();
     const [paginatedData, setPaginatedData] = useState<any>({})
     const [activePage, setPage] = useState(1);
     const [searchMode, setSearchMode] = useState(true);
@@ -127,12 +127,8 @@ function Records() {
       } )}
       <div className='flex justify-center w-full'>
         <Button className='mx-auto  mt-3 ' variant='gradient' onClick={() => {
-          let entries = Object.entries(getData())
-          let newID = entries.length+1
-         
-          
-          let record = {...newRow, ID: `${newID}`}
-          saveData(2, {...getData(), [newID]: {...record}})
+          let record = {...newRow, ID: ''}
+          addRecord(record)
           toast.info("Row added ", {theme: "colored"})
         }}>Add</Button>
       </div>
@@ -155,7 +151,7 @@ function Records() {
         dropdownPosition='bottom'/> </div>
       <div className='flex justify-center w-full my-5'>
         <Button onClick={() => {
-          saveData(1, [...getHeaders(), headerInput] )
+          addHeader(headerInput)
         }} className='mx-auto  mt-3 ' variant='gradient'>Add</Button>
       </div> 
     </div>

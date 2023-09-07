@@ -19,7 +19,10 @@ export type RecordDataSet  = {
     headers: string[] | Array<{header: string, headerType: string}>,   
 }
 
-
+export type THeader = {
+  header: string,
+  headerType: string
+}
 
 export class RecordNoID {
     private data: T_RecordNoID;

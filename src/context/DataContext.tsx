@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api";
 import { createContext, useContext, useState } from "react";
-import { Record, RecordDataSet, Records, TDataHeaders, T_RecordNoID, useCastTo } from '../Components/Helpers/useRecord';
+import { Record, RecordDataSet, Records, TDataHeaders, THeader, T_RecordNoID, useCastTo } from '../Components/Helpers/useRecord';
 
 type DataContextType = {
     getData(): Records
@@ -9,7 +9,9 @@ type DataContextType = {
     setData(data: object): void,
     setHeaders(headers: TDataHeaders): void,
     setBothDataAndHeaders(obj: object): void,
-
+    addRecord(record: Record): void,
+    addHeader(newHeader: THeader): void
+    deleteHeader(headerName: string): void
     saveData(typeOfData: number, data?: object): Promise<Boolean>,
     removeRecords(IDArray: string[]) : void
 
@@ -36,6 +38,20 @@ class RecordsData {
     public set_headers(value: TDataHeaders) {
         this.headers = value;
         this.computeTypes();
+    }
+
+    public add_record(record: Record) {
+        let newID = Object.keys(this.data).length+1;
+        record.ID = `${newID}`
+        this.data = {...this.data, [newID]: record}
+    }
+    public add_header(newHeader: THeader)
+    {
+        this.headers.push(newHeader)
+    }
+    public delete_header(headerName: string)
+    {
+        this.headers = this.headers.filter((v) => v.header !== headerName);
     }
 
     public get_headers_list() {
@@ -156,6 +172,16 @@ const DataContext = createContext<DataContextType>({
     sortData: function (): Record[] {
         throw new Error("Function not implemented.")
     },
+    addRecord: function (): Record[] {
+        throw new Error("Function not implemented.")
+    },
+    addHeader: function (): Record[] {
+        throw new Error("Function not implemented.")
+    },
+    deleteHeader: function (): Record[] {
+        throw new Error("Function not implemented.")
+    },
+
     
     RecordsContent: new RecordsData({}, [{header:'', headerType: ''}])
 });
@@ -224,7 +250,22 @@ export function DataProvider({children}: {children: React.ReactNode})
      })
     const sortData = (dir: boolean, headerName: string) => RecordsContent.sort_data(dir, headerName);
     const getHeaders = () => (RecordsContent ? RecordsContent.get_headers() : [])
-
+    const addRecord = (record: Record) => setRecordsContent((prev) => {
+        const newRecord = new RecordsData(prev.get_data(), prev.get_headers())
+        newRecord.add_record(record);
+        return newRecord;
+    })
+    const addHeader = (newHeader: THeader) => { setRecordsContent((prev) => {
+        const newRecord = new RecordsData(prev.get_data(), prev.get_headers())
+        newRecord.add_header(newHeader);
+        return newRecord;
+    })
+    }
+    const deleteHeader = (headerName: string) => { setRecordsContent((prev) => {
+        const newRecord = new RecordsData(prev.get_data(), prev.get_headers())
+        newRecord.delete_header(headerName);
+        return newRecord;
+    })}
     const getData = () => (RecordsContent ? RecordsContent.get_data() : {});
     /**
      * 
@@ -276,6 +317,9 @@ export function DataProvider({children}: {children: React.ReactNode})
             setHeaders, 
             getHeaders, 
             saveData, 
+            addRecord,
+            addHeader,
+            deleteHeader,
             RecordsContent }}>
             {children}
         </DataContext.Provider>
