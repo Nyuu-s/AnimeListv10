@@ -1,11 +1,12 @@
 import { invoke } from "@tauri-apps/api";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Record, RecordDataSet, Records, TDataHeaders, THeader, T_RecordNoID, useCastTo } from '../Components/Helpers/useRecord';
+import { toast } from "react-toastify";
 
 type DataContextType = {
     getData(): Records
     getHeaders(): TDataHeaders,
-    
+    updateColumn(header:string, toBeRestricted: string[]): void
     setData(data: object): void,
     setHeaders(headers: TDataHeaders): void,
     setBothDataAndHeaders(obj: object): void,
@@ -14,17 +15,31 @@ type DataContextType = {
     deleteHeader(headerName: string): void
     saveData(typeOfData: number, data?: object): Promise<Boolean>,
     removeRecords(IDArray: string[]) : void
-
+    getPossibleValues(headerName: string): Array<string>,
     sortData(direction: boolean, headerName: string) : Record[]
-
+    restrictedValues: RestrictedValues
     RecordsContent: RecordsData
 }
 
+class Table2H {
+    public column_header: string;
+    public column_values: [];
+    public row_values: [];
+    public row_header: string;
+
+    constructor(CHeader: string, RHeader: string)
+    {
+        this.column_header = CHeader;
+        this.row_header = RHeader;
+        this.column_values = [];
+        this.row_values = [];
+    }
+}
 
 class RecordsData {
     private data: Records;
     private headers: TDataHeaders;
-
+    private tablesH2: Table2H[]
 
     public get_data(): Records {
         return this.data;
@@ -53,6 +68,8 @@ class RecordsData {
     {
         this.headers = this.headers.filter((v) => v.header !== headerName);
     }
+
+
 
     public get_headers_list() {
         if (this.headers.length > 0)
@@ -141,6 +158,7 @@ class RecordsData {
     constructor(records: Records, headers: TDataHeaders){
         this.data = records;
         this.headers = headers;
+        this.tablesH2 = [];
         this.computeTypes(); // TODO find when to call this to avoid calling it on each delete row operation
     }
 
@@ -181,8 +199,15 @@ const DataContext = createContext<DataContextType>({
     deleteHeader: function (): Record[] {
         throw new Error("Function not implemented.")
     },
+    getPossibleValues: function (): Array<string> {
+        throw new Error("Function not implemented.")
+    },
+    updateColumn: function (): void {
+        throw new Error("Function not implemented.")
+    },
 
-    
+
+    restrictedValues: {} as RestrictedValues,
     RecordsContent: new RecordsData({}, [{header:'', headerType: ''}])
 });
 
@@ -236,10 +261,19 @@ function onRemoveRecords(arr: string[], data: Records) : Records
     return data;
 }
 
+type RestrictedValues = {
+    [key: string]: string[]
+}
 
 export function DataProvider({children}: {children: React.ReactNode})
 {
     const [RecordsContent, setRecordsContent] = useState<RecordsData>(new RecordsData({}, []))
+    const [restrictedValues, setRestrictedValues] = useState<RestrictedValues>({})
+
+    useEffect(() => {
+        console.log(restrictedValues);
+    }, [restrictedValues])
+    
 
     const setBothDataAndHeaders = (obj: object) => setRecordsContent(RecordDataBuilder(obj));
     const setHeaders = (arr: TDataHeaders) =>  setRecordsContent((prev) => {
@@ -301,6 +335,60 @@ export function DataProvider({children}: {children: React.ReactNode})
         }
         return await onSaveData(RecordsContent)
     }
+    
+
+    const updateColumn = (header:string, toBeRestricted: string[])=>{
+       
+        let restrictionObj =  {...restrictedValues, [header]: toBeRestricted}
+        let headerInfos = RecordsContent.get_headers().find((v) => v.header === header)
+        if(headerInfos && headerInfos.headerType === 'numeric')
+        {
+             toast.error('Restricting numeric values is not yet implemented', {theme: "colored"}) 
+             return;
+        }
+        setRestrictedValues(restrictionObj)
+         
+         Object.values(RecordsContent.get_data()).forEach((obj) => {
+            let noid = obj as T_RecordNoID;
+            let newStr:  string[] = []
+            let str = noid[header].value ? noid[header].value : '' ;
+            str.split(',').forEach((value) => {
+             
+                
+                if(restrictionObj[header] && restrictionObj[header].some((possibleValue) => possibleValue.trim() === value.trim()))
+                {
+                    newStr.push(value)
+                }
+              
+            });
+
+
+                noid[header].value = newStr.join(', ');
+            
+        })
+        
+        console.log(RecordsContent.get_data());
+    }
+    const getPossibleValues = (headerName: string) =>
+    {
+      
+
+        let valueSet = new Set<string>()
+        Object.values(RecordsContent.get_data()).forEach((obj) => {
+
+            let noid = obj as T_RecordNoID;
+            let str = noid[headerName].value ? noid[headerName].value : '' ;
+            str.split(',').forEach((value) => {
+                let lowerStr = value.trim().toLowerCase();
+                valueSet.add(lowerStr.charAt(0).toUpperCase() + lowerStr.slice(1))
+            });
+            
+            
+        })
+        
+        return Array.from(valueSet);
+        
+    }
 
     const removeRecords = (idArray: string[]) => {
        
@@ -320,6 +408,9 @@ export function DataProvider({children}: {children: React.ReactNode})
             addRecord,
             addHeader,
             deleteHeader,
+            getPossibleValues,
+            updateColumn,
+            restrictedValues,
             RecordsContent }}>
             {children}
         </DataContext.Provider>

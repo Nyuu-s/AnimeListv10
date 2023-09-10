@@ -1,4 +1,4 @@
-import { Affix, Button, ScrollArea, TextInput, rem } from "@mantine/core"
+import { Affix, Button, ScrollArea, Select, TextInput, rem } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"
 import { IconButton, SpeedDial, SpeedDialAction, SpeedDialContent, SpeedDialHandler, Typography } from "@material-tailwind/react"
 import { IconPlus, IconTrash } from "@tabler/icons-react"
@@ -28,7 +28,7 @@ function DetailsInfo({details}: DetailsProps) {
  const {opened} = useAppState().navState;
  const navigate = useNavigate()
 
- const {removeRecords,setData, saveData} = useDataState();
+ const {removeRecords,setData, saveData, restrictedValues} = useDataState();
 
  useEffect(() => {
     const allData = details.data;
@@ -147,7 +147,11 @@ const matches = useMediaQuery('(min-width: 768px)');
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-2  gap-y-16 select-none pr-10 ">
                 {currentRecord && currentRecord.map((data, header) => (
                   <li key={header} className=" pb-5"><span className="font-bold"> {header}:</span> 
+                  {
+                    restrictedValues[header] ? <Select id="value" clearable onChange={handleChange} defaultValue={data.value.toLowerCase()} placeholder='Pick one' data={restrictedValues[header].sort().map((v) => ({value: v.toLowerCase(), label: v}))                  }/>:
                     <TextInput id="value" name={header} onChange={handleChange} placeholder="Value" defaultValue={data.value} /> 
+                  }
+                    
                     <TextInput id="url" name={header}  className="mt-2" onChange={handleChange} placeholder="URL" defaultValue={data.url} /> 
                   </li>
                   ))}

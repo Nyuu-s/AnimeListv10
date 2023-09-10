@@ -1,11 +1,11 @@
-import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea, Checkbox, Menu } from "@mantine/core";
+import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea, Checkbox, Menu, Select } from "@mantine/core";
 
 import RecordRow from "./RecordRow";
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import RecordContextMenu from "./RecordContextMenu";
 import { Record } from "../Helpers/useRecord";
 import { useDataState } from "../../context";
-import { IconArrowsSort, IconMinusVertical, IconSortAscending, IconSortDescending, IconTrash } from "@tabler/icons-react";
+import { IconAccessPoint, IconAccessible, IconAdOff, IconAdjustments, IconArrowsSort, IconMinusVertical, IconSortAscending, IconSortDescending, IconTrash } from "@tabler/icons-react";
 import { useClickOutside, useViewportSize } from "@mantine/hooks";
 import { toast } from "react-toastify";
 
@@ -29,7 +29,7 @@ interface DataProps {
 }
 
 function RecordsTable(props: DataProps) {
-    const {saveData, deleteHeader} = useDataState()
+    const {saveData, deleteHeader, getPossibleValues, getHeaders, updateColumn, restrictedValues} = useDataState()
     const modal = useRef<HTMLDivElement>(null)
  const Options = 
     props.tableOption.isSticky ? " sticky top-0 bg-black" : ""
@@ -150,24 +150,81 @@ function RecordsTable(props: DataProps) {
           
        })
       
-       
+ 
        saveData(3, currentRecord);
        setEditMode(false)
     }
-   
+   const [defineValueModal, setDefineValueModal] = useState(false)
+   const [defineValueData, setDefineValueData] = useState<Array<{value: string, label:string }>>([])
+   const [selectdefineValue, setdefineValue] = useState<string | null >(null);
+
   return (
       
       
       <>
+      <Modal opened={defineValueModal} onClose={()=> setDefineValueModal(false)} >
+        <Modal.Title><div className="text-center text-lg"> Restrict possible values for  <span className="font-semibold">{selectedHeader.toUpperCase()}</span></div></Modal.Title>
+            <Modal.Body h={400}>
+            <div className="mt-5">All current values are listed down there.   </div>
+            <div className="mb-5">When restricting, <span className="text-yellow-500 ">all non-matching values will be cleared out.</span></div> 
+           
+             
+            <Select
+            
+             placeholder="Pick value to delete or add a new one"
+             value={selectdefineValue}
+             onChange={(e) => setdefineValue(e)}
+             data={defineValueData.sort((a, b) => a.value > b.value ? 1 : -1)} 
+             dropdownPosition="bottom"
+             defaultValue={null}
+             searchable
+             clearable
+             creatable
+             getCreateLabel={(query) => `+ Create ${query}`}
+             onCreate={(query) => {
+                const item = { value: query.toLowerCase(), label: query };
+                setDefineValueData((current) => [...current, item]);
+                return item;
+              }}
+              
+             />
+             
+            <Button className={"mt-5"} variant="outline" color="red" onClick={() => {
+                
+                
+                if(selectdefineValue)
+                {
+                    setDefineValueData((current) => {
+                        let arr = [...current.filter((v) => v.value !== selectdefineValue.toLocaleLowerCase(), 1)]
+                        return arr
+                    });
+                    setdefineValue(null)
+              
+                    
+                    
+                }
+            }}>Delete Current</Button>
+            <Button className={"mt-5 ml-5"} variant="filled" color="green" onClick={() => {    
+                let toBeRestricted = defineValueData.map((v) => v.label);            
+              
+                updateColumn(selectedHeader, toBeRestricted)
+            }}>Restrict</Button>
+             
+            </Modal.Body>
+      </Modal>
       <div
       ref={headerMenuRef}
         style={{ top: Math.abs(height - hPosition.y ) < 100 ? hPosition.y -100: hPosition.y - 30  , left: hPosition.x + 10 }}
         className="fixed z-50 h-40">
-
           <Menu shadow="md" opened={isHeaderMenuShown}  closeOnClickOutside closeOnItemClick  width={200}>
             <Menu.Dropdown  >
                 <ScrollArea >
                     <Menu.Label>Header: {selectedHeader} </Menu.Label>
+                    <Menu.Item icon={<IconAdjustments size={14} /> } disabled={getHeaders().find((v) => v.header === selectedHeader)?.headerType === 'numeric'} onClick={() => {
+                        
+                        setDefineValueData(getPossibleValues(selectedHeader).map((el) => ({value: el.toLowerCase(), label: el})))
+                        setDefineValueModal(true)
+                    }}>Restrict possible values</Menu.Item>
                     <Menu.Item color="red" icon={<IconTrash size={14} />} onClick={()=>{
                         if(selectedHeader !== 'ID')
                         {
@@ -260,8 +317,12 @@ function RecordsTable(props: DataProps) {
                 <>
                 <div key={i}>
                     <Text>{header}</Text>
-                    <Group className="mt-3 mb-3">
+                    <Group className="mt-3 mb-3 flex justify-between">
+                    {
+                        restrictedValues[header] ? <Select  name={header} defaultValue={data.value.toLowerCase()} clearable  placeholder='Pick one' data={restrictedValues[header].sort().map((v) => ({value: v.toLowerCase(), label: v}))                  }/>:
                         <TextInput name={header} defaultValue={data.value} placeholder={"Value"}></TextInput>
+                    }
+                        
                         <TextInput name={header} id="url" defaultValue={data.url} placeholder="URL"></TextInput>
                     </Group>
                     <Divider className="mb-3"></Divider>

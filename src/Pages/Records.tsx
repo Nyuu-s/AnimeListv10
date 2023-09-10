@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 function Records() {
     const {vSpacing, itemsPerPages, fontSize, isSticky, isResize} = useAppState().tableSettings;
     const { width, height } = useViewportSize();
-    const { sortData, getData, getHeaders, addRecord,addHeader, RecordsContent} = useDataState();
+    const { sortData, getData, getHeaders, addRecord,addHeader, RecordsContent, restrictedValues} = useDataState();
     const [paginatedData, setPaginatedData] = useState<any>({})
     const [activePage, setPage] = useState(1);
     const [searchMode, setSearchMode] = useState(true);
@@ -104,7 +104,7 @@ function Records() {
     <div className='flex justify-evenly w-full'>
       <Button className='w-1/12' variant='outline' color='green' onClick={() => {
         setisAddRowOpened(true)
-      }}> <IconPlus size={20} /> Record </Button>
+      }}> Add Record </Button>
       <TextInput onKeyDown={(event) => queryData(event, event.currentTarget.value)}  onChange={(text) => searchData(text.target.value)} className="w-1/2" icon={<div className="pointer-events-auto cursor-pointer" onClick={() => setSearchMode(!searchMode)}>{searchMode ? <IconSearch /> : <IconBraces /> }</div>} /> 
       <Button  className='w-1/12' variant='outline' color='lime' onClick={()=> {  
       setisAddHeaderOpened(true)
@@ -119,7 +119,11 @@ function Records() {
         {
           
           return <div key={i} className='mt-2'> 
-          <TextInput onChange={(e) => {  setnewRow((v) => ({...v, [value.header]: {url:"", value: e.target.value}} )) }} label={value.header}  />
+          {
+            restrictedValues[value.header] ? <Select clearable label={value.header} placeholder='Pick one' data={restrictedValues[value.header].sort().map((v) => ({value: v.toLowerCase(), label: v}))                  }/>:
+            <TextInput onChange={(e) => {  setnewRow((v) => ({...v, [value.header]: {url:"", value: e.target.value}} )) }} label={value.header}  />
+
+          }
           <TextInput onChange={(e) => { setnewRow((v) => ({...v, [value.header]: {url:e.target.value, value: v[value.header].value}} )) }} placeholder='URL' className='mt-2'  />
           </div>
 
