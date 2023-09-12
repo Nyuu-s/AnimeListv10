@@ -64,6 +64,7 @@ dependencies = [
  "lazy_static",
  "serde",
  "serde_json",
+ "serde_merge",
  "sha2",
  "tauri",
  "tauri-build",
@@ -2903,6 +2904,17 @@ dependencies = [
  "itoa 1.0.9",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "serde_merge"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "606e91878516232ac3b16c12e063d4468d762f16d77e7aef14a1f2326c5f409b"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror",
 ]
 
 [[package]]

@@ -39,7 +39,7 @@ class Table2H {
 class RecordsData {
     private data: Records;
     private headers: TDataHeaders;
-    private tablesH2: Table2H[]
+    // private tablesH2: Table2H[]
 
     public get_data(): Records {
         return this.data;
@@ -158,7 +158,7 @@ class RecordsData {
     constructor(records: Records, headers: TDataHeaders){
         this.data = records;
         this.headers = headers;
-        this.tablesH2 = [];
+        // this.tablesH2 = [];
         this.computeTypes(); // TODO find when to call this to avoid calling it on each delete row operation
     }
 
@@ -236,9 +236,9 @@ function RecordDataBuilder(obj: object): RecordsData
     return new RecordsData(DataSet, DataHeaders);
 }
 
-async function onSaveData(CurrentDataState: RecordsData): Promise<Boolean>
+async function onSaveData(CurrentDataState: RecordsData, restrictedValues: RestrictedValues): Promise<Boolean>
 {
-    return invoke('save_data', {data: CurrentDataState});
+    return invoke('save_data', {data: CurrentDataState, restricted: {restrictions: restrictedValues}});
 }
 
 function onRemoveRecords(arr: string[], data: Records) : Records
@@ -333,7 +333,7 @@ export function DataProvider({children}: {children: React.ReactNode})
                     break;
             }
         }
-        return await onSaveData(RecordsContent)
+        return await onSaveData(RecordsContent, restrictedValues)
     }
     
 
@@ -368,6 +368,7 @@ export function DataProvider({children}: {children: React.ReactNode})
         })
         
         console.log(RecordsContent.get_data());
+        onSaveData(RecordsContent, restrictionObj)
     }
     const getPossibleValues = (headerName: string) =>
     {

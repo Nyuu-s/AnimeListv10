@@ -43,12 +43,21 @@ pub async fn delete_all(ctx: State<'_, TauriConfig>,  filenames: State<'_, DataF
   Ok(())
 }
 
-#[tauri::command]
-pub async fn save_data(data_state: State<'_, SessionDataState>, ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>, data: serde_json::Value) -> Result<bool, String> {
-  //calculate new hash code and save it in the data state
-  let data_path = get_app_dir_string(DirName::Cache, &ctx, filenames).unwrap();
 
-  helper_write_file(&serde_json::to_string(&data).unwrap().as_bytes(), &data_path).map_err(|err| format!("{}", err))?;
+#[tauri::command]
+pub async fn save_data(data_state: State<'_, SessionDataState>, ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>, data: serde_json::Value, restricted: serde_json::Value) -> Result<bool, String> {
+  //calculate new hash code and save it in the data state
+  let data_path = get_app_dir_string(DirName::Cache, &ctx, filenames.clone()).unwrap();
+  let restrict_path = get_app_dir_path(DirName::_AppLocalData, ctx.config.clone(), &filenames);
+
+  let mut data_clone = data.clone();
+  if let (Some(a_map), Some(b_map)) = (data_clone.as_object_mut(), restricted.as_object()) {
+      a_map.extend(b_map.clone());
+  }
+  
+
+  helper_write_file(&serde_json::to_string(&data_clone).unwrap().as_bytes(), &data_path).map_err(|err| format!("{}", err))?;
+  // helper_write_file(&serde_json::to_string(&a_clone).unwrap().as_bytes(), &restrict_path.join("Restricted.json").to_str().unwrap()).map_err(|err| format!("{}", err))?;
   println!("previous hash: {}",data_state.hashcode.lock().unwrap());
 
   let hash = calculate_file_hash(&data_path).await.map_err(|err| format!("{}", err))?;
