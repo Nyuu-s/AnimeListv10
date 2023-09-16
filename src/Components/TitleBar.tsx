@@ -1,5 +1,5 @@
 
-import { Burger, Drawer, Group, Header, Tabs } from '@mantine/core';
+import { Burger, Button, Center, Drawer, Group, Header, Modal, NumberInput, SegmentedControl, Select, Tabs , TransferList, TransferListData} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconMessageCircle, IconSettings, IconUserShield } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -7,11 +7,16 @@ import { useLocation } from 'react-router-dom';
 import { useAppState } from '../context/AppContext';
 import TableSettings from './Tabs/TableSettings';
 import UserPreferences from './Tabs/UserPreferences';
+import StatsTableSimple from './StatsTableSimple';
+
 
 
 function TitleBar() {
 const {opened, toggle} = useAppState().navState;
 const [activeTab, setActiveTab] = useState<string | null>('first');
+const [statsModal, setStatsModal] = useState(false)
+const [segmentValue, setSegmentValue] = useState('tables');
+
 const USER_SETTINGS_ID= 'user-settings';
 const TABLE_SETTINGS_ID= 'table-settings';
 const NOTIFICATIONS_ID= 'notifications-pannel';
@@ -22,7 +27,36 @@ const [test, { open, close }] = useDisclosure(false);
 
   return (
     <Header height={60} mt={26} className='fixed z-50 h-full' p="xs">
-      <Burger opened={opened} onClick={toggle} className='mb-1'/>
+      <Modal title={"Statistics"} size={1000} opened={statsModal} onClose={() => setStatsModal(false)}>
+        <Center>
+
+          <SegmentedControl
+          value={segmentValue}
+          transitionDuration={0.5}
+          color='indigo'
+          onChange={setSegmentValue}
+          data={[
+            { label: 'Tables', value: 'tables' },
+            { label: 'Graphs', value: 'graphs' }
+          ]}
+        />
+        </Center>
+        {
+          segmentValue === 'tables' && 
+          <div className='h-screen'>
+            <StatsTableSimple />
+            <Center>
+              <Button color='green' variant='filled'>Add Table</Button>
+            </Center>
+          </div>
+        }
+      </Modal>
+      <Group>
+        <Burger opened={opened} onClick={toggle} className='mb-1'/>
+        <Button onClick={() => setStatsModal(true)} > <span className='hover:text-gray-300'> Statistics</span></Button>
+        
+      </Group>
+      
       <Group className='justify-end absolute top-2 right-0  '>
 
           <Tabs value={activeTab} onTabChange={setActiveTab}  className='mt-4'>

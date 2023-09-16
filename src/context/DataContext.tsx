@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 type DataContextType = {
     getData(): Records
     getHeaders(): TDataHeaders,
-    updateColumn(header:string, toBeRestricted: string[]): void
+    updateColumn(header:string, toBeRestricted: string[]): boolean
     setData(data: object): void,
     setHeaders(headers: TDataHeaders): void,
     setBothDataAndHeaders(obj: object): void,
@@ -202,7 +202,7 @@ const DataContext = createContext<DataContextType>({
     getPossibleValues: function (): Array<string> {
         throw new Error("Function not implemented.")
     },
-    updateColumn: function (): void {
+    updateColumn: function (): boolean {
         throw new Error("Function not implemented.")
     },
 
@@ -275,7 +275,11 @@ export function DataProvider({children}: {children: React.ReactNode})
     }, [restrictedValues])
     
 
-    const setBothDataAndHeaders = (obj: object) => setRecordsContent(RecordDataBuilder(obj));
+    const setBothDataAndHeaders = (obj: any) => {
+        setRecordsContent(RecordDataBuilder(obj))
+        setRestrictedValues(obj['restrictions'] as RestrictedValues)
+        
+    };
     const setHeaders = (arr: TDataHeaders) =>  setRecordsContent((prev) => {
        return  new RecordsData({...prev.get_data()}, arr)
     })
@@ -337,57 +341,78 @@ export function DataProvider({children}: {children: React.ReactNode})
     }
     
 
-    const updateColumn = (header:string, toBeRestricted: string[])=>{
-       
-        let restrictionObj =  {...restrictedValues, [header]: toBeRestricted}
-        let headerInfos = RecordsContent.get_headers().find((v) => v.header === header)
-        if(headerInfos && headerInfos.headerType === 'numeric')
-        {
-             toast.error('Restricting numeric values is not yet implemented', {theme: "colored"}) 
-             return;
-        }
-        setRestrictedValues(restrictionObj)
-         
-         Object.values(RecordsContent.get_data()).forEach((obj) => {
-            let noid = obj as T_RecordNoID;
-            let newStr:  string[] = []
-            let str = noid[header].value ? noid[header].value : '' ;
-            str.split(',').forEach((value) => {
-             
-                
-                if(restrictionObj[header] && restrictionObj[header].some((possibleValue) => possibleValue.trim() === value.trim()))
-                {
-                    newStr.push(value)
-                }
-              
-            });
-
-
-                noid[header].value = newStr.join(', ');
-            
-        })
+    const updateColumn = (header:string, toBeRestricted: string[]): boolean =>  {
+       try {
         
-        console.log(RecordsContent.get_data());
-        onSaveData(RecordsContent, restrictionObj)
+           let restrictionObj =  {...restrictedValues, [header]: toBeRestricted}
+           let headerInfos = RecordsContent.get_headers().find((v) => v.header === header)
+           if(headerInfos && headerInfos.headerType === 'numeric')
+           {
+                toast.error('Restricting numeric values is not yet implemented', {theme: "colored"}) 
+                return false;
+           }
+           setRestrictedValues(restrictionObj)
+            
+            Object.values(RecordsContent.get_data()).forEach((obj) => {
+               let noid = obj as T_RecordNoID;
+               let newStr:  string[] = []
+               let str = noid[header].value ? noid[header].value : '' ;
+               str.split(',').forEach((value) => {
+                
+                   
+                   if(restrictionObj[header] && restrictionObj[header].some((possibleValue) => possibleValue.trim() === value.trim()))
+                   {
+                       newStr.push(value)
+                   }
+                 
+               });
+   
+   
+                   noid[header].value = newStr.join(', ');
+               
+           })
+           
+          
+           onSaveData(RecordsContent, restrictionObj)
+           return true
+       } catch (error) {
+            return false
+       }
     }
     const getPossibleValues = (headerName: string) =>
     {
-      
-
+        let headerInfo = RecordsContent.get_headers().find((element) => element.header == headerName)
         let valueSet = new Set<string>()
-        Object.values(RecordsContent.get_data()).forEach((obj) => {
 
-            let noid = obj as T_RecordNoID;
-            let str = noid[headerName].value ? noid[headerName].value : '' ;
-            str.split(',').forEach((value) => {
-                let lowerStr = value.trim().toLowerCase();
-                valueSet.add(lowerStr.charAt(0).toUpperCase() + lowerStr.slice(1))
-            });
-            
-            
-        })
         
-        return Array.from(valueSet);
+
+            Object.values(RecordsContent.get_data()).forEach((obj) => {
+    
+                let noid = obj as T_RecordNoID;
+                let str = noid[headerName].value ? `${noid[headerName].value}` : '' ;
+                str.split(',').forEach((value) => {
+                    let lowerStr = value.trim().toLowerCase();
+                    valueSet.add(lowerStr.charAt(0).toUpperCase() + lowerStr.slice(1))
+                });
+                
+                
+            })
+        
+        
+        return Array.from(valueSet).sort((a,b) => {
+            if(headerInfo && headerInfo.headerType === 'numeric')
+            {
+                let a_number =  parseInt(a)
+                let b_number =  parseInt(b)
+                if(a.trim() == '')
+                    a_number = Infinity;
+                if(b.trim() == '')
+                    b_number == Infinity;
+              return a_number > b_number ? 1 : -1   
+            }
+            return a > b ? 1 : -1
+            
+        });
         
     }
 

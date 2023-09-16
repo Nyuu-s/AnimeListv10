@@ -1,5 +1,5 @@
 
-import { Divider, Navbar, ScrollArea } from "@mantine/core";
+import { Button, Divider, Navbar, ScrollArea } from "@mantine/core";
 // import Link from "next/link";
 import CustomNavLink from "./Helpers/CustomNavLink";
 
@@ -29,19 +29,17 @@ export default function Demo() {
           
         }</Navbar.Section>
 
-        <Navbar.Section grow component={ScrollArea} mx="-xs" px="xs">
+        <Navbar.Section >
          <div className="flex flex-col content-evenly">
          
             <CustomNavLink  path={"/"} display={"Home"} />
             <CustomNavLink  path={"/list"} display={"List"} />
           
 
-
+         
           
          </div>
         </Navbar.Section>
-
-        <Navbar.Section>{/* Footer with user */}</Navbar.Section>
       </Navbar>}
   
       </div>

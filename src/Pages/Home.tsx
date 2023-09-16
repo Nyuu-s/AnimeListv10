@@ -56,13 +56,6 @@ function transformhHours(hours: number) : {Total_minutes: number, Total_days: nu
 }
 
 export default function Home() {
-
-  const notify =  async () =>{
-     toast("Wow so easy !")
-  
-    
-    };
-
   const tansformedHours = transformhHours(1800);
   return (
     <>

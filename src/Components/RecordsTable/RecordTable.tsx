@@ -207,7 +207,8 @@ function RecordsTable(props: DataProps) {
             <Button className={"mt-5 ml-5"} variant="filled" color="green" onClick={() => {    
                 let toBeRestricted = defineValueData.map((v) => v.label);            
               
-                updateColumn(selectedHeader, toBeRestricted)
+                updateColumn(selectedHeader, toBeRestricted) ?
+                toast.success("Done!", {theme: 'dark', position: "top-center"}) : toast.error("Something went wrong sorry!", {theme: 'dark', position: "top-center"}) 
             }}>Restrict</Button>
              
             </Modal.Body>

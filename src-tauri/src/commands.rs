@@ -1,5 +1,6 @@
 
 
+use serde_json::json;
 use tauri::{State, AppHandle};
 use tauri::api::dialog;
 use crate::se_app_infos::{DataFiles, TauriConfig, SessionDataState, CustomResponse ,DirName, WindowConfig, Configurations};
@@ -88,11 +89,15 @@ pub fn import_file(app_handle: tauri::AppHandle, data_file_path: String,  ctx: S
         //Write json file in cache directory, to be edited, modified etc
         //And write a compressed json file in the data directory, will be used for persistance
         let result_value = serde_json::Value::from_str(&json_str).map_err(|err| format!("{}", err.to_string()))?;
-        write_json_file(json_str, &cache_path)?;
+        let mut result_value_extended = result_value.clone();
+        if let (Some(a_map), Some(b_map)) = (result_value_extended.as_object_mut(), json!({"restrictions": {}}).as_object()) {
+          a_map.extend(b_map.clone());
+      }
+        write_json_file(result_value_extended.to_string(), &cache_path)?;
         let data = compress_json_file(&cache_path)?;
         helper_write_file(&data, &compressed_json_file_path)?;
         helper_write_file(&data, &backup_compressed_json_file_path)?;
-        Ok(result_value)
+        Ok(result_value_extended)
       },
       Err(e) => Err(format!("{} ", e.to_string())),
   }
