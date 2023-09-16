@@ -2,12 +2,13 @@
 import { Burger, Button, Center, Drawer, Group, Header, Modal, NumberInput, SegmentedControl, Select, Tabs , TransferList, TransferListData} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconMessageCircle, IconSettings, IconUserShield } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAppState } from '../context/AppContext';
 import TableSettings from './Tabs/TableSettings';
 import UserPreferences from './Tabs/UserPreferences';
-import StatsTableSimple from './StatsTableSimple';
+
+import SimpleStatTableForm from './SimpleStatTableForm';
 
 
 
@@ -22,7 +23,6 @@ const TABLE_SETTINGS_ID= 'table-settings';
 const NOTIFICATIONS_ID= 'notifications-pannel';
 const {pathname } = useLocation()
 const [test, { open, close }] = useDisclosure(false);
-
 
 
   return (
@@ -44,10 +44,8 @@ const [test, { open, close }] = useDisclosure(false);
         {
           segmentValue === 'tables' && 
           <div className='h-screen'>
-            <StatsTableSimple />
-            <Center>
-              <Button color='green' variant='filled'>Add Table</Button>
-            </Center>
+            <SimpleStatTableForm  />
+
           </div>
         }
       </Modal>

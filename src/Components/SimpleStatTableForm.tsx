@@ -1,6 +1,7 @@
-import { Group, Select, Table, TransferList, TransferListData } from '@mantine/core'
+import { Button, Center, Group, NumberInput, Select, Table, TextInput, TransferList, TransferListData } from '@mantine/core'
 import { useEffect, useMemo, useState } from 'react';
 import { useDataState } from '../context';
+import SimpleStatTable from './SimpleStatTable';
 
 // const initialValues: TransferListData = [
 //     [
@@ -22,10 +23,9 @@ import { useDataState } from '../context';
 //   ];
 
 
+function SimpleStatTableForm() {
 
-function StatsTableSimple() {
-
-    const [tableNbCol, setTableNbCol] = useState<number>(1);
+    
     const {getHeaders, getPossibleValues, restrictedValues} = useDataState();
     const HeaderList = useMemo(() => getHeaders().map((v) => ({value: v.header, label: v.header})).sort((a, b) => a.label > b.label ? 1 : -1), [])
 
@@ -39,8 +39,14 @@ function StatsTableSimple() {
     const [transferdataCol, setTransferDataCol] = useState<TransferListData>(initialValues);
     const [RowSelect, setRowSelect] = useState<null | string>(null);
     const [ColSelect, setColSelect] = useState<null | string>(null)
+    const [currentMaxSize, setcurrentMaxSize] = useState({MaxRows: 1, MaxCols: 1})
+    const [tableTitle, setTableTitle] = useState("")
+    const MAX_SIZE_ROWS = 5;
+    const MAX_SIZE_COLS = 5;
 
-   const test = useMemo(() => {
+
+
+   const possibleValuesByHeaders = useMemo(() => {
         return (
             {
                 ...HeaderList.reduce((acc: {[key: string]: Array<{value: string, label: string}>}, v) => {
@@ -81,12 +87,13 @@ function StatsTableSimple() {
         )
     }, [HeaderList])
 
-    console.log(test);
+ 
     
     useEffect(() => {
         if( RowSelect !== null)
         {
-            setTransferDataRow(() => ([test[RowSelect], [{value: '', label: "Empty value"}]]) )
+            setTransferDataRow(() => ([possibleValuesByHeaders[RowSelect], [{value: '', label: "Empty value"}]]) )
+            setcurrentMaxSize((prev) => ({...prev, MaxRows: Math.min(possibleValuesByHeaders[RowSelect].length, currentMaxSize.MaxRows)}))
         }
 
     }, [RowSelect])
@@ -94,10 +101,20 @@ function StatsTableSimple() {
     useEffect(() => {
         if( ColSelect !== null)
         {
-            setTransferDataCol(() => ([test[ColSelect], [{value: '', label: "Empty value"}]]) )
+            setTransferDataCol(() => ([possibleValuesByHeaders[ColSelect], [{value: '', label: "Empty value"}]]) )
+            setcurrentMaxSize((prev) => ({...prev, MaxCols: Math.min(possibleValuesByHeaders[ColSelect].length, currentMaxSize.MaxCols)}))
         }
 
     }, [ColSelect])
+
+    useEffect(() => {
+        setcurrentMaxSize((prev) => ({...prev, MaxCols: Math.min(transferdataCol[0].length, currentMaxSize.MaxCols)}))
+    }, [transferdataCol])
+
+    useEffect(() => {
+        setcurrentMaxSize((prev) => ({...prev, MaxRows: Math.min(transferdataRow[0].length, currentMaxSize.MaxCols)}))
+    }, [transferdataRow])
+    
     
   return (
     <>
@@ -124,7 +141,7 @@ function StatsTableSimple() {
         <Select 
             defaultValue={ColSelect}
             onChange={(e) => setColSelect(e)}
-            label={"Header for Columns"}
+            label={"Header for columns"}
             data={HeaderList}
         />            
        {ColSelect && <TransferList
@@ -134,32 +151,18 @@ function StatsTableSimple() {
             nothingFound="Nothing here"
             titles={['Shown', 'Hidden']}
             breakpoint="sm"
-        />}
+            />}
     </Group>
+            <NumberInput className='w-1/6 lg:w-1/12' label={"Max size rows"} value={currentMaxSize.MaxRows}  max={Math.min(MAX_SIZE_ROWS,transferdataRow[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxRows: e as number}))}/>
+            <NumberInput className='w-1/6 lg:w-1/12' label={"Max size cols "} value={currentMaxSize.MaxCols}  max={Math.min(MAX_SIZE_COLS,transferdataCol[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxCols: e as number}))}/>
+           <TextInput label={"Title"} value={tableTitle} onChange={(e) => setTableTitle(e.target.value)} />
     <div>Preview: </div>
-    <Table>
-       
-        <tbody>
-            <tr>
-                <th></th>
-            {transferdataRow[0].slice(0, 5).map((v) => <th>
-              {v.label}
-                </th>)}
-            </tr>
-
-            {transferdataCol[0].slice(0, 5).map((v) => <tr>
-              <th>{v.label}</th>   
-              {transferdataRow[0].slice(0, 5).map(() => <td>{Math.round(Math.random()/0.1)}</td>)}
-                
-                
-                </tr>)}
-            
-        
-      
-        </tbody>
-    </Table>
+        <SimpleStatTable rows={transferdataRow} cols={transferdataCol} maxSize={currentMaxSize} title='Hello' />
+        <Center>
+                <Button color='green' variant='filled' >Add Table</Button>
+        </Center>
     </>
   )
 }
 
-export default StatsTableSimple
+export default SimpleStatTableForm

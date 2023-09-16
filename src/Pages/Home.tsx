@@ -1,9 +1,15 @@
 
-import { Badge, Button, Card, Group, Image, Table, Text } from '@mantine/core';
+import { Badge, Button, Card, Group, Image, Table, Text, TransferListData } from '@mantine/core';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 
-
+type SimpleTableData = {
+  rows: TransferListData | string[],
+  cols: TransferListData | string[]
+  title: string,
+  maxSize: {MaxRows: number, MaxCols: number}
+}
 
 
 function transformhHours(hours: number) : {Total_minutes: number, Total_days: number, Total_years: number,Total_Hours: number, sentence: string }
@@ -56,6 +62,7 @@ function transformhHours(hours: number) : {Total_minutes: number, Total_days: nu
 }
 
 export default function Home() {
+  const [SimpleStatTablesData, setSimpleStatTablesData] = useState<SimpleTableData[]>([])
   const tansformedHours = transformhHours(1800);
   return (
     <>
