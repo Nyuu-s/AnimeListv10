@@ -2,8 +2,10 @@ import { invoke } from "@tauri-apps/api";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Record, RecordDataSet, Records, TDataHeaders, THeader, T_RecordNoID, useCastTo } from '../Components/Helpers/useRecord';
 import { toast } from "react-toastify";
+import { TransferListData } from "@mantine/core";
 
 type DataContextType = {
+    addSimpleStatTable(data: SimpleTableData): void
     getData(): Records
     getHeaders(): TDataHeaders,
     updateColumn(header:string, toBeRestricted: string[]): boolean
@@ -17,7 +19,8 @@ type DataContextType = {
     removeRecords(IDArray: string[]) : void
     getPossibleValues(headerName: string): Array<string>,
     sortData(direction: boolean, headerName: string) : Record[]
-    restrictedValues: RestrictedValues
+    restrictedValues: RestrictedValues,
+    SimpleStatTablesData: SimpleTableData[],
     RecordsContent: RecordsData
 }
 
@@ -35,6 +38,14 @@ class Table2H {
         this.row_values = [];
     }
 }
+
+type SimpleTableData = {
+    rows: TransferListData | string[],
+    cols: TransferListData | string[],
+    dataCounts: number[][]
+    title: string,
+    maxSize: {MaxRows: number, MaxCols: number}
+  }
 
 class RecordsData {
     private data: Records;
@@ -205,9 +216,15 @@ const DataContext = createContext<DataContextType>({
     updateColumn: function (): boolean {
         throw new Error("Function not implemented.")
     },
+    
+    addSimpleStatTable: function (): void
+    {
+        throw new Error("Function not implemented.")
+    },
 
 
     restrictedValues: {} as RestrictedValues,
+    SimpleStatTablesData: [] as SimpleTableData[],
     RecordsContent: new RecordsData({}, [{header:'', headerType: ''}])
 });
 
@@ -269,6 +286,13 @@ export function DataProvider({children}: {children: React.ReactNode})
 {
     const [RecordsContent, setRecordsContent] = useState<RecordsData>(new RecordsData({}, []))
     const [restrictedValues, setRestrictedValues] = useState<RestrictedValues>({})
+    const [SimpleStatTablesData, setSimpleStatTablesData] = useState<SimpleTableData[]>([])
+
+    const addSimpleStatTable = (data: SimpleTableData ) =>{ 
+       
+        setSimpleStatTablesData((prev) => [...prev, data] )
+    
+    }
 
     useEffect(() => {
         console.log(restrictedValues);
@@ -423,6 +447,7 @@ export function DataProvider({children}: {children: React.ReactNode})
     };
     return (
         <DataContext.Provider value={{ 
+            addSimpleStatTable,
             sortData, 
             setBothDataAndHeaders, 
             removeRecords, 
@@ -437,6 +462,7 @@ export function DataProvider({children}: {children: React.ReactNode})
             getPossibleValues,
             updateColumn,
             restrictedValues,
+            SimpleStatTablesData,
             RecordsContent }}>
             {children}
         </DataContext.Provider>

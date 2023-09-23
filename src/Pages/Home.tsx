@@ -1,15 +1,12 @@
 
 import { Badge, Button, Card, Group, Image, Table, Text, TransferListData } from '@mantine/core';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
+import { useDataState } from '../context';
+import SimpleStatTable from '../Components/SimpleStatTable';
 
 
-type SimpleTableData = {
-  rows: TransferListData | string[],
-  cols: TransferListData | string[]
-  title: string,
-  maxSize: {MaxRows: number, MaxCols: number}
-}
+
+
 
 
 function transformhHours(hours: number) : {Total_minutes: number, Total_days: number, Total_years: number,Total_Hours: number, sentence: string }
@@ -62,7 +59,7 @@ function transformhHours(hours: number) : {Total_minutes: number, Total_days: nu
 }
 
 export default function Home() {
-  const [SimpleStatTablesData, setSimpleStatTablesData] = useState<SimpleTableData[]>([])
+  const {SimpleStatTablesData} = useDataState()
   const tansformedHours = transformhHours(1800);
   return (
     <>
@@ -92,40 +89,19 @@ export default function Home() {
 
 
       </Card>
-      <Card shadow="sm" padding="lg" radius="md" withBorder w={300} >
+        {SimpleStatTablesData.map((v) => (
+          <Card shadow="sm" padding="lg" radius="md" withBorder >
 
-        <Card.Section>
-          <Image
-            src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-            height={160}
-            alt="Norway"
-            />
-        </Card.Section>
+           
 
-        <Group position="apart" mt="md" mb="xs">
-          <Text weight={500}>Stato visione</Text>
-        </Group>
+            <Group position="apart" mt="md" mb="xs">
+              <Text weight={500}>{v.title}</Text>
+            </Group>
 
-        <Table striped>
-          <thead>
-            <tr>
-              <th>Hey</th>
-              <th>World</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Hey</td>
-              <td>Hey</td>
-            </tr>
-            <tr>
-              <td>Hey</td>
-              <td>Hey</td>
-            </tr>
-          </tbody>
-        </Table>
-      </Card>
+            <SimpleStatTable cols={v.cols} rows={v.rows} title={v.title} counts={v.dataCounts} maxSize={v.maxSize}   />
+          </Card>
 
+      ))}
       </Group>
     </>
   );

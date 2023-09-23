@@ -1,35 +1,39 @@
-import { Button, Center, Group, NumberInput, Select, Table, TextInput, TransferList, TransferListData } from '@mantine/core'
-import { useEffect, useMemo, useState } from 'react';
+import { Button, Center, Group, NumberInput, Select, Table, TextInput, TransferList, TransferListData, TransferListItem } from '@mantine/core'
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDataState } from '../context';
 import SimpleStatTable from './SimpleStatTable';
-
-// const initialValues: TransferListData = [
-//     [
-//       { value: 'react', label: 'React' },
-//       { value: 'ng', label: 'Angular' },
-//       { value: 'next', label: 'Next.js' },
-//       { value: 'blitz', label: 'Blitz.js' },
-//       { value: 'gatsby', label: 'Gatsby.js' },
-//       { value: 'vue', label: 'Vue' },
-//       { value: 'jq', label: 'jQuery' },
-//     ],
-//     [
-//       { value: 'sv', label: 'Svelte' },
-//       { value: 'rw', label: 'Redwood' },
-//       { value: 'np', label: 'NumPy' },
-//       { value: 'dj', label: 'Django' },
-//       { value: 'fl', label: 'Flask' },
-//     ],
-//   ];
+import { T_RecordNoID  } from './Helpers/useRecord';
 
 
 function SimpleStatTableForm() {
 
     
-    const {getHeaders, getPossibleValues, restrictedValues} = useDataState();
+    const {getHeaders,getData, getPossibleValues, restrictedValues, addSimpleStatTable} = useDataState();
     const HeaderList = useMemo(() => getHeaders().map((v) => ({value: v.header, label: v.header})).sort((a, b) => a.label > b.label ? 1 : -1), [])
 
-    
+    const getCountsFor2Headers = useCallback((headers: string[], values:[TransferListItem[], TransferListItem[]]) => {
+        const data = Object.values(getData());
+        let result: number[][] = []
+       
+        
+        values[0].forEach((cols, i) => {
+            result[i] = []
+            values[1].forEach((rows, j) => {
+                let res =  data.filter((v) => {
+                    
+                    let noid = v as T_RecordNoID
+                    let noidValue1: string =  `${noid[headers[0]].value}`;
+                    let noidValue2: string = `${noid[headers[1]].value}`;
+                   
+                    
+                    return noidValue1.toLowerCase().includes(`${cols.value.toLowerCase()}`) && noidValue2.toLowerCase().includes(`${rows.value.toLowerCase()}`)
+
+                })
+            result[i][j] = (res ? res.length : 0);
+        })
+    })
+        return result
+    }, [])
 
     const initialValues: TransferListData = [
         [],
@@ -43,6 +47,7 @@ function SimpleStatTableForm() {
     const [tableTitle, setTableTitle] = useState("")
     const MAX_SIZE_ROWS = 5;
     const MAX_SIZE_COLS = 5;
+
 
 
 
@@ -94,6 +99,7 @@ function SimpleStatTableForm() {
         {
             setTransferDataRow(() => ([possibleValuesByHeaders[RowSelect], [{value: '', label: "Empty value"}]]) )
             setcurrentMaxSize((prev) => ({...prev, MaxRows: Math.min(possibleValuesByHeaders[RowSelect].length, currentMaxSize.MaxRows)}))
+
         }
 
     }, [RowSelect])
@@ -102,17 +108,17 @@ function SimpleStatTableForm() {
         if( ColSelect !== null)
         {
             setTransferDataCol(() => ([possibleValuesByHeaders[ColSelect], [{value: '', label: "Empty value"}]]) )
-            setcurrentMaxSize((prev) => ({...prev, MaxCols: Math.min(possibleValuesByHeaders[ColSelect].length, currentMaxSize.MaxCols)}))
+            // setcurrentMaxSize((prev) => ({...prev, MaxCols: Math.min(possibleValuesByHeaders[ColSelect].length, currentMaxSize.MaxCols)}))
         }
 
     }, [ColSelect])
 
     useEffect(() => {
-        setcurrentMaxSize((prev) => ({...prev, MaxCols: Math.min(transferdataCol[0].length, currentMaxSize.MaxCols)}))
+        setcurrentMaxSize((prev) => ({...prev, MaxCols: Math.min(transferdataCol[0].length, MAX_SIZE_COLS)}))
     }, [transferdataCol])
 
     useEffect(() => {
-        setcurrentMaxSize((prev) => ({...prev, MaxRows: Math.min(transferdataRow[0].length, currentMaxSize.MaxCols)}))
+        setcurrentMaxSize((prev) => ({...prev, MaxRows: Math.min(transferdataRow[0].length, MAX_SIZE_ROWS)}))
     }, [transferdataRow])
     
     
@@ -122,7 +128,13 @@ function SimpleStatTableForm() {
 
         <Select
             value={RowSelect}
-            onChange={(e) => setRowSelect(e)}
+            onChange={(e) => {
+                if(e)
+                {
+                    setcurrentMaxSize(prev => ({...prev, MaxRows: MAX_SIZE_ROWS}))
+                    setRowSelect(e)
+                }
+            }}
             label={"Header for rows"}
             data={HeaderList}
         />
@@ -140,7 +152,13 @@ function SimpleStatTableForm() {
 
         <Select 
             defaultValue={ColSelect}
-            onChange={(e) => setColSelect(e)}
+            onChange={(e) => {
+                if(e)
+                {
+                    setcurrentMaxSize((prev) => ({...prev, MaxCols: MAX_SIZE_COLS}))
+                    setColSelect(e)
+                }
+            }}
             label={"Header for columns"}
             data={HeaderList}
         />            
@@ -153,13 +171,18 @@ function SimpleStatTableForm() {
             breakpoint="sm"
             />}
     </Group>
-            <NumberInput className='w-1/6 lg:w-1/12' label={"Max size rows"} value={currentMaxSize.MaxRows}  max={Math.min(MAX_SIZE_ROWS,transferdataRow[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxRows: e as number}))}/>
+            <NumberInput className='w-1/6 lg:w-1/12' label={"Max size rows"} value={currentMaxSize.MaxRows} max={Math.min(MAX_SIZE_ROWS,transferdataRow[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxRows: e as number}))}/>
             <NumberInput className='w-1/6 lg:w-1/12' label={"Max size cols "} value={currentMaxSize.MaxCols}  max={Math.min(MAX_SIZE_COLS,transferdataCol[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxCols: e as number}))}/>
            <TextInput label={"Title"} value={tableTitle} onChange={(e) => setTableTitle(e.target.value)} />
     <div>Preview: </div>
-        <SimpleStatTable rows={transferdataRow} cols={transferdataCol} maxSize={currentMaxSize} title='Hello' />
+        <SimpleStatTable rows={transferdataRow} cols={transferdataCol}  maxSize={currentMaxSize}  title='' />
         <Center>
-                <Button color='green' variant='filled' >Add Table</Button>
+                <Button color='green' variant='filled' onClick={() => {
+
+                    const counts = getCountsFor2Headers([RowSelect as string, ColSelect as string], [ transferdataRow[0],transferdataCol[0] ])
+
+                    addSimpleStatTable({cols: transferdataCol, rows: transferdataRow, dataCounts: counts, maxSize: currentMaxSize, title: tableTitle})
+                }} >Add Table</Button>
         </Center>
     </>
   )
