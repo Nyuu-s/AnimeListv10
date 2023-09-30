@@ -9,6 +9,9 @@ import TableSettings from './Tabs/TableSettings';
 import UserPreferences from './Tabs/UserPreferences';
 
 import SimpleStatTableForm from './SimpleStatTableForm';
+import StatsTablesList from './StatsTablesList';
+import { SimpleTableData } from './Helpers/useCustomTypes';
+
 
 
 
@@ -22,8 +25,9 @@ const USER_SETTINGS_ID= 'user-settings';
 const TABLE_SETTINGS_ID= 'table-settings';
 const NOTIFICATIONS_ID= 'notifications-pannel';
 const {pathname } = useLocation()
-const [test, { open, close }] = useDisclosure(false);
-
+const [drawer, { open, close }] = useDisclosure(false);
+const [openStatForm, setopenStatForm] = useState(false)
+const [editTableData, seteditTableData] = useState<SimpleTableData | undefined>()
 
   return (
     <Header height={60} mt={26} className='fixed z-50 h-full' p="xs">
@@ -44,7 +48,12 @@ const [test, { open, close }] = useDisclosure(false);
         {
           segmentValue === 'tables' && 
           <div className='h-screen'>
-            <SimpleStatTableForm  />
+            {!openStatForm && <Button variant='filled' color='indigo' onClick={() => {
+              seteditTableData(undefined)
+              setopenStatForm(true)
+            }}>New Table</Button>}
+            { openStatForm && <SimpleStatTableForm setFormState={setopenStatForm} editData={editTableData} />}
+            {!openStatForm && <StatsTablesList setFormState={setopenStatForm} setEditData={seteditTableData}/>}
 
           </div>
         }
@@ -80,7 +89,7 @@ const [test, { open, close }] = useDisclosure(false);
           </Tabs.List>
 
           <Tabs.Panel value={USER_SETTINGS_ID} pt="xs">
-          <Drawer position='right' overlayProps={{opacity: 0.5 }} withCloseButton={false} opened={activeTab === TABLE_SETTINGS_ID && test} onClose={close}>
+          <Drawer position='right' overlayProps={{opacity: 0.5 }} withCloseButton={false} opened={activeTab === TABLE_SETTINGS_ID && drawer} onClose={close}>
             {/* Drawer content */}
         
               <Drawer.Header >
@@ -93,7 +102,7 @@ const [test, { open, close }] = useDisclosure(false);
           
           </Drawer>
 
-          <Drawer position='right'  withCloseButton={false} opened={activeTab === USER_SETTINGS_ID && test} onClose={close}>
+          <Drawer position='right'  withCloseButton={false} opened={activeTab === USER_SETTINGS_ID && drawer} onClose={close}>
             {/* Drawer content */}
          
               <Drawer.Header >

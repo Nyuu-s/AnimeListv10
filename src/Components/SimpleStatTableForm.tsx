@@ -3,12 +3,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDataState } from '../context';
 import SimpleStatTable from './SimpleStatTable';
 import { T_RecordNoID  } from './Helpers/useRecord';
+import { SimpleTableData } from './Helpers/useCustomTypes';
+import { invoke } from '@tauri-apps/api';
 
+interface editProps {
+    editData: SimpleTableData | undefined
+    setFormState(value:boolean): void
+}
+function SimpleStatTableForm({editData,setFormState}:editProps) {
 
-function SimpleStatTableForm() {
-
-    
-    const {getHeaders,getData, getPossibleValues, restrictedValues, addSimpleStatTable} = useDataState();
+    const editMode = editData != undefined
+    const {getHeaders,getData, getPossibleValues, restrictedValues, addSimpleStatTable, SimpleStatTablesData, editSimpleStatTable} = useDataState();
     const HeaderList = useMemo(() => getHeaders().map((v) => ({value: v.header, label: v.header})).sort((a, b) => a.label > b.label ? 1 : -1), [])
 
     const getCountsFor2Headers = useCallback((headers: string[], values:[TransferListItem[], TransferListItem[]]) => {
@@ -35,14 +40,26 @@ function SimpleStatTableForm() {
         return result
     }, [])
 
-    const initialValues: TransferListData = [
+    const initialRowValues: TransferListData = editMode ? editData.rows as TransferListData
+    :
+    [
         [],
         []
-    ]  
-    const [transferdataRow, setTransferDataRow] = useState<TransferListData>(initialValues);
-    const [transferdataCol, setTransferDataCol] = useState<TransferListData>(initialValues);
-    const [RowSelect, setRowSelect] = useState<null | string>(null);
-    const [ColSelect, setColSelect] = useState<null | string>(null)
+    ]
+
+    const initialColValues: TransferListData = editMode ? editData.cols as TransferListData
+    :
+    [
+        [],
+        []
+    ]
+    
+
+
+    const [transferdataRow, setTransferDataRow] = useState<TransferListData>(initialRowValues);
+    const [transferdataCol, setTransferDataCol] = useState<TransferListData>(initialColValues);
+    const [RowSelect, setRowSelect] = useState<null | string>(editMode ? editData.headers.row : null);
+    const [ColSelect, setColSelect] = useState<null | string>(editMode ? editData.headers.col : null)
     const [currentMaxSize, setcurrentMaxSize] = useState({MaxRows: 1, MaxCols: 1})
     const [tableTitle, setTableTitle] = useState("")
     const MAX_SIZE_ROWS = 5;
@@ -112,18 +129,19 @@ function SimpleStatTableForm() {
         }
 
     }, [ColSelect])
-
+    
     useEffect(() => {
         setcurrentMaxSize((prev) => ({...prev, MaxCols: Math.min(transferdataCol[0].length, MAX_SIZE_COLS)}))
     }, [transferdataCol])
-
+    
     useEffect(() => {
         setcurrentMaxSize((prev) => ({...prev, MaxRows: Math.min(transferdataRow[0].length, MAX_SIZE_ROWS)}))
     }, [transferdataRow])
     
     
-  return (
-    <>
+    return (
+        <>
+        <TextInput label={"Title"} value={tableTitle} onChange={(e) => setTableTitle(e.target.value)} />
     <Group>
 
         <Select
@@ -173,16 +191,36 @@ function SimpleStatTableForm() {
     </Group>
             <NumberInput className='w-1/6 lg:w-1/12' label={"Max size rows"} value={currentMaxSize.MaxRows} max={Math.min(MAX_SIZE_ROWS,transferdataRow[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxRows: e as number}))}/>
             <NumberInput className='w-1/6 lg:w-1/12' label={"Max size cols "} value={currentMaxSize.MaxCols}  max={Math.min(MAX_SIZE_COLS,transferdataCol[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxCols: e as number}))}/>
-           <TextInput label={"Title"} value={tableTitle} onChange={(e) => setTableTitle(e.target.value)} />
     <div>Preview: </div>
-        <SimpleStatTable rows={transferdataRow} cols={transferdataCol}  maxSize={currentMaxSize}  title='' />
+        {(transferdataRow[0].length > 0 || transferdataCol[0].length > 0) ? <SimpleStatTable rows={transferdataRow} cols={transferdataCol}  maxSize={currentMaxSize}  title='' /> : <> </>}
         <Center>
-                <Button color='green' variant='filled' onClick={() => {
+                <Button color={editMode ? 'indigo' : 'green'} variant='filled' onClick={() => {
 
-                    const counts = getCountsFor2Headers([RowSelect as string, ColSelect as string], [ transferdataRow[0],transferdataCol[0] ])
-
-                    addSimpleStatTable({cols: transferdataCol, rows: transferdataRow, dataCounts: counts, maxSize: currentMaxSize, title: tableTitle})
-                }} >Add Table</Button>
+                    if(RowSelect && ColSelect && transferdataCol[0].length > 0 && transferdataRow[0].length > 0)
+                    {  
+                        let headersNames = {col: ColSelect, row: RowSelect}
+                        const counts = getCountsFor2Headers([RowSelect as string, ColSelect as string], [ transferdataRow[0],transferdataCol[0] ])
+                        let addingTable
+                        if(editMode)
+                        {
+                            addingTable = {headers:headersNames, id: editData.id,  cols: transferdataCol, visibility: true, rows: transferdataRow, dataCounts: counts, maxSize: currentMaxSize, title: tableTitle}
+                            editSimpleStatTable(editData.id, addingTable)
+                        }
+                        else
+                        {
+                            const ID =  SimpleStatTablesData.length > 0 ? SimpleStatTablesData.sort((a, b) => a.id > b.id ? 1 : -1)[SimpleStatTablesData.length-1].id+1 : 0
+                            addingTable = {headers:headersNames, id: ID,  cols: transferdataCol, visibility: true, rows: transferdataRow, dataCounts: counts, maxSize: currentMaxSize, title: tableTitle}
+                            addSimpleStatTable(addingTable)
+                            
+                            
+                        }
+                        setFormState(false)
+                        
+                    }
+                }} >{editMode ? "Edit Table" : "Add Table"}</Button>
+                <Button variant='filled' color='yellow' onClick={() => {
+                    setFormState(false)
+                }}>Cancel</Button>
         </Center>
     </>
   )

@@ -3,9 +3,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Record, RecordDataSet, Records, TDataHeaders, THeader, T_RecordNoID, useCastTo } from '../Components/Helpers/useRecord';
 import { toast } from "react-toastify";
 import { TransferListData } from "@mantine/core";
+import { SimpleTableData } from "../Components/Helpers/useCustomTypes";
 
 type DataContextType = {
-    addSimpleStatTable(data: SimpleTableData): void
+    addSimpleStatTable(data: SimpleTableData): void,
+    editSimpleStatTable(id:number, data: SimpleTableData): void,
+    deleteSimpleStatTable(id:number): void,
+    setSimpleStatTablesData(statsTables: SimpleTableData[]): void
     getData(): Records
     getHeaders(): TDataHeaders,
     updateColumn(header:string, toBeRestricted: string[]): boolean
@@ -39,13 +43,7 @@ class Table2H {
     }
 }
 
-type SimpleTableData = {
-    rows: TransferListData | string[],
-    cols: TransferListData | string[],
-    dataCounts: number[][]
-    title: string,
-    maxSize: {MaxRows: number, MaxCols: number}
-  }
+
 
 class RecordsData {
     private data: Records;
@@ -221,6 +219,19 @@ const DataContext = createContext<DataContextType>({
     {
         throw new Error("Function not implemented.")
     },
+    editSimpleStatTable: function (): void
+    {
+        throw new Error("Function not implemented.")
+    },
+    deleteSimpleStatTable: function (): void
+    {
+        throw new Error("Function not implemented.")
+    },
+    setSimpleStatTablesData: function (): void
+    {
+        throw new Error("Function not implemented.")
+    },
+  
 
 
     restrictedValues: {} as RestrictedValues,
@@ -290,8 +301,35 @@ export function DataProvider({children}: {children: React.ReactNode})
 
     const addSimpleStatTable = (data: SimpleTableData ) =>{ 
        
-        setSimpleStatTablesData((prev) => [...prev, data] )
+        setSimpleStatTablesData((prev) => {
+            let newData = [...prev, data]
+            invoke("save_stats_data", {data: newData})
+            return newData
+        } )
     
+    }
+
+    const editSimpleStatTable = (id:number, data:SimpleTableData) => {
+        setSimpleStatTablesData((prev) => {
+            let index = SimpleStatTablesData.findIndex((v) => v.id == id)
+            let newarr = [...prev]
+            if(index)
+            {
+                newarr[index] = data
+                invoke("save_stats_data", {data: newarr})
+            }
+            return newarr
+        })
+    }
+
+    const deleteSimpleStatTable = (id:number) => {
+        setSimpleStatTablesData((prev) => {
+            let index = SimpleStatTablesData.findIndex((v) => v.id == id)
+            let newarr = [...prev]
+            index != undefined ? newarr.splice(index, 1) : index
+            
+            return newarr
+        })
     }
 
     useEffect(() => {
@@ -448,6 +486,9 @@ export function DataProvider({children}: {children: React.ReactNode})
     return (
         <DataContext.Provider value={{ 
             addSimpleStatTable,
+            editSimpleStatTable,
+            setSimpleStatTablesData,
+            deleteSimpleStatTable,
             sortData, 
             setBothDataAndHeaders, 
             removeRecords, 

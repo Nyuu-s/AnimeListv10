@@ -74,6 +74,22 @@ pub async fn save_data(data_state: State<'_, SessionDataState>, ctx: State<'_, T
   Ok(true)
 }
 #[tauri::command]
+pub async fn save_stats_data(ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>, data: serde_json::Value) -> Result<bool, String> {
+  //calculate new hash code and save it in the data state
+  let data_path = get_app_dir_path(DirName::_AppLocalData, ctx.config.clone(), &filenames).join("Statistics_tables.json");
+  
+  helper_write_file(&serde_json::to_string(&data).unwrap().as_bytes(), &data_path.to_str().unwrap()).map_err(|err| format!("{}", err))?;
+  Ok(true)
+}
+#[tauri::command]
+pub async fn fetch_stats_data(ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>) -> Result<serde_json::Value, String> {
+  //calculate new hash code and save it in the data state
+  let data_path = get_app_dir_path(DirName::_AppLocalData, ctx.config.clone(), &filenames).join("Statistics_tables.json"); 
+  let data_str= fs::read_to_string(data_path).map_err(|err| format!{"{}", err})?;
+  let data_json: serde_json::Value = serde_json::from_str(&data_str).map_err(|err| format!("{}", err))?;
+  Ok(data_json)
+}
+#[tauri::command]
 pub fn get_data(ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles>) -> Result<serde_json::Value, String> {
   let data_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames);
   let data_str =  fs::read_to_string(data_path).map_err(|err| format!{"{}", err})?;

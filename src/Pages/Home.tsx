@@ -1,8 +1,7 @@
 
-import { Badge, Button, Card, Group, Image, Table, Text, TransferListData } from '@mantine/core';
-import { useState } from 'react';
-import { useDataState } from '../context';
+import { Badge, Card, Group, Image, Skeleton, Text } from '@mantine/core';
 import SimpleStatTable from '../Components/SimpleStatTable';
+import { useDataState } from '../context';
 
 
 
@@ -61,6 +60,14 @@ function transformhHours(hours: number) : {Total_minutes: number, Total_days: nu
 export default function Home() {
   const {SimpleStatTablesData} = useDataState()
   const tansformedHours = transformhHours(1800);
+
+
+
+  
+
+
+  
+
   return (
     <>
 
@@ -89,19 +96,27 @@ export default function Home() {
 
 
       </Card>
-        {SimpleStatTablesData.map((v) => (
-          <Card shadow="sm" padding="lg" radius="md" withBorder >
+        {SimpleStatTablesData.map((v) => {
+          if(v.visibility)
+          {
 
-           
+            return(
+            <Card shadow="sm" padding="lg" radius="md" withBorder >
 
-            <Group position="apart" mt="md" mb="xs">
-              <Text weight={500}>{v.title}</Text>
-            </Group>
+            
 
-            <SimpleStatTable cols={v.cols} rows={v.rows} title={v.title} counts={v.dataCounts} maxSize={v.maxSize}   />
-          </Card>
+              <Group position="apart" mt="md" mb="xs">
+                <Text weight={500}>{v.title}</Text>
+              </Group>
 
-      ))}
+              <SimpleStatTable cols={v.cols} rows={v.rows} title={v.title} counts={v.dataCounts} maxSize={v.maxSize}   />
+            </Card>
+            )
+          }
+
+        })
+        } 
+    
       </Group>
     </>
   );
