@@ -3,9 +3,12 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Record, RecordDataSet, Records, TDataHeaders, THeader, T_RecordNoID, useCastTo } from '../Components/Helpers/useRecord';
 import { toast } from "react-toastify";
 import { TransferListData } from "@mantine/core";
-import { SimpleTableData } from "../Components/Helpers/useCustomTypes";
+import { ChartData, SimpleTableData } from "../Components/Helpers/useCustomTypes";
 
 type DataContextType = {
+    deleteChart(id:number):void
+    addChart(data: ChartData): void,
+    editChart(id:number, data: ChartData):void
     addSimpleStatTable(data: SimpleTableData): void,
     editSimpleStatTable(id:number, data: SimpleTableData): void,
     deleteSimpleStatTable(id:number): void,
@@ -25,6 +28,7 @@ type DataContextType = {
     sortData(direction: boolean, headerName: string) : Record[]
     restrictedValues: RestrictedValues,
     SimpleStatTablesData: SimpleTableData[],
+    chartsCollection: ChartData[],
     RecordsContent: RecordsData
 }
 
@@ -231,11 +235,24 @@ const DataContext = createContext<DataContextType>({
     {
         throw new Error("Function not implemented.")
     },
+    addChart: function (): void
+    {
+        throw new Error("Function not implemented.")
+    },
+    editChart: function (): void
+    {
+        throw new Error("Function not implemented.")
+    },
+    deleteChart: function (): void
+    {
+        throw new Error("Function not implemented.")
+    },
   
 
 
     restrictedValues: {} as RestrictedValues,
     SimpleStatTablesData: [] as SimpleTableData[],
+    chartsCollection: [] as ChartData[],
     RecordsContent: new RecordsData({}, [{header:'', headerType: ''}])
 });
 
@@ -293,11 +310,52 @@ type RestrictedValues = {
     [key: string]: string[]
 }
 
+
+
 export function DataProvider({children}: {children: React.ReactNode})
 {
     const [RecordsContent, setRecordsContent] = useState<RecordsData>(new RecordsData({}, []))
     const [restrictedValues, setRestrictedValues] = useState<RestrictedValues>({})
     const [SimpleStatTablesData, setSimpleStatTablesData] = useState<SimpleTableData[]>([])
+    const [chartsCollection, setChartsCollection] = useState<ChartData[]>([])
+
+    
+    const addChart = (data: ChartData ) =>{ 
+       
+        setChartsCollection((prev) => {
+            let newData = [...prev, data]
+            // invoke("save_charts_data", {data: newData})
+            return newData
+        } )
+    
+    }
+
+    const editChart = (id:number, data:ChartData) => {
+        setChartsCollection((prev) => {
+            let index = chartsCollection.findIndex((v) => v.id == id)
+            let newarr = [...prev]
+            if(index != undefined)
+            {
+                newarr[index] = data
+                // invoke("save_charts_data", {data: newData})
+            }
+            return newarr
+        })
+    }
+
+    const deleteChart = (id:number) => {
+        setChartsCollection((prev) => {
+            let index = chartsCollection.findIndex((v) => v.id == id)
+            let newarr = [...prev]
+            if( index != undefined )
+            {         
+                newarr.splice(index, 1) 
+                // invoke("save_charts_data", {data: newData})
+            }
+            return newarr
+        })
+    }
+
 
     const addSimpleStatTable = (data: SimpleTableData ) =>{ 
        
@@ -313,7 +371,7 @@ export function DataProvider({children}: {children: React.ReactNode})
         setSimpleStatTablesData((prev) => {
             let index = SimpleStatTablesData.findIndex((v) => v.id == id)
             let newarr = [...prev]
-            if(index)
+            if(index != undefined)
             {
                 newarr[index] = data
                 invoke("save_stats_data", {data: newarr})
@@ -326,16 +384,14 @@ export function DataProvider({children}: {children: React.ReactNode})
         setSimpleStatTablesData((prev) => {
             let index = SimpleStatTablesData.findIndex((v) => v.id == id)
             let newarr = [...prev]
-            index != undefined ? newarr.splice(index, 1) : index
-            
+            if( index != undefined )
+            {         
+                newarr.splice(index, 1) 
+                invoke("save_stats_data", {data: newarr})
+            }
             return newarr
         })
-    }
-
-    useEffect(() => {
-        console.log(restrictedValues);
-    }, [restrictedValues])
-    
+    }   
 
     const setBothDataAndHeaders = (obj: any) => {
         setRecordsContent(RecordDataBuilder(obj))
@@ -484,7 +540,10 @@ export function DataProvider({children}: {children: React.ReactNode})
         saveData(0);
     };
     return (
-        <DataContext.Provider value={{ 
+        <DataContext.Provider value={{
+            deleteChart,
+            editChart,
+            addChart, 
             addSimpleStatTable,
             editSimpleStatTable,
             setSimpleStatTablesData,
@@ -504,6 +563,7 @@ export function DataProvider({children}: {children: React.ReactNode})
             updateColumn,
             restrictedValues,
             SimpleStatTablesData,
+            chartsCollection,
             RecordsContent }}>
             {children}
         </DataContext.Provider>

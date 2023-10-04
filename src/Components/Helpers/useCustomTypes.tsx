@@ -11,3 +11,25 @@ export type SimpleTableData = {
     maxSize: {MaxRows: number, MaxCols: number}
   }
 
+export enum ChartType {
+  CLine,
+  CPie,
+  CDonut
+}
+
+type chartDataset = {
+  label: string,
+  data: number[],
+  backgroundColor: string[],
+  borderColor: string[]
+
+}
+
+export type ChartData = {
+  visibility: boolean,
+  type: ChartType,
+  id: number,
+  title: string
+  data: chartDataset[]
+}
+

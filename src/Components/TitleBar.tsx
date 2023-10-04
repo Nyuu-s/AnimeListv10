@@ -11,6 +11,7 @@ import UserPreferences from './Tabs/UserPreferences';
 import SimpleStatTableForm from './SimpleStatTableForm';
 import StatsTablesList from './StatsTablesList';
 import { SimpleTableData } from './Helpers/useCustomTypes';
+import ChartForm from './ChartForm';
 
 
 
@@ -41,20 +42,26 @@ const [editTableData, seteditTableData] = useState<SimpleTableData | undefined>(
           onChange={setSegmentValue}
           data={[
             { label: 'Tables', value: 'tables' },
-            { label: 'Graphs', value: 'graphs' }
+            { label: 'Charts', value: 'charts' }
           ]}
         />
         </Center>
         {
           segmentValue === 'tables' && 
           <div className='h-screen'>
-            {!openStatForm && <Button variant='filled' color='indigo' onClick={() => {
+            {!openStatForm && <Button variant='filled' color='indigo' className='my-5' onClick={() => {
               seteditTableData(undefined)
               setopenStatForm(true)
             }}>New Table</Button>}
             { openStatForm && <SimpleStatTableForm setFormState={setopenStatForm} editData={editTableData} />}
             {!openStatForm && <StatsTablesList setFormState={setopenStatForm} setEditData={seteditTableData}/>}
 
+          </div>
+        }
+        {
+          segmentValue == 'charts' &&
+          <div>
+            <ChartForm />
           </div>
         }
       </Modal>

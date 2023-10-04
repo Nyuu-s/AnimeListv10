@@ -1,5 +1,5 @@
 
-import { Badge, Card, Group, Image, Skeleton, Text } from '@mantine/core';
+import { Badge, Card, Group, Image, Skeleton, Text, TransferListData } from '@mantine/core';
 import SimpleStatTable from '../Components/SimpleStatTable';
 import { useDataState } from '../context';
 
@@ -57,21 +57,56 @@ function transformhHours(hours: number) : {Total_minutes: number, Total_days: nu
   return result
 }
 
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+
+
+
 export default function Home() {
-  const {SimpleStatTablesData} = useDataState()
+  const {SimpleStatTablesData, chartsCollection} = useDataState()
   const tansformedHours = transformhHours(1800);
 
 
 
   
+  let t = {
 
-
-  
-
-  return (
-    <>
-
-    <Group>
+    labels: [`red`, 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    datasets: [
+      {
+        label: '# of Votes',
+        data : SimpleStatTablesData[0]?.dataCounts.flat(),
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  }
+    
+    return (
+      <>
+      
+      <Group>
+        <div className='w-52 h-52'>
+          <Doughnut  data={t} />
+        </div>
       <Card shadow="sm" padding="lg" radius="md" withBorder w={300} h={300}>
 
         <Card.Section>
@@ -96,6 +131,21 @@ export default function Home() {
 
 
       </Card>
+        {chartsCollection.map((v) => {
+          if(v.visibility)
+          {
+            return (
+              <Card>
+                <Group position="apart" mt="md" mb="xs">
+                  <Text weight={500}>{v.title}</Text>
+                </Group>
+              </Card>
+            )
+          }
+        })
+
+        }
+
         {SimpleStatTablesData.map((v) => {
           if(v.visibility)
           {

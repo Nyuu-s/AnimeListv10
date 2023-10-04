@@ -141,61 +141,69 @@ function SimpleStatTableForm({editData,setFormState}:editProps) {
     
     return (
         <>
-        <TextInput label={"Title"} value={tableTitle} onChange={(e) => setTableTitle(e.target.value)} />
-    <Group>
+        <TextInput className='text-center w-1/2 mx-auto my-5' label={"Title"} value={tableTitle} onChange={(e) => setTableTitle(e.target.value)} />
+        <div className='flex justify-around'>
+            <div className='mr-10 mt-5'>
+                <div className='flex mb-5'>
+                    <Select
+                        value={RowSelect}
+                        onChange={(e) => {
+                            if(e)
+                            {
+                                setcurrentMaxSize(prev => ({...prev, MaxRows: MAX_SIZE_ROWS}))
+                                setRowSelect(e)
+                            }
+                        }}
+                        label={"Header for rows"}
+                        data={HeaderList}
+                        />
+                        <NumberInput className='w-32 ml-6' label={"Max size rows"} value={currentMaxSize.MaxRows} max={Math.min(MAX_SIZE_ROWS,transferdataRow[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxRows: e as number}))}/>
+                </div>
+                {RowSelect && <TransferList
+                    value={transferdataRow}
+                    onChange={setTransferDataRow}
+                    searchPlaceholder="Search..."
+                    nothingFound="Nothing here"
+                    titles={['To be Counted', 'Exculded']}
+                    breakpoint="sm"
+                    />}
+            </div>
+            <div>
+                <div className='mr-10 mt-5'>
+                    <div className='flex mb-5'>
+                        <Select 
+                            defaultValue={ColSelect}
+                            onChange={(e) => {
+                                if(e)
+                                {
+                                    setcurrentMaxSize((prev) => ({...prev, MaxCols: MAX_SIZE_COLS}))
+                                    setColSelect(e)
+                                }
+                            }}
+                            label={"Header for columns"}
+                            data={HeaderList}
+                            />            
+                        <NumberInput className='w-32 ml-6' label={"Max size cols "} value={currentMaxSize.MaxCols}  max={Math.min(MAX_SIZE_COLS,transferdataCol[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxCols: e as number}))}/>
+                    </div>
+                    
+                        {ColSelect && <TransferList
+                                value={transferdataCol}
+                                onChange={setTransferDataCol}
+                                searchPlaceholder="Search..."
+                                nothingFound="Nothing here"
+                                titles={['To be Counted', 'Exculded']}
+                                breakpoint="sm"
+                                />}
+                
+                </div>
+            </div>
+        </div>
 
-        <Select
-            value={RowSelect}
-            onChange={(e) => {
-                if(e)
-                {
-                    setcurrentMaxSize(prev => ({...prev, MaxRows: MAX_SIZE_ROWS}))
-                    setRowSelect(e)
-                }
-            }}
-            label={"Header for rows"}
-            data={HeaderList}
-        />
-        {RowSelect && <TransferList
-            value={transferdataRow}
-            onChange={setTransferDataRow}
-            searchPlaceholder="Search..."
-            nothingFound="Nothing here"
-            titles={['To be Counted', 'Exculded']}
-            breakpoint="sm"
-        />}
-        
-    </Group>
-    <Group>
-
-        <Select 
-            defaultValue={ColSelect}
-            onChange={(e) => {
-                if(e)
-                {
-                    setcurrentMaxSize((prev) => ({...prev, MaxCols: MAX_SIZE_COLS}))
-                    setColSelect(e)
-                }
-            }}
-            label={"Header for columns"}
-            data={HeaderList}
-        />            
-       {ColSelect && <TransferList
-            value={transferdataCol}
-            onChange={setTransferDataCol}
-            searchPlaceholder="Search..."
-            nothingFound="Nothing here"
-            titles={['Shown', 'Hidden']}
-            breakpoint="sm"
-            />}
-    </Group>
-            <NumberInput className='w-1/6 lg:w-1/12' label={"Max size rows"} value={currentMaxSize.MaxRows} max={Math.min(MAX_SIZE_ROWS,transferdataRow[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxRows: e as number}))}/>
-            <NumberInput className='w-1/6 lg:w-1/12' label={"Max size cols "} value={currentMaxSize.MaxCols}  max={Math.min(MAX_SIZE_COLS,transferdataCol[0].length) } min={1}  onChange={(e) => setcurrentMaxSize((prev) => ({...prev, MaxCols: e as number}))}/>
-    <div>Preview: </div>
-        {(transferdataRow[0].length > 0 || transferdataCol[0].length > 0) ? <SimpleStatTable rows={transferdataRow} cols={transferdataCol}  maxSize={currentMaxSize}  title='' /> : <> </>}
-        <Center>
-                <Button color={editMode ? 'indigo' : 'green'} variant='filled' onClick={() => {
-
+        {(transferdataRow[0].length > 0 || transferdataCol[0].length > 0) ? <> <div className='font-bold mt-5'>Preview: </div>  <SimpleStatTable rows={transferdataRow} cols={transferdataCol}  maxSize={currentMaxSize}  title='' /> </> : <> </>}
+    
+        <Center className='mt-5'>
+                <Button className='mr-5' color={editMode ? 'indigo' : 'green'} variant='filled' onClick={() => {
+                    
                     if(RowSelect && ColSelect && transferdataCol[0].length > 0 && transferdataRow[0].length > 0)
                     {  
                         let headersNames = {col: ColSelect, row: RowSelect}
