@@ -17,19 +17,20 @@ export enum ChartType {
   CDonut
 }
 
-type chartDataset = {
+export type DatasetChart = {
   label: string,
   data: number[],
   backgroundColor: string[],
   borderColor: string[]
-
+  borderWidth: number
 }
 
 export type ChartData = {
   visibility: boolean,
   type: ChartType,
   id: number,
-  title: string
-  data: chartDataset[]
+  title: string,
+  labels: string[],
+  datasets: DatasetChart[]
 }
 

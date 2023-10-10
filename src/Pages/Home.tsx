@@ -59,6 +59,7 @@ function transformhHours(hours: number) : {Total_minutes: number, Total_days: nu
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import CustomChart from '../Components/CustomChart';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -104,11 +105,8 @@ export default function Home() {
       <>
       
       <Group>
-        <div className='w-52 h-52'>
-          <Doughnut  data={t} />
-        </div>
-      <Card shadow="sm" padding="lg" radius="md" withBorder w={300} h={300}>
 
+      <Card shadow="sm" padding="lg" radius="md" withBorder w={300} h={300}>
         <Card.Section>
           <Image
             src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
@@ -136,8 +134,9 @@ export default function Home() {
           {
             return (
               <Card>
-                <Group position="apart" mt="md" mb="xs">
+                <Group w={500}>
                   <Text weight={500}>{v.title}</Text>
+                  <CustomChart chart={v}/>
                 </Group>
               </Card>
             )
