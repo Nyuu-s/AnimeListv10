@@ -73,48 +73,14 @@ export default function Home() {
 
 
   
-  let t = {
-
-    labels: [`red`, 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-    datasets: [
-      {
-        label: '# of Votes',
-        data : SimpleStatTablesData[0]?.dataCounts.flat(),
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-        ],
-        borderWidth: 1,
-      },
-    ],
-  }
+ 
     
     return (
       <>
       
       <Group>
 
-      <Card shadow="sm" padding="lg" radius="md" withBorder w={300} h={300}>
-        <Card.Section>
-          <Image
-            src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-            height={160}
-            alt="Norway"
-            />
-        </Card.Section>
-
+      <Card shadow="sm" padding="lg" radius="md" withBorder w={300} >
         <Group position="apart" mt="md" mb="xs">
           <Text weight={500}>Total hours Spent </Text>
           <Badge color="pink" variant="light">

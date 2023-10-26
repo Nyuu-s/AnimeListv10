@@ -71,19 +71,24 @@ function GetLabelsForRow(TablesCollection: SimpleTableData[], TableID: number): 
 type chartmap = {
   [key: string]: ChartType
 }
-
-function ChartForm() {
+interface editProps {
+  editData: ChartData | undefined
+  setFormState(value:boolean): void
+}
+function ChartForm({editData, setFormState}: editProps) {
   const ChartTypeMap: chartmap = {
     "Doughnut": ChartType.CDonut,
     "Pie": ChartType.CPie,
     "Lines": ChartType.CLine
   }
-    const {SimpleStatTablesData, chartsCollection, addChart, getHeaders, getPossibleValues, getData} = useDataState()
-    const [ChartTitle, setChartTitle] = useState<string>()
-    const [SelectChartType, setSelectChartType] = useState<string>(Object.keys(ChartTypeMap)[0])
-    const [SelectOverlayLabel, setSelectOverlayLabel] = useState<string>()
-    const [SelectTable, setSelectTable] = useState<string | undefined>(undefined)
-    const [SelectColumn, setSelectColumn] = useState<string | undefined>(undefined)
+   console.log(editData)
+    const editMode = editData != undefined
+    const {SimpleStatTablesData, chartsCollection, addChart, getHeaders, getPossibleValues, getData, editChart} = useDataState()
+    const [ChartTitle, setChartTitle] = useState<string>(editData ? editData.title : '')
+    const [SelectChartType, setSelectChartType] = useState<string>( editData ? Object.keys(ChartTypeMap).find((key) => ChartTypeMap[key] === editData.type) as string : Object.keys(ChartTypeMap)[0])
+    const [SelectOverlayLabel, setSelectOverlayLabel] = useState<string>(editData ? editData.datasets[0].label : '')
+    const [SelectTable, setSelectTable] = useState<string | undefined>(editData  ? editData.fromTable ?? undefined : undefined)
+    const [SelectColumn, setSelectColumn] = useState<string | undefined>(editData  ? editData.fromColumn ?? undefined : undefined)
     const [isSColumnDisabled, setisSColumnDisabled] = useState<boolean>(false)
     const [isSTableDisabled, setisSTableDisabled] = useState<boolean>(false)
 
@@ -157,8 +162,13 @@ function ChartForm() {
         data={HeaderList.filter((v) => v.label !== 'ID')} />
          <Center className='mt-5'>
           
-            <Button className="mr-5" variant="filled" color="green" onClick={() => {
-              const ID =  chartsCollection.length > 0 ? chartsCollection.sort((a, b) => a.id > b.id ? 1 : -1)[chartsCollection.length-1].id+1 : 0
+            <Button className="mr-5" variant="filled" color={editMode ? "indigo":"green"} onClick={() => {
+              let ID = editMode ? 
+                editData.id 
+                :
+                chartsCollection.length > 0 ? chartsCollection.sort((a, b) => a.id > b.id ? 1 : -1)[chartsCollection.length-1].id+1 : 0
+              
+          
 
               //Table Mode
               if(!isSColumnDisabled && isSTableDisabled)
@@ -168,9 +178,16 @@ function ChartForm() {
                 const cartesianProd: ChartData = GetChartDataForCartesianProd(SimpleStatTablesData[parseInt(SelectTable as string)], ID, true, ChartTitle as string, ChartTypeMap[SelectChartType], SelectOverlayLabel as string )
                 const rowlabels = GetLabelsForRow(SimpleStatTablesData, parseInt(SelectTable as string))
                 const collabels = GetLabelsForCol(SimpleStatTablesData, parseInt(SelectTable as string))
-                const addingChart: ChartData = cartesianProd
+                const chartCreatedOrUpdated: ChartData = {...cartesianProd, fromTable: SelectTable}
+                if(editMode)
+                {
+                  editChart(ID, chartCreatedOrUpdated)
+                }
+                else
+                {
+                  addChart(chartCreatedOrUpdated)
+                }
                
-               addChart(addingChart)
               }
               else // Column Mode
               {
@@ -192,11 +209,21 @@ function ChartForm() {
                       borderWidth: 1,
                       label: "#"
                     }
-                  
-                  addChart({labels, id: ID, title: ChartTitle as string, visibility: true, type: ChartTypeMap[SelectChartType], datasets: [dataset]})
-              }
-            }}>Add Chart</Button>
-            <Button variant="filled" color="yellow">Cancel</Button>
+                    const chartCreatedOrUpdated = {labels, id: ID, title: ChartTitle as string, visibility: true, type: ChartTypeMap[SelectChartType], datasets: [dataset], fromColumn: SelectColumn}
+                    if(editMode)
+                    {
+                      editChart(ID, chartCreatedOrUpdated)
+                    }
+                    else
+                    {
+                      addChart(chartCreatedOrUpdated)
+                    }
+                  }
+                  setFormState(false);
+            }}>{editMode ? "Edit Chart":"Add Chart"}</Button>
+            <Button variant="filled" color="yellow" onClick={() =>{
+              setFormState(false);
+            }}>Cancel</Button>
          </Center>
     </div>
   )

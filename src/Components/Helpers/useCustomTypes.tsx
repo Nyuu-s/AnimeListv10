@@ -31,6 +31,8 @@ export type ChartData = {
   id: number,
   title: string,
   labels: string[],
-  datasets: DatasetChart[]
+  datasets: DatasetChart[],
+  fromColumn?: string,
+  fromTable?: string
 }
 

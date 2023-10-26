@@ -61,7 +61,7 @@ function SimpleStatTableForm({editData,setFormState}:editProps) {
     const [RowSelect, setRowSelect] = useState<null | string>(editMode ? editData.headers.row : null);
     const [ColSelect, setColSelect] = useState<null | string>(editMode ? editData.headers.col : null)
     const [currentMaxSize, setcurrentMaxSize] = useState({MaxRows: 1, MaxCols: 1})
-    const [tableTitle, setTableTitle] = useState("")
+    const [tableTitle, setTableTitle] = useState(editMode ? editData.title : '')
     const MAX_SIZE_ROWS = 5;
     const MAX_SIZE_COLS = 5;
 

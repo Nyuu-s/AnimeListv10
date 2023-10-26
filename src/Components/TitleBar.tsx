@@ -9,9 +9,10 @@ import TableSettings from './Tabs/TableSettings';
 import UserPreferences from './Tabs/UserPreferences';
 
 import SimpleStatTableForm from './SimpleStatTableForm';
-import StatsTablesList from './StatsTablesList';
-import { SimpleTableData } from './Helpers/useCustomTypes';
+import StatsChartsList from './StatsChartsList';
+import { ChartData, SimpleTableData } from './Helpers/useCustomTypes';
 import ChartForm from './ChartForm';
+import StatsTablesList from './StatsTablesList';
 
 
 
@@ -27,8 +28,10 @@ const TABLE_SETTINGS_ID= 'table-settings';
 const NOTIFICATIONS_ID= 'notifications-pannel';
 const {pathname } = useLocation()
 const [drawer, { open, close }] = useDisclosure(false);
-const [openStatForm, setopenStatForm] = useState(false)
+const [openTableForm, setopenTableForm] = useState(false)
+const [openChartForm, setopenChartForm] = useState(false)
 const [editTableData, seteditTableData] = useState<SimpleTableData | undefined>()
+const [editChartData, seteditChartData] = useState<ChartData | undefined>()
 
   return (
     <Header height={60} mt={26} className='fixed z-50 h-full' p="xs">
@@ -49,19 +52,26 @@ const [editTableData, seteditTableData] = useState<SimpleTableData | undefined>(
         {
           segmentValue === 'tables' && 
           <div className='h-screen'>
-            {!openStatForm && <Button variant='filled' color='indigo' className='my-5' onClick={() => {
+            {!openTableForm && <Button variant='filled' color='indigo' className='my-5' onClick={() => {
               seteditTableData(undefined)
-              setopenStatForm(true)
+              setopenTableForm(true)
             }}>New Table</Button>}
-            { openStatForm && <SimpleStatTableForm setFormState={setopenStatForm} editData={editTableData} />}
-            {!openStatForm && <StatsTablesList setFormState={setopenStatForm} setEditData={seteditTableData}/>}
+            { openTableForm && <SimpleStatTableForm setFormState={setopenTableForm} editData={editTableData} />}
+            {!openTableForm && <StatsTablesList setFormState={setopenTableForm} setEditData={seteditTableData}/>}
 
           </div>
         }
         {
           segmentValue == 'charts' &&
-          <div>
-            <ChartForm />
+          <div className='h-screen'>
+            {!openChartForm && <Button variant='filled' color='indigo' className='my-5' onClick={() => {
+              seteditChartData(undefined)
+              setopenChartForm(true)
+            }}>New Chart</Button>}
+            { openChartForm && <ChartForm editData={editChartData} setFormState={setopenChartForm} />}
+            {!openChartForm && <StatsChartsList setFormState={setopenChartForm} setEditData={seteditChartData}/>}
+
+            
           </div>
         }
       </Modal>
