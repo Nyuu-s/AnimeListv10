@@ -40,7 +40,6 @@ function GetChartDataForCartesianProd(Table: SimpleTableData, ID: number, visibi
 
     out.datasets.push({data: dataCounts, backgroundColor: bgColors, borderColor: bgBorderColor, borderWidth: 1, label: tooltip})
     // out.datasets.push({data: dataCounts, backgroundColor: bgColors, borderColor: bgBorderColor, borderWidth: 1, label: "twice"})
-    console.log(out);
     
   }
   return out
@@ -81,7 +80,7 @@ function ChartForm({editData, setFormState}: editProps) {
     "Pie": ChartType.CPie,
     "Lines": ChartType.CLine
   }
-   console.log(editData)
+   
     const editMode = editData != undefined
     const {SimpleStatTablesData, chartsCollection, addChart, getHeaders, getPossibleValues, getData, editChart} = useDataState()
     const [ChartTitle, setChartTitle] = useState<string>(editData ? editData.title : '')
@@ -95,15 +94,15 @@ function ChartForm({editData, setFormState}: editProps) {
     const HeaderList = useMemo(() => getHeaders().map((v) => ({value: v.header, label: v.header})).sort((a, b) =>  (a.label > b.label)  ? 1 : -1), [])
 
 
-    useEffect(() => {
-      console.log(SelectColumn);
-      
+    useEffect(() => {      
       setisSColumnDisabled(SelectColumn !== undefined && SelectColumn !== null )
       setisSTableDisabled(SelectTable !== undefined && SelectTable !== null )
     }, [SelectTable, SelectColumn])
     
 
   function getChartDataFromColumn(str: string) {
+    
+    
       const pValues = getPossibleValues(str)
       const data = Object.values(getData())
 
@@ -168,29 +167,33 @@ function ChartForm({editData, setFormState}: editProps) {
                 :
                 chartsCollection.length > 0 ? chartsCollection.sort((a, b) => a.id > b.id ? 1 : -1)[chartsCollection.length-1].id+1 : 0
               
-          
-
-              //Table Mode
-              if(!isSColumnDisabled && isSTableDisabled)
+              if(SelectColumn || SelectTable)
               {
 
                 
-                const cartesianProd: ChartData = GetChartDataForCartesianProd(SimpleStatTablesData[parseInt(SelectTable as string)], ID, true, ChartTitle as string, ChartTypeMap[SelectChartType], SelectOverlayLabel as string )
-                const rowlabels = GetLabelsForRow(SimpleStatTablesData, parseInt(SelectTable as string))
-                const collabels = GetLabelsForCol(SimpleStatTablesData, parseInt(SelectTable as string))
-                const chartCreatedOrUpdated: ChartData = {...cartesianProd, fromTable: SelectTable}
-                if(editMode)
+                //Table Mode
+                if(!isSColumnDisabled && isSTableDisabled)
                 {
-                  editChart(ID, chartCreatedOrUpdated)
+                  
+                  
+                  const cartesianProd: ChartData = GetChartDataForCartesianProd(SimpleStatTablesData[parseInt(SelectTable as string)], ID, true, ChartTitle as string, ChartTypeMap[SelectChartType], SelectOverlayLabel as string )
+                  const rowlabels = GetLabelsForRow(SimpleStatTablesData, parseInt(SelectTable as string))
+                  const collabels = GetLabelsForCol(SimpleStatTablesData, parseInt(SelectTable as string))
+                  const chartCreatedOrUpdated: ChartData = {...cartesianProd, fromTable: SelectTable}
+                  if(editMode)
+                  {
+                    editChart(ID, chartCreatedOrUpdated)
+                  }
+                  else
+                  {
+                    
+                    SelectTable && addChart(chartCreatedOrUpdated)
+                  }
+                  
                 }
-                else
+                else // Column Mode
                 {
-                  addChart(chartCreatedOrUpdated)
-                }
-               
-              }
-              else // Column Mode
-              {
+                  
                   const chartData = getChartDataFromColumn(SelectColumn as string)
                   const labels = Object.keys(chartData)
                   const counts: number[] = Object.values(chartData)
@@ -202,25 +205,28 @@ function ChartForm({editData, setFormState}: editProps) {
                     backgrounds.push(`rgba(${r}, ${g}, ${b}, 0.5)`)
                   })
                   const dataset: DatasetChart = 
-                    {
-                      data: counts,
-                      backgroundColor: backgrounds,
-                      borderColor: [],
-                      borderWidth: 1,
-                      label: "#"
-                    }
-                    const chartCreatedOrUpdated = {labels, id: ID, title: ChartTitle as string, visibility: true, type: ChartTypeMap[SelectChartType], datasets: [dataset], fromColumn: SelectColumn}
-                    if(editMode)
-                    {
-                      editChart(ID, chartCreatedOrUpdated)
-                    }
-                    else
-                    {
-                      addChart(chartCreatedOrUpdated)
-                    }
+                  {
+                    data: counts,
+                    backgroundColor: backgrounds,
+                    borderColor: [],
+                    borderWidth: 1,
+                    label: "#"
                   }
-                  setFormState(false);
-            }}>{editMode ? "Edit Chart":"Add Chart"}</Button>
+                  const chartCreatedOrUpdated = {labels, id: ID, title: ChartTitle as string, visibility: true, type: ChartTypeMap[SelectChartType], datasets: [dataset], fromColumn: SelectColumn}
+                  if(editMode)
+                  {
+                    editChart(ID, chartCreatedOrUpdated)
+                  }
+                  else
+                  {
+
+                    
+                    addChart(chartCreatedOrUpdated)
+                  }
+                }
+                setFormState(false);
+              }
+              }}>{editMode ? "Edit Chart":"Add Chart"}</Button>
             <Button variant="filled" color="yellow" onClick={() =>{
               setFormState(false);
             }}>Cancel</Button>

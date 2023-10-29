@@ -19,7 +19,9 @@ use data_commands::{
   read_user_config,
   delete_all,
   save_stats_data,
-  fetch_stats_data
+  save_charts_data,
+  fetch_stats_data,
+  fetch_charts_data
 };
 use commands::{
   open_external_url,
@@ -68,7 +70,9 @@ tauri::Builder::default()
     export_xlsx,
     delete_all,
     save_stats_data,
+    save_charts_data,
     fetch_stats_data,
+    fetch_charts_data,
     // init_app_on_ready, 
     save_data,
     get_data,

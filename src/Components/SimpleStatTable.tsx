@@ -51,18 +51,18 @@ function SimpleStatTable({rows, cols, counts, title, maxSize}: SimpleTableData) 
                 <tbody>
                     <tr>
                         <th> </th>
-                    {cols[0].slice(0, maxSize.MaxCols).map((v) => <th>
+                    {cols[0].slice(0, maxSize.MaxCols).map((v, i) => <th key={i}>
                       {v.label}
                         </th>)}
                     </tr>
         
                     {
                       rows[0].slice(0, maxSize.MaxRows).map((v, i) => 
-                        <tr> 
+                        <tr key={i}> 
                           <th>{v.label}</th>   
                           {counts ?
-                            counts[i].slice(0, maxSize.MaxCols).map((count) => <td>{count}</td>) :
-                            typeof cols[0] === 'object' && cols[0].slice(0, maxSize.MaxCols).map(() => <td>{Math.round(Math.random()/0.1)}</td>)
+                            counts[i].slice(0, maxSize.MaxCols).map((count, i) => <td key={i}>{count}</td>) :
+                            typeof cols[0] === 'object' && cols[0].slice(0, maxSize.MaxCols).map((_,i) => <td key={i}>{Math.round(Math.random()/0.1)}</td>)
                           }                        
                         </tr>)
                     }

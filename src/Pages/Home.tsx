@@ -95,11 +95,11 @@ export default function Home() {
 
 
       </Card>
-        {chartsCollection.map((v) => {
+        {chartsCollection.map((v, i) => {
           if(v.visibility)
           {
             return (
-              <Card>
+              <Card key={i}>
                 <Group w={500}>
                   <Text weight={500}>{v.title}</Text>
                   <CustomChart chart={v}/>
@@ -111,15 +111,12 @@ export default function Home() {
 
         }
 
-        {SimpleStatTablesData.map((v) => {
+        {SimpleStatTablesData.map((v, i) => {
           if(v.visibility)
           {
 
             return(
-            <Card shadow="sm" padding="lg" radius="md" withBorder >
-
-            
-
+            <Card key={i} shadow="sm" padding="lg" radius="md" withBorder >
               <Group position="apart" mt="md" mb="xs">
                 <Text weight={500}>{v.title}</Text>
               </Group>

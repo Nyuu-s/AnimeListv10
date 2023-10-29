@@ -13,6 +13,7 @@ type DataContextType = {
     editSimpleStatTable(id:number, data: SimpleTableData): void,
     deleteSimpleStatTable(id:number): void,
     setSimpleStatTablesData(statsTables: SimpleTableData[]): void
+    setChartsCollection(charts: ChartData[]): void
     getData(): Records
     getHeaders(): TDataHeaders,
     updateColumn(header:string, toBeRestricted: string[]): boolean
@@ -235,6 +236,9 @@ const DataContext = createContext<DataContextType>({
     {
         throw new Error("Function not implemented.")
     },
+    setChartsCollection: function(): void {
+        throw new Error("Function not implemented.")
+    },
     addChart: function (): void
     {
         throw new Error("Function not implemented.")
@@ -324,7 +328,7 @@ export function DataProvider({children}: {children: React.ReactNode})
        
         setChartsCollection((prev) => {
             let newData = [...prev, data]
-            // invoke("save_charts_data", {data: newData})
+            invoke("save_charts_data", {data: newData})
             return newData
         } )
     
@@ -337,7 +341,7 @@ export function DataProvider({children}: {children: React.ReactNode})
             if(index != undefined)
             {
                 newarr[index] = data
-                // invoke("save_charts_data", {data: newData})
+                invoke("save_charts_data", {data: newarr})
             }
             return newarr
         })
@@ -350,7 +354,7 @@ export function DataProvider({children}: {children: React.ReactNode})
             if( index != undefined )
             {         
                 newarr.splice(index, 1) 
-                // invoke("save_charts_data", {data: newData})
+                invoke("save_charts_data", {data: newarr})
             }
             return newarr
         })
@@ -544,6 +548,7 @@ export function DataProvider({children}: {children: React.ReactNode})
             deleteChart,
             editChart,
             addChart, 
+            setChartsCollection,
             addSimpleStatTable,
             editSimpleStatTable,
             setSimpleStatTablesData,

@@ -1,5 +1,6 @@
 
 use tauri::State;
+use tauri::api::ipc::SerializeOptions;
 use crate::se_app_infos::SessionDataState;
 use crate::se_app_infos::InitialDataState;
 use crate::se_app_infos::TauriConfig;
@@ -12,6 +13,7 @@ use crate::path_helper::{get_app_dir_path, get_app_dir_string};
 use crate::file_manager::{decompress_file_json, helper_write_file, get_file_metadata,calculate_file_hash};
 use std::io::{BufReader, BufRead};
 
+use std::path::PathBuf;
 use std::sync::Mutex;
 use std::fs;
 
@@ -32,15 +34,54 @@ struct JsonData {
     data: Vec<JsonDataSection>
 }
 
+fn remove_json_files(folder: PathBuf) -> Result<(), String>
+{
+  if folder.is_dir()
+  {
+    for entry in  fs::read_dir(folder).map_err(|_| format!("No files in directory."))?
+    {
+      let entry = entry.map_err(|_| format!("Incorrect entry file."))?;
+      let file_path = entry.path();
+      if file_path.extension() == Some(std::ffi::OsStr::new("json"))
+      {
+        fs::remove_file(file_path).map_err(|_| format!("No files in directory."))?;
+      }
+    }
 
+  }
+  Ok(())
+}
+
+fn remove_file(file: PathBuf) -> Result<(), String>
+{
+  fs::remove_file(file).map_err(|_| format!("Error while attempting to remove file."))?;
+  Ok(())
+}
+
+fn empty_file(file: PathBuf) -> Result<(), String>
+{
+  fs::write(file,"").map_err(|_| format!("Error while attempting to empty file."))?;
+  Ok(())
+}
 
 #[tauri::command]
 pub async fn delete_all(ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>) -> Result<(), String> {
   let cache_path = get_app_dir_path(DirName::Cache, ctx.config.clone(), &filenames);
   let local_data_path = get_app_dir_path(DirName::LocalData, ctx.config.clone(), &filenames);
-  fs::write(cache_path,"").map_err(|err| format!("{}", err))?;
-  fs::remove_file(local_data_path).map_err(|_| format!("No data currently loaded."))?;
-  Ok(())
+  let data_path = get_app_dir_path(DirName::_AppLocalData, ctx.config.clone(), &filenames);
+  
+  let mut errors = Vec::new();
+  empty_file(cache_path).unwrap_or_else(|_| errors.push(format!("No data currently loaded")));
+  remove_file(local_data_path).unwrap_or_else(|_| errors.push(format!("No data currently loaded")));
+  remove_json_files(data_path).unwrap_or_else(|err| errors.push(err));
+  
+  
+  match errors.is_empty() {
+      true => Ok(()),
+      false => Err(errors.join(",\n"))
+  }
+  
+  
 }
 
 
@@ -81,10 +122,27 @@ pub async fn save_stats_data(ctx: State<'_, TauriConfig>,  filenames: State<'_, 
   helper_write_file(&serde_json::to_string(&data).unwrap().as_bytes(), &data_path.to_str().unwrap()).map_err(|err| format!("{}", err))?;
   Ok(true)
 }
+
+#[tauri::command]
+pub async fn save_charts_data(ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>, data: serde_json::Value) -> Result<bool, String> {
+  //calculate new hash code and save it in the data state
+  let data_path = get_app_dir_path(DirName::_AppLocalData, ctx.config.clone(), &filenames).join("Statistics_charts.json");
+  
+  helper_write_file(&serde_json::to_string(&data).unwrap().as_bytes(), &data_path.to_str().unwrap()).map_err(|err| format!("{}", err))?;
+  Ok(true)
+}
 #[tauri::command]
 pub async fn fetch_stats_data(ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>) -> Result<serde_json::Value, String> {
   //calculate new hash code and save it in the data state
   let data_path = get_app_dir_path(DirName::_AppLocalData, ctx.config.clone(), &filenames).join("Statistics_tables.json"); 
+  let data_str= fs::read_to_string(data_path).map_err(|err| format!{"{}", err})?;
+  let data_json: serde_json::Value = serde_json::from_str(&data_str).map_err(|err| format!("{}", err))?;
+  Ok(data_json)
+}
+#[tauri::command]
+pub async fn fetch_charts_data(ctx: State<'_, TauriConfig>,  filenames: State<'_, DataFiles<'_>>) -> Result<serde_json::Value, String> {
+  //calculate new hash code and save it in the data state
+  let data_path = get_app_dir_path(DirName::_AppLocalData, ctx.config.clone(), &filenames).join("Statistics_charts.json"); 
   let data_str= fs::read_to_string(data_path).map_err(|err| format!{"{}", err})?;
   let data_json: serde_json::Value = serde_json::from_str(&data_str).map_err(|err| format!("{}", err))?;
   Ok(data_json)

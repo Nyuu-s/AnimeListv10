@@ -35,8 +35,8 @@ function StatsTablesList({setEditData, setFormState}:listProps) {
           </tr>
         </thead>
         <tbody>
-          {SimpleStatTablesData.map((v) => (
-            <tr > 
+          {SimpleStatTablesData.map((v, i) => (
+            <tr key={i}> 
               <td><Center>{v.id}</Center></td>
               <td><Center>{v.title}</Center></td>
               <td><Center><Switch color='indigo' checked={v.visibility}  onChange={(e) => handleVisibility(e, v.id)}/></Center></td>

@@ -93,8 +93,8 @@ function FileMenu() {
 
   return (
 
-    <Menu shadow="md" width={200} offset={2}>
-        <Menu.Target>
+    <Menu  shadow="md" width={200} offset={2}>
+        <Menu.Target >
             <Button >File</Button>
         </Menu.Target>
 

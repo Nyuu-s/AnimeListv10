@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'
 import Details from './Pages/Details'
 import { useDataState } from './context'
 import { useAppState } from './context/AppContext'
-import { SimpleTableData } from './Components/Helpers/useCustomTypes'
+import { ChartData, SimpleTableData } from './Components/Helpers/useCustomTypes'
 
 
 type UProperties = {
@@ -22,18 +22,34 @@ function App() {
 
 const {userPreferences} = useAppState()
 
-const {setBothDataAndHeaders, setSimpleStatTablesData} = useDataState()
+const {setBothDataAndHeaders, setSimpleStatTablesData, setChartsCollection} = useDataState()
 
 
 
 useEffect(() => {
     const fetchData = async () => {
+      
+      try {
         const data: object = await invoke("get_data", {});
         setBothDataAndHeaders(data)
+      } catch (error) {
+        console.log("Something went wrong with the fetch of main list data");
+        
+      }
         //set data + headers object in context
-
+      try {
         const stats = await invoke('fetch_stats_data', {}) as SimpleTableData[]
         setSimpleStatTablesData(stats)
+      } catch (error) {
+        console.log("Something went wrong with the fetch of statistic tables data");
+      }
+
+      try {
+        const charts = await invoke('fetch_charts_data', {}) as ChartData[]
+        setChartsCollection(charts)
+      } catch (error) {
+        console.log("Something went wrong with the fetch of statistic charts data", error);
+      }
     }
 
     fetchData();

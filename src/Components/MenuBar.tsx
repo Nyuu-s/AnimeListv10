@@ -6,6 +6,7 @@ import { FaRegWindowMaximize, FaRegWindowRestore, FaWindowMinimize } from 'react
 import { MdClose } from 'react-icons/md';
 import FileMenu from './FileMenu';
 import CustomDialog from './ThreeButtonDialog';
+import Statistics from './Statistics';
 
 
 // todo incorporate style so menubar match the theme
@@ -79,8 +80,10 @@ function MenuBar() {
                     onButtonClick={handleDialogButtonClick}
                   />
             <div data-tauri-drag-region className='flex justify-start items-center '>
-                <Image src={"/icon1.png"} width={30} ></Image>
+                <Image src={"/icon1.png"} ml={10} width={35} />
+                {/* <Image src={"/icon2.png"} ml={10} width={100} /> */}
                 <FileMenu />
+                <Statistics />
             </div>
             <div data-tauri-drag-region className='select-none flex justify-end items-center '>
                 
