@@ -1,10 +1,9 @@
-import { Button, Center, Group, NumberInput, Select, Table, TextInput, TransferList, TransferListData, TransferListItem } from '@mantine/core'
+import { Button, Center, NumberInput, Select, TextInput, TransferList, TransferListData, TransferListItem } from '@mantine/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDataState } from '../context';
 import SimpleStatTable from './SimpleStatTable';
-import { T_RecordNoID  } from './Helpers/useRecord';
+import { T_RecordNoID } from './Helpers/useRecord';
 import { SimpleTableData } from './Helpers/useCustomTypes';
-import { invoke } from '@tauri-apps/api';
 
 interface editProps {
     editData: SimpleTableData | undefined

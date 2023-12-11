@@ -1,8 +1,7 @@
 import { invoke } from "@tauri-apps/api";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { Record, RecordDataSet, Records, TDataHeaders, THeader, T_RecordNoID, useCastTo } from '../Components/Helpers/useRecord';
 import { toast } from "react-toastify";
-import { TransferListData } from "@mantine/core";
 import { ChartData, SimpleTableData } from "../Components/Helpers/useCustomTypes";
 
 type DataContextType = {
@@ -33,20 +32,20 @@ type DataContextType = {
     RecordsContent: RecordsData
 }
 
-class Table2H {
-    public column_header: string;
-    public column_values: [];
-    public row_values: [];
-    public row_header: string;
+// class Table2H {
+//     public column_header: string;
+//     public column_values: [];
+//     public row_values: [];
+//     public row_header: string;
 
-    constructor(CHeader: string, RHeader: string)
-    {
-        this.column_header = CHeader;
-        this.row_header = RHeader;
-        this.column_values = [];
-        this.row_values = [];
-    }
-}
+//     constructor(CHeader: string, RHeader: string)
+//     {
+//         this.column_header = CHeader;
+//         this.row_header = RHeader;
+//         this.column_values = [];
+//         this.row_values = [];
+//     }
+// }
 
 
 

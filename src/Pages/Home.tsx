@@ -1,5 +1,5 @@
 
-import { Badge, Card, Group, Image, Skeleton, Text, TransferListData } from '@mantine/core';
+import { Badge, Card, Group, Text } from '@mantine/core';
 import SimpleStatTable from '../Components/SimpleStatTable';
 import { useDataState } from '../context';
 
@@ -58,7 +58,6 @@ function transformhHours(hours: number) : {Total_minutes: number, Total_days: nu
 }
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
 import CustomChart from '../Components/CustomChart';
 
 ChartJS.register(ArcElement, Tooltip, Legend);

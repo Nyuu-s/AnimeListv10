@@ -1,11 +1,11 @@
 import { Divider, Group, Modal, Table, TextInput, Text, Button, ScrollArea, Checkbox, Menu, Select } from "@mantine/core";
 
 import RecordRow from "./RecordRow";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import RecordContextMenu from "./RecordContextMenu";
 import { Record } from "../Helpers/useRecord";
 import { useDataState } from "../../context";
-import { IconAccessPoint, IconAccessible, IconAdOff, IconAdjustments, IconArrowsSort, IconMinusVertical, IconSortAscending, IconSortDescending, IconTrash } from "@tabler/icons-react";
+import { IconAdjustments, IconArrowsSort, IconMinusVertical, IconSortAscending, IconSortDescending, IconTrash } from "@tabler/icons-react";
 import { useClickOutside, useViewportSize } from "@mantine/hooks";
 import { toast } from "react-toastify";
 

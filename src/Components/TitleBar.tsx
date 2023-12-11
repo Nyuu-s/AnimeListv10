@@ -1,20 +1,13 @@
 
-import { Burger, Button, Center, Drawer, Group, Header, Modal, NumberInput, SegmentedControl, Select, Tabs , TransferList, TransferListData} from '@mantine/core';
+import { Burger, Drawer, Group, Header, Tabs } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconMessageCircle, IconSettings, IconUserShield } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAppState } from '../context/AppContext';
 import TableSettings from './Tabs/TableSettings';
 import UserPreferences from './Tabs/UserPreferences';
 
-import SimpleStatTableForm from './SimpleStatTableForm';
-import StatsChartsList from './StatsChartsList';
-import { ChartData, SimpleTableData } from './Helpers/useCustomTypes';
-import ChartForm from './ChartForm';
-import StatsTablesList from './StatsTablesList';
-import FileMenu from './FileMenu';
-import Statistics from './Statistics';
 
 
 

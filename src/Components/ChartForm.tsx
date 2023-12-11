@@ -2,8 +2,7 @@ import { Button, Center, Select, TextInput, TransferListItem } from "@mantine/co
 import { useDataState } from "../context"
 import { useEffect, useMemo, useState } from "react"
 import { ChartData, ChartType, DatasetChart, SimpleTableData } from "./Helpers/useCustomTypes"
-import { RecordNoID, T_RecordNoID } from "./Helpers/useRecord";
-import { title } from "process";
+import { T_RecordNoID } from "./Helpers/useRecord";
 
 const clamp = (num:number, min:number, max: number) => Math.min(Math.max(num, min), max);
 function GetChartDataForCartesianProd(Table: SimpleTableData, ID: number, visibility: boolean, title: string, chartType: ChartType, tooltip: string): ChartData {
@@ -45,27 +44,27 @@ function GetChartDataForCartesianProd(Table: SimpleTableData, ID: number, visibi
   return out
 }
 
-function GetLabelsForCol(TablesCollection: SimpleTableData[], TableID: number): string[] {
-  const cols = TablesCollection[TableID].cols[0]
-  if (typeof cols[0] === 'object')
-  {
-     return (cols as TransferListItem[]).map((colLabel) => {
-      return colLabel.label
-    })
-  }
-  return []
-}
+// function GetLabelsForCol(TablesCollection: SimpleTableData[], TableID: number): string[] {
+//   const cols = TablesCollection[TableID].cols[0]
+//   if (typeof cols[0] === 'object')
+//   {
+//      return (cols as TransferListItem[]).map((colLabel) => {
+//       return colLabel.label
+//     })
+//   }
+//   return []
+// }
 
-function GetLabelsForRow(TablesCollection: SimpleTableData[], TableID: number): string[] {
-  const rows = TablesCollection[TableID].rows[0]
-  if (typeof rows[0] === 'object')
-  {
-     return (rows as TransferListItem[]).map((rowLabel) => {
-      return rowLabel.label
-    })
-  }
-  return []
-}
+// function GetLabelsForRow(TablesCollection: SimpleTableData[], TableID: number): string[] {
+//   const rows = TablesCollection[TableID].rows[0]
+//   if (typeof rows[0] === 'object')
+//   {
+//      return (rows as TransferListItem[]).map((rowLabel) => {
+//       return rowLabel.label
+//     })
+//   }
+//   return []
+// }
 
 type chartmap = {
   [key: string]: ChartType
@@ -177,8 +176,8 @@ function ChartForm({editData, setFormState}: editProps) {
                   
                   
                   const cartesianProd: ChartData = GetChartDataForCartesianProd(SimpleStatTablesData[parseInt(SelectTable as string)], ID, true, ChartTitle as string, ChartTypeMap[SelectChartType], SelectOverlayLabel as string )
-                  const rowlabels = GetLabelsForRow(SimpleStatTablesData, parseInt(SelectTable as string))
-                  const collabels = GetLabelsForCol(SimpleStatTablesData, parseInt(SelectTable as string))
+                  // const rowlabels = GetLabelsForRow(SimpleStatTablesData, parseInt(SelectTable as string))
+                  // const collabels = GetLabelsForCol(SimpleStatTablesData, parseInt(SelectTable as string))
                   const chartCreatedOrUpdated: ChartData = {...cartesianProd, fromTable: SelectTable}
                   if(editMode)
                   {

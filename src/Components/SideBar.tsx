@@ -1,5 +1,5 @@
 
-import { Button, Divider, Navbar, ScrollArea } from "@mantine/core";
+import { Divider, Navbar } from "@mantine/core";
 // import Link from "next/link";
 import CustomNavLink from "./Helpers/CustomNavLink";
 
