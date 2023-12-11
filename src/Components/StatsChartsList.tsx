@@ -1,8 +1,8 @@
 import { ActionIcon, Center, Group, Switch, Table } from '@mantine/core'
-import React, { ChangeEvent } from 'react'
+import { ChangeEvent } from 'react'
 import { useDataState } from '../context'
-import { IconAdjustments, IconAdjustmentsExclamation, IconTrash } from '@tabler/icons-react'
-import { ChartData, SimpleTableData } from './Helpers/useCustomTypes'
+import { IconAdjustments, IconTrash } from '@tabler/icons-react'
+import { ChartData } from './Helpers/useCustomTypes'
 
 interface listProps {
   setEditData(data: ChartData): void,
